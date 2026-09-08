@@ -24,6 +24,11 @@
 #imp button.imp-lim:hover{border-color:#fff;color:#fff}
 .header{top:40px!important}
 body{padding-top:114px!important}
+/* Os seis valores da pagina 1 sao texto fixo no HTML, os dois conjuntos lado a
+   lado; o seletor de empresa so troca o atributo data-brand e o CSS mostra o
+   que interessa. Fica editavel a mao sem voltar a depender de JavaScript. */
+:root:not([data-brand="giro"]) #valChips [data-v="giro"]{display:none}
+:root[data-brand="giro"] #valChips [data-v="yandeh"]{display:none}
 /* aviso de base vazia */
 #semBase{max-width:720px;margin:40px auto;padding:26px 30px;background:var(--card-bg);
   border:1px solid var(--gray-300);border-left:4px solid var(--b-acc);border-radius:10px}
@@ -222,13 +227,11 @@ h1 em{font-style:normal;color:var(--gray-500)}
 .ex-n b{font-size:44px;font-weight:700;letter-spacing:-2.2px;line-height:1;color:var(--gray-900)}
 .ex-n span{font-size:12px;color:var(--gray-500)}
 .ex-op{display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--gray-300)}
-.ex-seta{text-align:center;font-size:20px;color:var(--gray-300);line-height:1;margin:12px 0 10px}
 .vals{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
 .vals span{font-size:11px;font-weight:600;color:var(--gray-700);background:var(--card-bg);
   border:1px solid var(--gray-300);border-radius:20px;padding:3px 10px}
-.conc4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}
-.c4{border-radius:11px;padding:14px 16px;font-size:14px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
-.c4 em{display:block;font-style:normal;font-size:10.5px;font-weight:600;opacity:.7;margin-top:3px}
+/* .conc4/.c4/.ex-seta sairam com a tira de conceitos: agora os quatro
+   conceitos aparecem no proprio nine-box conceitual, com os pares de nota. */
 
 /* sub-bloco dentro de um painel, com filete e rótulo próprio: evita abrir
    painel novo só para uma faixa de conteúdo que pertence ao mesmo assunto */
@@ -252,6 +255,12 @@ h1 em{font-style:normal;color:var(--gray-500)}
 .mc{border-radius:7px;padding:11px 12px;min-height:62px;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .mc .mn{font-size:12.5px;font-weight:700}
 .mc .mx{font-size:10px;font-weight:500;opacity:.75}
+/* pares de nota possíveis dentro de cada quadrante. O fundo é preto
+   translúcido, não um token: as células são pastéis de tinta escura nos dois
+   temas, então o mesmo véu escurece o pastel na medida certa em qualquer um. */
+.mc .mcb{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.mc .mcb span{font-size:9.5px;font-weight:600;letter-spacing:.2px;padding:1px 6px;
+  border-radius:20px;background:rgba(0,0,0,.08);white-space:nowrap;font-variant-numeric:tabular-nums}
 .c-ins{background:var(--nb-ins);color:var(--nb-ins-ink)}
 .c-ple{background:var(--nb-ple);color:var(--nb-ple-ink)}
 .c-for{background:var(--nb-for);color:var(--nb-for-ink)}
@@ -262,12 +271,11 @@ h1 em{font-style:normal;color:var(--gray-500)}
 .nb.big{grid-template-rows:repeat(3,minmax(160px,1fr)) 18px}
 /* O cabeçalho da célula é uma linha de flex, não elemento absoluto: com a
    contagem e a etiqueta de movimento juntas à direita, o posicionamento
-   absoluto fazia o "2 excepcionais · 5×5" passar por cima do número. */
+   absoluto fazia o rótulo passar por cima do número. */
 .nbc{border-radius:8px;position:relative;overflow:hidden;padding:9px 11px;
   display:flex;flex-direction:column}
 .nbh{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;position:relative;z-index:2}
 .nbt{font-size:11.5px;font-weight:700;min-width:0}
-.exctag{display:block;font-size:9.5px;font-weight:600;opacity:.75;margin-top:2px}
 .nbn{font-size:17px;font-weight:700;opacity:.55;display:flex;align-items:baseline;gap:6px;flex:none}
 /* mudança do quadrante contra o ciclo anterior, colada na contagem */
 .nbd{font-size:10.5px;font-weight:700;opacity:1;padding:1px 6px;border-radius:20px;
@@ -302,6 +310,23 @@ h1 em{font-style:normal;color:var(--gray-500)}
 .nbfiltro button:hover{border-color:var(--gray-300);color:var(--gray-900)}
 .nbfiltro button.is-on{background:var(--b-acc);border-color:var(--b-acc);color:#fff}
 .nbwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(268px,332px);gap:18px;align-items:start}
+/* Recorte por conceito: sem matriz ao lado, o espaço inteiro é da lista. Com
+   93 pessoas no maior conceito, uma coluna vira rolagem sem fim, então vira
+   grade de cartões compactos: a pessoa é reconhecida pela foto e pelo nome,
+   e o plano de ação é a única informação que precisa ser lida. */
+.nbwrap.so-lista{grid-template-columns:1fr}
+.nbwrap.so-lista .nblista{max-height:min(74vh,760px)}
+.nbwrap.so-lista #nbLista{display:grid;gap:7px;
+  grid-template-columns:repeat(auto-fill,minmax(232px,1fr));align-content:start}
+.nbwrap.so-lista .nbl-hd{grid-column:1/-1}
+.nbwrap.so-lista .nbl{grid-template-columns:32px minmax(0,1fr);gap:9px;
+  border:1px solid var(--gray-100);border-radius:9px;padding:7px 9px}
+.nbwrap.so-lista .nbl:hover{background:var(--gray-50);border-color:var(--gray-300)}
+.nbwrap.so-lista .nbl-2,.nbwrap.so-lista .nbl-3{display:none}
+.nbwrap.so-lista .nbl-1{font-size:11.8px;white-space:normal;line-height:1.25}
+.nbwrap.so-lista .nbl-p{grid-column:2;margin-top:3px}
+.nbwrap.so-lista .nbl-c{display:none}
+.nbwrap.so-lista .lstav{width:32px;height:32px}
 .nblista{max-height:min(70vh,700px);overflow-y:auto;padding-right:4px}
 .nbl-hd{font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--gray-500);
   padding-bottom:7px;border-bottom:1px solid var(--gray-300);margin-bottom:4px;position:sticky;top:0;
@@ -394,49 +419,67 @@ h1 em{font-style:normal;color:var(--gray-500)}
   vertical-align:middle;margin-left:6px}
 
 /* ---- distribuição e evolução da página 2, sem tabela ---- */
-.dist2{display:grid;gap:17px}
-.bigstk{display:flex;height:56px;border-radius:10px;overflow:hidden;background:var(--gray-100)}
-.bigstk span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;overflow:hidden}
-.bigstk span b{font-size:20px;font-weight:700;letter-spacing:-.6px;line-height:1}
-.bigstk span em{font-style:normal;font-size:9.5px;font-weight:700;opacity:.7}
-.bigstk span+span{box-shadow:-1.5px 0 0 var(--card-bg)}
+/* ---- plano de ação: texto livre da planilha, com cor nas quatro palavras
+   que se repetem. Cinza para qualquer outra coisa, sem recusar o conteúdo. ---- */
+.pa{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.2px;
+  padding:3px 8px;border-radius:20px;white-space:nowrap}
+.pa-des{background:var(--nb-ins);color:var(--nb-ins-ink)}
+.pa-rec{background:#fdf0d5;color:#8a5a00}
+.pa-suc{background:var(--nb-exc);color:var(--nb-exc-ink)}
+.pa-pro{background:var(--nb-for);color:var(--nb-for-ink)}
+.pa-out{background:var(--gray-100);color:var(--gray-700)}
+.pa-vazio{background:none;color:var(--gray-300);font-weight:600;padding-left:0}
+:root[data-theme="dark"] .pa-rec{background:#3a2a05;color:#f0c469}
+.nbl-p{min-width:0;overflow:hidden}
+
+.dist2{display:grid;gap:15px}
+/* faixa fina: só proporção, sem número dentro. O número mora embaixo, uma vez. */
+.finastk{display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--gray-100)}
+.finastk span{min-width:0}
+.finastk span+span{box-shadow:-1.5px 0 0 var(--card-bg)}
 .dlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:14px}
-.dcard{display:grid;gap:6px;align-content:start}
+/* o cartão é botão: abre a lista de quem está naquele conceito */
+.dcard{display:grid;gap:6px;align-content:start;text-align:left;font-family:inherit;
+  background:none;border:none;padding:6px 8px;margin:-6px -8px;border-radius:9px;
+  cursor:pointer;transition:background .13s}
+.dcard:hover{background:var(--gray-50)}
+.dcard:focus-visible{outline:2px solid var(--b-acc);outline-offset:1px}
+.dcard.estatico{cursor:default;background:none}
 .dcard .dt1{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--gray-700)}
 .dcard .dt1 i{width:10px;height:10px;border-radius:3px;flex:none}
-.dcard .dv1{font-size:31px;font-weight:700;letter-spacing:-1.2px;line-height:1;color:var(--gray-900)}
+.dcard .dv1{display:block;font-size:31px;font-weight:700;letter-spacing:-1.2px;line-height:1;color:var(--gray-900)}
 .dcard .dv1 small{font-size:11.5px;font-weight:600;color:var(--gray-500);letter-spacing:0;margin-left:6px}
-.dcard .db1{height:6px;border-radius:3px;background:var(--gray-100);overflow:hidden}
-.dcard .db1 i{display:block;height:100%;border-radius:3px}
-/* ---- o gap auto x gestor: haltere na régua ----
-   Os dois pontos ficam onde a nota está, e a barra entre eles é a distância.
-   Comprimento e posição juntos, em vez de uma barrinha solta numa coluna. */
-.gl{display:grid;grid-template-columns:200px minmax(170px,1fr) 54px;align-items:center;gap:14px}
-/* a régua fica alinhada à coluna do meio pela mesma conta do grid:
-   200 + 14 de gap à esquerda, 54 + 14 à direita */
-.gapx{position:relative;height:15px;margin:0 68px 6px 214px}
-.gapx u{position:absolute;top:13px;width:1px;height:6px;background:var(--gray-300)}
-.gapx b{position:absolute;top:0;transform:translateX(-50%);font-size:9px;font-weight:700;color:var(--gray-500)}
-.gl{padding:6px 0;border-bottom:1px solid var(--gray-100)}
-.gl:hover{background:var(--gray-50)}
-.gl.eixo{border-top:1.5px solid var(--gray-300);margin-top:5px}
-.gl.eixo .gl-n{font-weight:700}
-.gl-n{font-size:12.3px;font-weight:600;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gl-p{position:relative;height:20px}
-.gl-p u{position:absolute;top:2px;bottom:2px;width:1px;background:var(--gray-100)}
-.gl-p i{position:absolute;top:50%;transform:translate(-50%,-50%)}
-.gl-p i.haste{height:5px;border-radius:3px;background:var(--gray-300);transform:translateY(-50%);left:0}
-.gl-p i.pg{width:12px;height:12px;border-radius:50%;background:var(--b-acc);box-shadow:0 0 0 2px var(--card-bg)}
-.gl-p i.pa{width:12px;height:12px;border-radius:50%;background:var(--card-bg);
-  box-shadow:inset 0 0 0 2.5px var(--gray-700),0 0 0 2px var(--card-bg)}
-.gl-d{font-size:12px;font-weight:700;color:var(--gray-700);text-align:right}
-.gaplg{display:flex;flex-wrap:wrap;gap:7px 18px;align-items:center;margin-top:13px;font-size:11px;
-  color:var(--gray-700)}
-.gaplg span{display:inline-flex;align-items:center;gap:7px;font-weight:600}
-.gaplg i.pg{width:12px;height:12px;border-radius:50%;background:var(--b-acc)}
-.gaplg i.pa{width:12px;height:12px;border-radius:50%;background:var(--card-bg);
-  box-shadow:inset 0 0 0 2.5px var(--gray-700)}
-.gaplg i.haste{width:22px;height:5px;border-radius:3px;background:var(--gray-300)}
+@media print{.dcard{cursor:default}.dcard:hover{background:none}}
+/* ---- auto x gestor: tabela ----
+   A pergunta aqui é "quanto", e número lido em coluna responde melhor que
+   posição numa régua. Os dois eixos em cima, em corpo normal; os seis valores
+   abaixo, menores, como abertura do eixo de valores. */
+.gatab{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.gatab th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--gray-500);text-align:right;padding:0 10px 7px;border-bottom:1px solid var(--gray-300)}
+.gatab th.ga-k{text-align:left}
+.gatab td{padding:7px 10px;border-bottom:1px solid var(--gray-100)}
+.gatab .ga-k{text-align:left;color:var(--gray-900)}
+.gatab .ga-n,.gatab .ga-d{text-align:right;width:104px}
+/* quadradinho de fundo por número: tom claro para a autoavaliação, tom do
+   acento para a nota do gestor, que é a que decide */
+.ga-b{display:inline-block;min-width:46px;padding:3px 8px;border-radius:6px;
+  font-variant-numeric:tabular-nums;text-align:center}
+.ga-b.auto{background:var(--gray-100);color:var(--gray-700)}
+.ga-b.gest{background:var(--b-acc-soft);color:var(--b-acc);font-weight:700}
+.ga-eixo .ga-b{min-width:54px;padding:5px 9px}
+.ga-eixo td{font-size:13.5px;font-weight:700}
+.ga-eixo .ga-k{font-weight:700}
+/* faixa que separa os eixos da abertura por valor */
+.ga-sec td{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--gray-500);padding:11px 10px 4px;border-bottom:none}
+.ga-val td{font-size:11.5px;color:var(--gray-700)}
+.ga-val .ga-k{padding-left:20px}
+.ga-d.up{color:var(--nb-ins-ink)}
+.ga-d.dn{color:var(--nb-for-ink)}
+.ga-d.eq{color:var(--gray-500)}
+:root[data-theme="dark"] .ga-d.up{color:#ff8a7a}
+:root[data-theme="dark"] .ga-d.dn{color:#5fd98a}
 
 /* evolução mora dentro do painel da distribuição, como um rodapé.
    O filete e o rótulo vêm de .bloco / .bloco-k, definidos na página 1. */
@@ -498,7 +541,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
 <div class="header">
   <div>
     <div class="header-title">Avaliação de Desempenho · H2 2026</div>
-    <div class="header-subtitle">Ciclo Março a Agosto de 2026 · números pré-calibragem</div>
+    <div class="header-subtitle">Ciclo Março a Agosto de 2026</div>
   </div>
   <nav>
     <button class="is-on" data-p="p1">O ciclo</button>
@@ -523,16 +566,45 @@ h1 em{font-style:normal;color:var(--gray-500)}
 <!-- ==================== PÁGINA 1 ==================== -->
 <section class="page on" id="p1">
 
+  <!-- ======================================================================
+       PÁGINA 1 · CONTEÚDO FIXO
+       Esta página não lê a planilha: é texto, e se edita aqui mesmo.
+       Cada bloco abaixo está marcado com [EDITE] no que costuma mudar de
+       ciclo para ciclo — datas, etapa atual, números de capa.
+       ====================================================================== -->
+
   <div class="cover">
     <div class="eyebrow">Como funciona</div>
     <h1>Duas notas, uma régua,<br><em>um conceito.</em></h1>
-    <div class="status-pill"><i></i><span id="statusTxt">—</span></div>
+    <!-- [EDITE] situação do ciclo, mostrada na pílula da capa -->
+    <div class="status-pill"><i></i><span>Calibragem em comitê · 24/08 a 09/09</span></div>
   </div>
 
   <div class="panel">
-    <div class="phd"><span class="pn">01</span><span class="pt">O ciclo</span></div>
-    <div class="tl" id="tl"></div>
-    <div class="fatos" id="statusFatos"></div>
+    <div class="phd"><span class="pn">01</span><span class="pt">O ciclo de pessoas</span></div>
+
+    <!-- [EDITE] linha do tempo.
+         Uma etapa = um <div class="tli">. A classe diz o estado:
+           done = concluída   ·   now = etapa atual   ·   todo = ainda vem
+         Só a etapa "now" leva a tarja "estamos aqui".
+         A barra de progresso é a largura de .tl-feito: com 5 etapas, ela para
+         no centro da etapa atual em (n.º da etapa − 0,5) × 20%.
+         Hoje: etapa 3 de 5 → (3 − 0,5) × 20 = 50 → menos 10 de recuo = 40%. -->
+    <div class="tl" id="tl">
+      <div class="tl-trilho"></div>
+      <div class="tl-feito" style="width:40.0%"></div>
+      <div class="tli done"><b>1</b>
+        <div class="tln">Autoavaliação</div><div class="tld">10 a 16/08</div></div>
+      <div class="tli done"><b>2</b>
+        <div class="tln">Avaliação do gestor</div><div class="tld">10 a 21/08</div></div>
+      <div class="tli now"><b>3</b>
+        <div class="tln">Calibragem</div><div class="tld">24/08 a 09/09</div>
+        <div class="tlnow">estamos aqui</div></div>
+      <div class="tli todo"><b>4</b>
+        <div class="tln">Devolutiva</div><div class="tld">14 a 29/09</div></div>
+      <div class="tli todo"><b>5</b>
+        <div class="tln">PDI</div><div class="tld">a partir de 25/09</div></div>
+    </div>
   </div>
 
   <div class="panel">
@@ -550,28 +622,85 @@ h1 em{font-style:normal;color:var(--gray-500)}
         <div class="ex-k">Eixo Y · Como</div>
         <div class="ex-t">Valores<br>&amp; Comportamentos</div>
         <div class="ex-n"><b>6</b><span>notas, uma por valor</span></div>
-        <div class="vals" id="valChips"></div>
+        <!-- [EDITE] os seis valores. Os dois conjuntos ficam aqui; o seletor
+             Yandeh/Girotrade do topo mostra um e esconde o outro por CSS. -->
+        <div class="vals" id="valChips">
+          <span data-v="yandeh">Encantar o Cliente</span>
+          <span data-v="yandeh">Sede por Resultados</span>
+          <span data-v="yandeh">Nós pela Yandeh</span>
+          <span data-v="yandeh">Inovar para Liderar</span>
+          <span data-v="yandeh">Ser Dono</span>
+          <span data-v="yandeh">Melhor e Mais longe com Dados</span>
+          <span data-v="giro">Encantar o Cliente</span>
+          <span data-v="giro">No Ritmo Certo</span>
+          <span data-v="giro">Nós pela Giro</span>
+          <span data-v="giro">Presença que faz a Diferença</span>
+          <span data-v="giro">Ser Dono</span>
+          <span data-v="giro">Aqui Tudo Tem Lugar</span>
+        </div>
       </div>
     </div>
 
     <div class="bloco">
       <div class="bloco-k">Toda nota sai desta régua, nos dois eixos</div>
-      <div class="reg5" id="ruler"></div>
+      <!-- [EDITE] a régua. A classe r1..r5 é a cor de cada degrau. -->
+      <div class="reg5" id="ruler">
+        <div class="rg r1"><b>1</b><span>Insatisfatório<br><small>Performance e comportamento abaixo do esperado, com impacto negativo nos resultados ou no time.
+</small></span></div>
+        <div class="rg r2"><b>2</b><span>Abaixo das expectativas<br><small>Performance ou comportamento inconsistentes, com impacto limitado e necessidade clara de evolução.
+</small></span></div>
+        <div class="rg r3"><b>3</b><span>Dentro das expectativas<br><small>Performance consistente e comportamento alinhado à cultura, contribuindo de forma positiva para os resultados da área.</small></span></div>
+        <div class="rg r4"><b>4</b><span>Acima das expectativas<br><small>Performance superior ao esperado e forte aderência cultural, gerando impacto relevante e influência positiva no time.</small></span></div>
+        <div class="rg r5"><b>5</b><span>Excepcional<br><small>Performance extraordinária e referência clara em cultura, elevando o padrão de resultados e comportamento na organização.</small></span></div>
+      </div>
     </div>
-
-    <div class="ex-seta">↓</div>
-    <div class="conc4" id="conc4"></div>
   </div>
 
   <div class="panel">
     <div class="phd"><span class="pn">03</span><span class="pt">Onde as duas notas se cruzam</span>
-      <span class="ps">Baixo 1–2 · Médio 3 · Alto 4–5</span></div>
-    <div class="m9" id="m9"></div>
+      <span class="ps">E = entregas, V = valores</span></div>
+    <div class="m9" id="m9">
+      <div class="ylab">Valores 4–5</div>
+      <div class="mc c-ins"><div class="mn">Insuficiente</div>
+        <div class="mcb"><span>E1·V4</span><span>E1·V5</span><span>E2·V4</span><span>E2·V5</span></div></div>
+      <div class="mc c-for"><div class="mn">Forte Desempenho</div>
+        <div class="mcb"><span>E3·V4</span><span>E3·V5</span></div></div>
+      <div class="mc c-exc"><div class="mn">Excepcional</div>
+        <div class="mcb"><span>E4·V4</span><span>E4·V5</span><span>E5·V4</span><span>E5·V5</span></div></div>
+
+      <div class="ylab">Valores 3</div>
+      <div class="mc c-ins"><div class="mn">Insuficiente</div>
+        <div class="mcb"><span>E1·V3</span><span>E2·V3</span></div></div>
+      <div class="mc c-ple"><div class="mn">Pleno</div>
+        <div class="mcb"><span>E3·V3</span></div></div>
+      <div class="mc c-for"><div class="mn">Forte Desempenho</div>
+        <div class="mcb"><span>E4·V3</span><span>E5·V3</span></div></div>
+
+      <div class="ylab">Valores 1–2</div>
+      <div class="mc c-ins"><div class="mn">Insuficiente</div>
+        <div class="mcb"><span>E1·V1</span><span>E1·V2</span><span>E2·V1</span><span>E2·V2</span></div></div>
+      <div class="mc c-ins"><div class="mn">Insuficiente</div>
+        <div class="mcb"><span>E3·V1</span><span>E3·V2</span></div></div>
+      <div class="mc c-ins"><div class="mn">Insuficiente</div>
+        <div class="mcb"><span>E4·V1</span><span>E4·V2</span><span>E5·V1</span><span>E5·V2</span></div></div>
+
+      <div></div>
+      <div class="xlab">Entregas 1–2</div>
+      <div class="xlab">Entregas 3</div>
+      <div class="xlab">Entregas 4–5</div>
+    </div>
   </div>
 
   <div class="panel">
-    <div class="phd"><span class="pn">04</span><span class="pt">Quem entra</span></div>
-    <div class="fatos" id="eleg"></div>
+    <div class="phd"><span class="pn">04</span><span class="pt">Elegíveis</span></div>
+    <!-- [EDITE] regras de elegibilidade do ciclo. -->
+    <div class="fatos" id="eleg">
+      <div class="fato"><div class="fk">Tempo mínimo de casa</div><b>3<small> meses</small></b></div>
+      <div class="fato"><div class="fk">Data de corte</div><b>30/05</b>
+        <div class="fs">admitidos até essa data entram no ciclo</div></div>
+      <div class="fato"><div class="fk">Elegíveis no H2 2026</div><b>234</b>
+              <div class="fs">Yandecos avaliados</div></div>
+    </div>
   </div>
 
 </section>
@@ -665,7 +794,10 @@ h1 em{font-style:normal;color:var(--gray-500)}
 .chtip .t-now{background:var(--b-acc)}
 .chtip .t-ant{background:var(--gray-300)}
 .chtip em{font-style:normal;opacity:.6}
-.lg{display:flex;gap:15px;flex-wrap:wrap;margin-top:9px;font-size:11px;color:var(--gray-700);font-weight:600}
+/* legenda acima do gráfico: lê-se o que é cada série antes de olhar a forma */
+.lg{display:flex;gap:15px;flex-wrap:wrap;margin-bottom:9px;font-size:11px;color:var(--gray-700);font-weight:600}
+/* legenda única do painel, quando dois gráficos gêmeos dividem as mesmas séries */
+.lg-painel{margin:-4px 0 12px}
 .lg span{display:inline-flex;align-items:center;gap:6px}
 .lg i{width:17px;height:0;border-top:2px solid var(--gray-500);display:inline-block}
 .lg i.s-now{border-top-color:var(--b-acc);border-top-style:solid}
@@ -768,7 +900,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
   .pc{break-inside:avoid}
   /* as peças gráficas precisam sair inteiras: quebrar uma barra empilhada
      no meio inverte a leitura da proporção */
-  .evc,.dcard,.bigstk,.arc,.coment{break-inside:avoid}
+  .evc,.dcard,.finastk,.arc,.coment{break-inside:avoid}
   .busca,.arc-9{display:none!important}
   .areas{grid-template-columns:repeat(4,1fr);gap:8px}
   .coment{background:#fff}
@@ -783,8 +915,9 @@ h1 em{font-style:normal;color:var(--gray-500)}
   .donut svg{width:104px;height:104px}
   .areas{grid-template-columns:repeat(auto-fill,minmax(158px,1fr))}
   .busca{flex:1 1 100%}
-  .gl{grid-template-columns:130px minmax(120px,1fr) 46px;gap:9px}
-  .gapx{margin:0 55px 6px 139px}
+  /* tabela auto x gestor em tela estreita: colunas de número mais justas */
+  .gatab .ga-n,.gatab .ga-d{width:74px}
+  .gatab th,.gatab td{padding-left:6px;padding-right:6px}
 }
 </style>
 
@@ -793,9 +926,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
 
   <div class="cover">
     <div class="eyebrow">Resultados do ciclo</div>
-    <h1>Onde a companhia<br><em>chegou.</em></h1>
-    <p class="lead">Tudo sai da <b>nota do gestor</b> registrada na base, pela régua oficial. Nada aqui é resultado
-      de comitê. As comparações com o ciclo anterior usam sempre a <b>mesma coorte</b>.</p>
+    <h1>Visão Yandeh<br><em>Geral</em></h1>
   </div>
 
   <div class="panel">
@@ -807,6 +938,8 @@ h1 em{font-style:normal;color:var(--gray-500)}
   <div class="panel">
     <div class="phd"><span class="pn">02</span><span class="pt">Como a régua foi usada</span>
       <span class="ps" id="curvaSub"></span></div>
+    <!-- legenda única do painel: os dois gráficos abaixo têm as mesmas séries -->
+    <div class="lg lg-painel" id="lgCurva"></div>
     <div class="chgrid">
       <div class="chart" id="chNotaE"></div>
       <div class="chart" id="chNotaV"></div>
@@ -826,33 +959,28 @@ h1 em{font-style:normal;color:var(--gray-500)}
   </div>
 
   <div class="panel">
-    <div class="phd"><span class="pn">04</span><span class="pt">A curva ao longo da hierarquia</span>
+    <div class="phd"><span class="pn">04</span><span class="pt">Análise por senioridade X desempenho</span>
       <span class="ps" id="senSub"></span></div>
-    <div class="chgrid">
-      <div class="chart" id="chSenE"></div>
-      <div class="chart" id="chSenV"></div>
-    </div>
+    <div class="chart" id="chSen"></div>
     <div class="read" id="senNote"></div>
   </div>
 
   <div class="panel">
-    <div class="phd"><span class="pn">05</span><span class="pt">Para onde cada business unit andou</span>
-      <span class="ps" id="buSub"></span></div>
+    <div class="phd"><span class="pn">05</span><span class="pt">Evolução de cada Business Unit</span></div>
     <div class="chart" id="chBU"></div>
     <div class="read" id="buNote"></div>
     <div class="cap" id="capBU"></div>
   </div>
 
   <div class="panel">
-    <div class="phd"><span class="pn">06</span><span class="pt">De-para de cada valor</span>
+    <div class="phd"><span class="pn">06</span><span class="pt">Evolução de cada valor</span>
       <span class="ps">Nota do gestor: onde cada valor estava e onde está.</span></div>
     <div class="chart" id="chValores"></div>
     <div class="read" id="valNote"></div>
   </div>
 
   <div class="panel">
-    <div class="phd"><span class="pn">07</span><span class="pt">A distância entre a autoavaliação e o gestor</span>
-      <span class="ps">Único lugar do relatório onde a autoavaliação aparece.</span></div>
+    <div class="phd"><span class="pn">07</span><span class="pt">Auto Avaliação X Avaliação Gestor</span></div>
     <div class="gaps" id="gaps"></div>
     <div class="cap" id="gapCap"></div>
   </div>
@@ -886,8 +1014,8 @@ h1 em{font-style:normal;color:var(--gray-500)}
   <div class="panel">
     <div class="phd"><span class="pn">02</span><span class="pt">Especialistas e lideranças</span>
       <span class="ps" id="cardSub"></span>
-      <div class="busca"><input id="fBusca" type="text" placeholder="buscar qualquer pessoa da base…" autocomplete="off"></div>
-      <button class="btn-min" type="button" data-nb="senior">9-box dos 61</button>
+      <div class="busca"><input id="fBusca" type="text" placeholder="buscar nesta lista…" autocomplete="off"></div>
+      <button class="btn-min" type="button" data-nb="senior" id="btnNbSenior">9-box da lista</button>
       <button class="btn-min" id="toggleAll" type="button">Abrir todos</button></div>
     <div class="cards" id="cards"></div>
   </div>
@@ -1276,9 +1404,16 @@ const CONC_CURTO = { 'Insuficiente':'Insuf.', 'Pleno':'Pleno',
                      'Forte Desempenho':'Forte', 'Excepcional':'Exc.' };
 const RANK = { 'Excepcional':0, 'Forte Desempenho':1, 'Pleno':2, 'Insuficiente':3 };
 
-/* matriz oficial — linhas = valores (alto→baixo), colunas = entregas (baixo→alto) */
+/* Matriz oficial — linhas = valores (alto→baixo), colunas = entregas (baixo→alto).
+   Alterada em 04/09/2026 a pedido: o quadrante alto × alto passou a ser
+   Excepcional inteiro, e não apenas o par 5×5.
+   Consequência: 70 das 215 pessoas com nota saem de Forte Desempenho para
+   Excepcional, que vai de 2 para 72 (1% → 33% dos avaliados).
+   Atenção ao comparar ciclos: o conceito do ciclo anterior chega pronto na
+   coluna da planilha, calculado pela regra antiga. Enquanto essa base não for
+   recalculada, a evolução entre ciclos mede também a troca de régua. */
 const MATRIZ = [
-  ['Insuficiente', 'Forte Desempenho', 'Forte Desempenho'],
+  ['Insuficiente', 'Forte Desempenho', 'Excepcional'],
   ['Insuficiente', 'Pleno',            'Forte Desempenho'],
   ['Insuficiente', 'Insuficiente',     'Insuficiente']
 ];
@@ -1322,19 +1457,14 @@ function tempoCasa(n){
 }
 
 /* ============================================================
-   PÁGINA 1
+   PÁGINA 1 — sem código.
+   O conteúdo dela é HTML fixo, escrito direto na <section id="p1">. Não lê a
+   planilha e não depende de nada aqui: linha do tempo, régua, conceitos e a
+   matriz se editam na marcação, cada bloco assinalado com [EDITE].
+   A única coisa que continua no script e conversa com esta página é a
+   constante MATRIZ, que calcula o conceito de cada pessoa nas páginas 2 e 3.
+   Se a regra mudar, mude nos dois lugares.
    ============================================================ */
-const ETAPAS = [
-  { n:'Autoavaliação', d:'Você avalia suas entregas e sua atuação em cada valor, com evidências concretas.', p:'10 a 16/08', w:'1 semana' },
-  { n:'Avaliação do gestor', d:'O líder dá uma nota de entregas e uma para cada valor, com comentários que sustentam cada uma.', p:'10 a 21/08', w:'2 semanas' },
-  { n:'Calibragem', d:'O comitê compara pessoas entre áreas, tira viés e fecha a posição no 9-box.', p:'24/08 a 09/09', w:'~2,5 semanas' },
-  { n:'Devolutiva', d:'Feedback individual e envio das cartinhas de movimentação, já aprovadas pelo comitê.', p:'14 a 29/09', w:'2 semanas' },
-  { n:'PDI', d:'Plano construído com o líder a partir da calibragem. Treinamentos em 25/09 e 02/10.', p:'a partir de 25/09', w:'contínuo' }
-];
-const ETAPA_ATUAL = 2;
-/* rótulo curto: a definição de cada nota é falada, não impressa no slide */
-const REGUA = ['Insatisfatório', 'Abaixo das expectativas', 'Dentro das expectativas',
-               'Acima das expectativas', 'Excepcional'];
 
 /* Textos de leitura desligados a pedido: o relatorio entrega o dado e o
    grafico, a interpretacao fica com quem conduz o comite. Os calculos
@@ -1343,65 +1473,23 @@ const REGUA = ['Insatisfatório', 'Abaixo das expectativas', 'Dentro das expecta
    sai do DOM, para nao deixar caixa vazia no lugar. */
 function ocultaLeitura(sel){ const el = $(sel); if (el) el.remove(); }
 
-function renderPagina1(){
-  /* 01 · linha do tempo. A barra de progresso para no centro da etapa atual:
-     cada uma das cinco colunas ocupa 20%, então o centro da etapa i está em
-     (i + 0,5) × 20%. */
-  $('#tl').innerHTML =
-    '<div class="tl-trilho"></div>' +
-    '<div class="tl-feito" style="width:' + (((ETAPA_ATUAL + 0.5) * 20) - 10).toFixed(1) + '%"></div>' +
-    ETAPAS.map((e, i) => {
-      const cls = i < ETAPA_ATUAL ? 'done' : i === ETAPA_ATUAL ? 'now' : 'todo';
-      return '<div class="tli ' + cls + '"><b>' + (i + 1) + '</b>' +
-        '<div class="tln">' + e.n + '</div><div class="tld">' + e.p + '</div>' +
-        (i === ETAPA_ATUAL ? '<div class="tlnow">estamos aqui</div>' : '') + '</div>';
-    }).join('');
+/* Gráfico sem dado tem que dizer o que faltou. Três painéis desta página
+   dependem de colunas que a planilha pode não trazer (nível, business unit,
+   autoavaliação) e, quando não vinham, o bloco simplesmente não desenhava:
+   um retângulo em branco no meio do relatório, sem nenhuma pista de causa.
+   Em comitê isso se lê como defeito, e foi exatamente o que aconteceu. */
+function vazioPainel(sel, msg){
+  const el = $(sel); if (!el) return;
+  el.innerHTML = msg ? '<div class="empty">' + esc(msg) + '</div>' : '';
+}
 
-  const feitas = P.filter(p => p.gE != null && p.gV != null).length;
-  $('#statusTxt').textContent = 'Calibragem em comitê · 24/08 a 09/09';
-  $('#statusFatos').innerHTML =
-    '<div class="fato"><div class="fk">Avaliações fechadas</div>' +
-      '<b>' + feitas + '<small> / ' + P.length + '</small></b>' +
-      '<div class="fs">com nota do gestor nos dois eixos</div></div>' +
-    '<div class="fato alerta"><div class="fk">Posições de comitê</div><b>0</b>' +
-      '<div class="fs">registradas na base: tudo aqui é pré-calibragem</div></div>';
-
-  /* 02 · os dois eixos e os quatro conceitos possíveis */
-  $('#valChips').innerHTML = (BRAND === 'giro' ? VALORES_GIRO : VALORES_YAN)
-    .map(v => '<span>' + v + '</span>').join('');
-  $('#conc4').innerHTML = ORDEM_CONC.map(k =>
-    '<div class="c4" style="background:' + CONC[k].bg + ';color:' + CONC[k].ink + '">' + k +
-    (k === 'Excepcional' ? '<em>só com 5 × 5</em>' : '') + '</div>').join('');
-
-  /* 03 · a régua */
-  $('#ruler').innerHTML = REGUA.map((r, i) =>
-    '<div class="rg r' + (i + 1) + '"><b>' + (i + 1) + '</b><span>' + r + '</span></div>').join('');
-
-  /* 04 · a matriz conceitual */
-  const YL = ['Valores 4–5', 'Valores 3', 'Valores 1–2'];
-  const XL = ['Entregas 1–2', 'Entregas 3', 'Entregas 4–5'];
-  let m = '';
-  for (let r = 0; r < 3; r++){
-    m += '<div class="ylab">' + YL[r] + '</div>';
-    for (let c = 0; c < 3; c++){
-      const nome = MATRIZ[r][c];
-      m += '<div class="mc ' + CONC[nome].cls + '"><div class="mn">' + nome + '</div>' +
-           '<div class="mx">' + ((r === 0 && c === 2) ? 'Excepcional quando 5 × 5' : '&nbsp;') + '</div></div>';
-    }
-  }
-  m += '<div></div>' + XL.map(x => '<div class="xlab">' + x + '</div>').join('');
-  $('#m9').innerHTML = m;
-
-  /* 05 · elegibilidade */
-  $('#eleg').innerHTML =
-    '<div class="fato"><div class="fk">Tempo mínimo de casa</div><b>3<small> meses</small></b>' +
-      '<div class="fs">para haver insumo suficiente</div></div>' +
-    '<div class="fato"><div class="fk">Data de corte</div><b>30/05</b>' +
-      '<div class="fs">admitidos até essa data entram no ciclo</div></div>' +
-    '<div class="fato"><div class="fk">Elegíveis no H2 2026</div><b>' + P.length + '</b>' +
-      '<div class="fs">Yandeh e Girotrade somadas</div></div>' +
-    '<div class="fato"><div class="fk">Decisão final</div><b>Comitê</b>' +
-      '<div class="fs">valida a posição no 9-box e o plano de ação</div></div>';
+/* Legenda no cabeçalho do painel, para os dois casos em que o painel tem dois
+   gráficos com as mesmas séries: repetir a legenda lado a lado ocupa espaço
+   para dizer duas vezes a mesma coisa. Os gráficos recebem `semLegenda`. */
+function legendaPainel(sel, series){
+  const el = $(sel); if (!el) return;
+  el.innerHTML = series.map(s =>
+    '<span><i class="' + s.cls + '"></i>' + esc(s.n) + '</span>').join('');
 }
 
 /* ============================================================
@@ -1521,14 +1609,20 @@ function lineChart(sel, cfg){
   s += '<line class="xh" x1="0" x2="0" y1="' + g.t + '" y2="' + (g.t + ih) + '"/>';
   s += '<rect class="hit" x="' + g.l + '" y="' + g.t + '" width="' + iw + '" height="' + ih + '"/>';
 
-  const legenda = cfg.series.map(se =>
-    '<span><i class="' + se.cls + '"></i>' + esc(se.n) + '</span>').join('');
+  /* Legenda antes do desenho: quem lê o gráfico precisa saber o que é cada
+     série antes de olhar a forma, não depois. `semLegenda` existe para os
+     painéis com dois gráficos gêmeos, que desenham a legenda uma vez só no
+     cabeçalho em vez de repetir a mesma coisa lado a lado. */
+  const legenda = cfg.semLegenda ? '' :
+    '<div class="lg">' + cfg.series.map(se =>
+      '<span><i class="' + se.cls + '"></i>' + esc(se.n) + '</span>').join('') + '</div>';
 
   $(sel).innerHTML =
     '<div class="chart-t">' + esc(cfg.titulo) + '</div>' +
-    '<div class="chart-s">' + cfg.sub + '</div>' +
+    (cfg.sub ? '<div class="chart-s">' + esc(cfg.sub) + '</div>' : '') +
+    legenda +
     '<svg viewBox="0 0 ' + g.w + ' ' + g.h + '" role="img" aria-label="' + esc(cfg.titulo) + '">' + s + '</svg>' +
-    '<div class="chtip"></div><div class="lg">' + legenda + '</div>';
+    '<div class="chtip"></div>';
 
   if (cfg.tip) ligaHover($(sel), cfg, X, Y, g);
 }
@@ -1686,14 +1780,18 @@ function columnChart(sel, cfg){
       (g.t + ih + 17 + degrau + k * 11) + '" text-anchor="middle">' + esc(l) + '</text>').join('');
   });
 
+  /* legenda antes do desenho, mesma regra do lineChart */
+  const legenda = cfg.semLegenda ? '' :
+    '<div class="lg">' +
+      cfg.series.map(x => '<span><i class="bar ' + x.cls + '"></i>' + esc(x.n) + '</span>').join('') +
+      (cfg.linhas || []).map(x => '<span><i class="ln ' + x.cls + '"></i>' + esc(x.n) + '</span>').join('') +
+    '</div>';
+
   $(sel).innerHTML =
     '<div class="chart-t">' + esc(cfg.titulo) + '</div>' +
-    '<div class="chart-s">' + cfg.sub + '</div>' +
-    '<svg viewBox="0 0 ' + g.w + ' ' + g.h + '" role="img" aria-label="' + esc(cfg.titulo) + '">' + s + '</svg>' +
-    '<div class="lg">' +
-      cfg.series.map(x => '<span><i class="bar ' + x.cls + '"></i>' + x.n + '</span>').join('') +
-      (cfg.linhas || []).map(x => '<span><i class="ln ' + x.cls + '"></i>' + x.n + '</span>').join('') +
-    '</div>';
+    (cfg.sub ? '<div class="chart-s">' + esc(cfg.sub) + '</div>' : '') +
+    legenda +
+    '<svg viewBox="0 0 ' + g.w + ' ' + g.h + '" role="img" aria-label="' + esc(cfg.titulo) + '">' + s + '</svg>';
 
   $(sel).querySelectorAll('[data-tip]').forEach(el => {
     el.addEventListener('mouseenter', ev => mostraTipHtml(ev, el.dataset.tip));
@@ -1708,7 +1806,6 @@ function renderPagina2(){
   const com   = P.filter(p => p.conc);
   const hist  = P.filter(p => p.pE != null && p.pV != null);
   const histC = hist.filter(p => p.gE != null && p.gV != null);
-  const auto  = P.filter(p => p.aE != null || p.aV != null);
   const mE = avg(P.filter(p => p.gE != null).map(p => p.gE));
   const mV = avg(P.filter(p => p.gV != null).map(p => p.gV));
   const aE = avg(P.filter(p => p.aE != null).map(p => p.aE));
@@ -1718,13 +1815,22 @@ function renderPagina2(){
   const fato = (k, v, s, alerta) =>
     '<div class="fato' + (alerta ? ' alerta' : '') + '"><div class="fk">' + k + '</div>' +
     '<b>' + v + '</b><div class="fs">' + s + '</div></div>';
+  /* Nota máxima nos dois eixos. Deixou de ser o que define o Excepcional em
+     04/09/2026, quando o quadrante alto × alto passou a ser Excepcional
+     inteiro — mas continua sendo o teto da régua, e é o recorte que separa
+     quem tirou 5 e 5 dos outros 71 do mesmo quadrante. */
+  const cincoCinco = P.filter(p => p.gE === 5 && p.gV === 5);
+  const exc = P.filter(p => p.conc === 'Excepcional').length;
+
   $('#kpis').innerHTML =
     fato('Pessoas avaliadas', com.length + '<small> / ' + P.length + '</small>',
          'com nota do gestor nos dois eixos') +
     fato('Com histórico', histC.length + '<small> / ' + P.length + '</small>',
          'nota nos dois ciclos, base de toda comparação') +
     fato('Média de entregas', nf2(mE), 'nota do gestor, régua de 1 a 5') +
-    fato('Média de valores', nf2(mV), 'média dos seis valores');
+    fato('Média de valores', nf2(mV), 'média dos seis valores') +
+    fato('Nota máxima 5 × 5', cincoCinco.length + (exc ? '<small> / ' + exc + '</small>' : ''),
+         'entregas 5 e valores 5' + (exc ? ', dentro dos excepcionais' : ''));
 
   ocultaLeitura('#gapNote');
 
@@ -1743,14 +1849,16 @@ function renderPagina2(){
   /* uma escala só para os dois painéis: lado a lado com eixos diferentes,
      a forma da curva mente sobre a comparação */
   const escNotas = escalaPct(curvaE.now.concat(curvaE.ant, curvaV.now, curvaV.ant));
-  $('#curvaSub').textContent = 'Coorte pareada: ' + histC.length + ' pessoas com nota nos dois ciclos.';
+  $('#curvaSub').textContent = 'Grupo comparável: ' + histC.length + ' pessoas com nota nos dois ciclos.';
 
   const pctFmt = v => Math.round(v) + '%';
+  legendaPainel('#lgCurva', [{ n:'Anterior', cls:'s-ant' }, { n:'Ciclo', cls:'s-now' }]);
   [['#chNotaE', 'Entregas', curvaE], ['#chNotaV', 'Valores', curvaV]].forEach(function(cfg){
     const sel = cfg[0], nome = cfg[1], c = cfg[2];
     lineChart(sel, {
       titulo: 'Curva de notas · ' + nome,
-      sub: 'Fatia da coorte em cada nota da régua oficial.',
+      sub: 'Fatia do grupo comparável em cada nota da régua oficial.',
+      semLegenda: true,
       xs: NOTAS.map(String),
       esc: escNotas,
       yfmt: pctFmt,
@@ -1765,25 +1873,37 @@ function renderPagina2(){
   });
   ocultaLeitura('#curvaNote');
 
-  /* --- 03 · distribuição: uma barra de 100% e cinco números grandes --- */
-  $('#distSub').textContent = com.length + ' pessoas com conceito calculado · ' + (P.length - com.length) + ' sem nota completa do gestor';
+  /* --- 03 · distribuição: uma faixa fina e os números grandes embaixo ---
+     Antes o mesmo número aparecia três vezes no painel: escrito dentro da barra
+     empilhada, escrito de novo no cartão, e uma terceira vez como barrinha
+     dentro do cartão (essa com outra escala, normalizada pelo maior conceito e
+     não pelo total, o que fazia duas grandezas diferentes parecerem a mesma).
+     Ficou uma leitura só: a faixa mostra a proporção, o número mostra o número. */
+  $('#distSub').textContent = com.length + ' com conceito · ' + (P.length - com.length) + ' sem nota do gestor';
   const distRows = ORDEM_CONC.map(k => ({ k, n: P.filter(p => p.conc === k).length, bg: CONC[k].bg, ink: CONC[k].ink }));
   const semC = P.length - com.length;
-  const maxDist = Math.max(...distRows.map(r => r.n), semC, 1);
   $('#dist2').innerHTML =
-    '<div class="bigstk">' + distRows.filter(r => r.n).map(r => {
-      const w = r.n * 100 / com.length;
-      return '<span style="width:' + w + '%;background:' + r.bg + ';color:' + r.ink + '" title="' + r.k + ': ' + r.n + '">' +
-        (w >= 7 ? '<b>' + Math.round(w) + '%</b>' + (w >= 13 ? '<em>' + r.n + ' pessoas</em>' : '') : '') + '</span>';
-    }).join('') + '</div>' +
+    '<div class="finastk">' + distRows.filter(r => r.n).map(r =>
+      '<span style="width:' + (r.n * 100 / com.length) + '%;background:' + r.bg + '"' +
+      ' title="' + esc(r.k) + ': ' + r.n + '"></span>').join('') + '</div>' +
     '<div class="dlist">' + distRows.map(r =>
-      '<div class="dcard"><div class="dt1"><i style="background:' + r.bg + '"></i>' + r.k + '</div>' +
-      '<div class="dv1">' + r.n + '<small>' + pc(r.n, com.length) + '% dos avaliados</small></div>' +
-      '<div class="db1"><i style="width:' + Math.max(2, r.n * 100 / maxDist) + '%;background:' + r.bg + '"></i></div></div>').join('') +
-    '<div class="dcard"><div class="dt1"><i style="background:var(--gray-100)"></i>Sem conceito</div>' +
-      '<div class="dv1" style="color:var(--gray-500)">' + semC + '<small>' + pc(semC, P.length) + '% da base</small></div>' +
-      '<div class="db1"><i style="width:' + Math.max(2, semC * 100 / maxDist) + '%;background:var(--gray-300)"></i></div></div>' +
-    '</div>';
+      '<button type="button" class="dcard" data-conc="' + esc(r.k) + '"' +
+        ' title="Ver as ' + r.n + ' pessoas em ' + esc(r.k) + '">' +
+        '<span class="dt1"><i style="background:' + r.bg + '"></i>' + esc(r.k) + '</span>' +
+        '<span class="dv1">' + r.n + '<small>' + pc(r.n, com.length) + '%</small></span>' +
+      '</button>').join('') +
+    '</div>' +
+    /* "Sem conceito" saiu da grade e virou observação. Como cartão ele ficava
+       ao lado dos conceitos, sugerindo ser mais um deles, e o número grande
+       colado ao percentual se lia como um número só ("16" + "9%" = "169%").
+       Aqui é frase, com o denominador dito por extenso. */
+    (semC ? '<div class="cap">' + semC + (semC === 1 ? ' pessoa' : ' pessoas') +
+      ' sem conceito, ' + pc(semC, P.length) + '% das ' + P.length +
+      ' da base: não têm as duas notas do gestor.</div>' : '');
+  /* os cartões nascem do innerHTML, então o listener é ligado aqui: o
+     `$$('[data-nb]')` do fim do arquivo roda uma vez, sobre o HTML original */
+  $$('#dist2 [data-conc]').forEach(b =>
+    b.addEventListener('click', () => abreNineBox('conc:' + b.dataset.conc)));
 
   /* --- evolução --- */
   let mel = 0, est = 0, reg = 0;
@@ -1827,29 +1947,66 @@ function renderPagina2(){
   };
   /* ---------- 06 · a curva ao longo da hierarquia ---------- */
   const MIN_GRUPO = 5;
-  const gNp = grupos('nivel', ORDEM_NIVEL, histC).filter(g => g.k !== 'NAO INFORMADO' && g.n >= MIN_GRUPO);
-  $('#senSub').textContent = gNp.length + ' agrupamentos com ' + MIN_GRUPO +
-    '+ pessoas na coorte pareada. Abaixo disso a média vira ruído.';
-  const escSen = escalaMedia(gNp.reduce((a, g) => a.concat([g.cE, g.pE, g.cV, g.pV]), []));
-  [['#chSenE', 'Entregas', 'cE', 'pE'], ['#chSenV', 'Valores', 'cV', 'pV']].forEach(function(cfg){
-    const sel = cfg[0], nome = cfg[1], kc = cfg[2], kp = cfg[3];
-    lineChart(sel, {
-      titulo: 'Média por senioridade · ' + nome,
-      sub: 'Nota média do gestor, da base da pirâmide para o topo.',
-      xs: gNp.map(g => nomeNivel(g.k)),
-      xrot: true,
-      esc: escSen,
-      series: [
-        { n:'Anterior', cls:'s-ant', vals:gNp.map(g => g[kp]) },
-        { n:'Ciclo',    cls:'s-now', vals:gNp.map(g => g[kc]) }
-      ],
-      geo: { b:66 },
-      tip: i => '<b>' + esc(nomeNivel(gNp[i].k)) + '</b> · ' + gNp[i].n + ' pessoas<br>' +
-        '<i class="t-now"></i>Este ciclo: <b>' + nf2(gNp[i][kc]) + '</b><br>' +
-        '<i class="t-ant"></i>Anterior: <b>' + nf2(gNp[i][kp]) + '</b> <em>(Δ ' +
-        (gNp[i][kc] - gNp[i][kp] >= 0 ? '+' : '') + nf2(gNp[i][kc] - gNp[i][kp]) + ')</em>'
-    });
+  /* A ordem preferida e a lista oficial de senioridade. Mas `grupos` so devolve
+     as chaves que existem na base, entao uma planilha em que a coluna NÍVEL veio
+     com o CARGO ("DESENVOLVEDOR DE SOFTWARE SR" em vez de "ANALISTA SR") derruba
+     as doze chaves de uma vez e o painel inteiro sai em branco, sem dizer por
+     que. Nesse caso agrupamos pelos niveis que a base de fato tem. */
+  let gNp = grupos('nivel', ORDEM_NIVEL, histC).filter(g => g.k !== 'NAO INFORMADO' && g.n >= MIN_GRUPO);
+  let nivelForaDaLista = false;
+  if (!gNp.length){
+    gNp = grupos('nivel', null, histC)
+            .filter(g => g.k && g.k !== 'NAO INFORMADO' && g.n >= MIN_GRUPO)
+            .sort((a, b) => (b.cE ?? 0) - (a.cE ?? 0));
+    nivelForaDaLista = gNp.length > 0;
+  }
+  if (!gNp.length){
+    const temNivel = histC.some(p => p.nivel);
+    vazioPainel('#chSen', temNivel
+      ? 'Nenhum nível com ' + MIN_GRUPO + '+ pessoas no grupo comparável.'
+      : 'Sem nível de senioridade na base: confira a coluna NÍVEL em "Conferir colunas".');
+    $('#senSub').textContent = temNivel ? 'grupos pequenos demais para comparar' : 'coluna NÍVEL ausente';
+  } else {
+  /* O subtitulo explicava o metodo (quantos grupos, corte de 5 pessoas). Saiu:
+     em comite o slide carrega o numero, a regra e falada. Fica so o aviso de
+     dado impróprio, que e informacao, nao explicacao. */
+  $('#senSub').textContent = nivelForaDaLista
+    ? 'a coluna NÍVEL parece trazer o cargo' : '';
+  /* Mesmo desenho do painel de business unit: um gráfico só, com os dois eixos
+     dentro dele. Coluna é a média de hoje, o traço por cima é onde o nível
+     estava no ciclo passado. Dois gráficos de linha lado a lado repetiam
+     moldura, eixo e legenda para dizer a mesma coisa duas vezes. */
+  const dlSen = (c, p) => (c == null || p == null) ? null : c - p;
+  const dicaSen = (eixo, kc, kp) => i => {
+    const g = gNp[i];
+    const d = dlSen(g[kc], g[kp]);
+    return '<b>' + esc(nomeNivel(g.k)) + '</b>' +
+      '<div class="tl">' + eixo + ' · nota do gestor</div>' +
+      '<div style="margin-top:5px">Ciclo anterior: <b>' + nf2(g[kp]) + '</b></div>' +
+      '<div>Este ciclo: <b>' + nf2(g[kc]) + '</b>' +
+        (d == null ? '' : ' (' + (d >= 0 ? '+' : '−') + nf2(Math.abs(d)) + ')') + '</div>' +
+      '<div class="tl">' + g.n + ' pessoas no grupo comparável</div>';
+  };
+  columnChart('#chSen', {
+    titulo: 'Nota média do gestor, por senioridade',
+    sub: 'Barra: média de hoje. Traço: onde o nível estava no ciclo passado.',
+    xs: gNp.map(g => nomeNivel(g.k)),
+    esc: { min:1, max:5, ticks:[1, 2, 3, 4, 5] },
+    geo: { w:1080, h:370, l:46, r:22, t:34, b:82 },
+    series: [
+      { n:'Entregas · este ciclo', cls:'c-ent', vals:gNp.map(g => g.cE),
+        deltas: gNp.map(g => dlSen(g.cE, g.pE)) },
+      { n:'Valores · este ciclo',  cls:'c-val', vals:gNp.map(g => g.cV),
+        deltas: gNp.map(g => dlSen(g.cV, g.pV)) }
+    ],
+    linhas: [
+      { n:'Entregas · ciclo anterior', cls:'c-ent', serie:0,
+        vals:gNp.map(g => g.pE), tip: dicaSen('Entregas', 'cE', 'pE') },
+      { n:'Valores · ciclo anterior',  cls:'c-val', serie:1,
+        vals:gNp.map(g => g.pV), tip: dicaSen('Valores', 'cV', 'pV') }
+    ]
   });
+  }
   ocultaLeitura('#senNote');
 
   /* ---------- 06 · colunas por business unit ----------
@@ -1857,9 +2014,17 @@ function renderPagina2(){
      duas colunas por BU, e cada linha do ciclo anterior corre por cima da
      coluna que ela compara. Dois gráficos lado a lado repetiam a moldura,
      o eixo e a legenda para dizer a mesma coisa duas vezes. */
-  const gB = grupos('bu');
+  /* `grupos('bu')` monta as chaves a partir dos valores existentes, entao uma
+     base sem business unit devolve um unico grupo de chave vazia, ou nenhum, e
+     o grafico sai em branco calado. Filtra a chave vazia e avisa. */
+  const gB = grupos('bu').filter(g => g.k);
   gB.sort((a, b) => b.n - a.n);
-  const parBU = grupos('bu', null, histC);
+  const parBU = grupos('bu', null, histC).filter(g => g.k);
+  if (!gB.length){
+    vazioPainel('#chBU', 'Sem business unit na base: confira a coluna BUSINESS UNIT em "Conferir colunas".');
+    $('#buNote').innerHTML = '';
+    $('#capBU').textContent = '';
+  } else {
   /* ordenado pelo movimento em entregas: num gráfico de variação a ordem é
      o que deixa a leitura acontecer da esquerda para a direita */
   const linhasBU = gB.map(g => {
@@ -1881,12 +2046,13 @@ function renderPagina2(){
       '<div style="margin-top:5px">Ciclo anterior: <b>' + nf2(r[kp]) + '</b></div>' +
       '<div>Este ciclo: <b>' + nf2(r[kc]) + '</b>' +
         (d == null ? '' : ' (' + (d >= 0 ? '+' : '−') + nf2(Math.abs(d)) + ')') + '</div>' +
-      '<div class="tl">' + r.parN + ' de ' + r.qtd + ' pessoas na coorte pareada</div>';
+      '<div class="tl">' + r.parN + ' de ' + r.qtd + ' pessoas no grupo comparável</div>';
   };
-  $('#buSub').textContent = 'Média do gestor por BU, com onde ela estava no ciclo anterior.';
+  /* O subtitulo do painel dizia a mesma coisa que o titulo e que a legenda do
+     grafico, tres vezes em poucos pixels. Ficou so a legenda. */
   columnChart('#chBU', {
-    titulo: 'Quanto cada business unit andou',
-    sub: 'Coluna é a média deste ciclo. A linha por cima dela é a mesma média no ciclo anterior, na coorte pareada.',
+    titulo: 'Nota média do gestor, por business unit',
+    sub: 'Barra: média de hoje. Traço: onde a BU estava no ciclo passado.',
     xs: linhasBU.map(r => r.n),
     esc: { min:1, max:5, ticks:[1, 2, 3, 4, 5] },
     geo: { w:1080, h:370, l:46, r:22, t:34, b:82 },
@@ -1915,6 +2081,7 @@ function renderPagina2(){
   $('#capBU').innerHTML = foraBU.length
     ? 'Sem coluna por não ter os dois ciclos: <b>' + foraBU.join(', ') + '</b>.'
     : '';
+  }
 
   /* ---------- 08 · perfil por valor, auto vs gestor ---------- */
   const gapRows = VALORES_YAN.map((v, i) => {
@@ -1956,38 +2123,54 @@ function renderPagina2(){
       { k:'Entregas · nota do eixo', a:aE, g:mE, d:(aE != null && mE != null) ? aE - mE : null, eixo:true },
       { k:'Valores · média dos seis', a:aV, g:mV, d:(aV != null && mV != null) ? aV - mV : null, eixo:true }
     ]);
-  /* teto arredondado para cima, não o maior valor da lista: com o maior
-     valendo 100% todas as barras encostam na borda e a diferença some */
-  /* Barra ligando os dois pontos na régua: o comprimento é o gap e a
-     posição é a nota. A tabela de barrinhas dizia menos e ocupava mais. */
-  const gLo = Math.floor(Math.min(...linhasGap.map(r => Math.min(r.a ?? 9, r.g ?? 9))) * 4) / 4 - 0.25;
-  const gHi = Math.ceil(Math.max(...linhasGap.map(r => Math.max(r.a ?? 0, r.g ?? 0))) * 4) / 4 + 0.25;
-  const gx = v => ((v - gLo) / (gHi - gLo)) * 100;
-  const ticks = [];
-  for (let t = Math.ceil(gLo * 4) / 4; t <= gHi + 1e-9; t += 0.25) ticks.push(Math.round(t * 100) / 100);
+  /* Sem autoavaliação todas as linhas caem no `return ''` mais abaixo e o
+     painel sai vazio, sem explicar. Este painel existe só para comparar auto
+     com gestor: sem uma das pontas, não há o que mostrar, mas há o que dizer. */
+  if (!linhasGap.some(r => r.a != null)){
+    const temAuto = P.some(p => p.aE != null || p.aV != null || (p.avals || []).some(x => x != null));
+    vazioPainel('#gaps', temAuto
+      ? 'A base tem autoavaliação, mas não nos seis valores: confira as colunas VALOR n AUTO.'
+      : 'Sem autoavaliação na base: confira as colunas AUTO em "Conferir colunas".');
+    $('#gapCap').textContent = '';
+  } else {
+  /* Tabela, não gráfico: aqui a pergunta é "quanto", e número lido em tabela
+     responde isso melhor que posição numa régua. Os dois eixos vêm primeiro,
+     em corpo normal, porque são a leitura de cima; os seis valores vêm abaixo,
+     em corpo menor, como abertura do eixo de valores. */
+  /* cada número num quadradinho com fundo próprio: auto e gestor ganham tons
+     distintos, para o olho separar as duas colunas sem precisar do cabeçalho */
+  const cel = (v, lado) => '<td class="ga-n"><span class="ga-b ' + lado + '">' +
+    (v == null ? '–' : nf2(v)) + '</span></td>';
+  const celD = d => {
+    if (d == null) return '<td class="ga-d">–</td>';
+    const cls = d > 0.004 ? 'up' : d < -0.004 ? 'dn' : 'eq';
+    const sin = d > 0.004 ? '+' : d < -0.004 ? '−' : '±';
+    return '<td class="ga-d ' + cls + '">' + sin + nf2(Math.abs(d)) + '</td>';
+  };
+  const linha = (r, cls) =>
+    '<tr' + (cls ? ' class="' + cls + '"' : '') + '>' +
+      '<td class="ga-k">' + esc(r.k) + '</td>' + cel(r.a, 'auto') + cel(r.g, 'gest') + celD(r.d) + '</tr>';
+
+  const eixos = linhasGap.filter(r => r.eixo);
+  const valores = linhasGap.filter(r => !r.eixo);
+
   $('#gaps').innerHTML =
-    '<div class="gapx">' + ticks.map(t =>
-      '<u style="left:' + gx(t).toFixed(1) + '%"></u><b style="left:' + gx(t).toFixed(1) + '%">' +
-      nf2(t) + '</b>').join('') + '</div>' +
-    linhasGap.map(r => {
-      if (r.a == null || r.g == null) return '';
-      const x1 = Math.min(gx(r.a), gx(r.g)), x2 = Math.max(gx(r.a), gx(r.g));
-      return '<div class="gl' + (r.eixo ? ' eixo' : '') + '">' +
-        '<div class="gl-n">' + esc(r.k) + '</div>' +
-        '<div class="gl-p">' +
-          ticks.map(t => '<u style="left:' + gx(t).toFixed(1) + '%"></u>').join('') +
-          '<i class="haste" style="left:' + x1.toFixed(1) + '%;width:' + (x2 - x1).toFixed(1) + '%"></i>' +
-          '<i class="pg" style="left:' + gx(r.g).toFixed(1) + '%" title="Gestor ' + nf2(r.g) + '"></i>' +
-          '<i class="pa" style="left:' + gx(r.a).toFixed(1) + '%" title="Autoavaliação ' + nf2(r.a) + '"></i>' +
-        '</div>' +
-        '<div class="gl-d">' + (r.d > 0 ? '+' : r.d < 0 ? '−' : '±') + nf2(Math.abs(r.d)) + '</div></div>';
-    }).join('') +
-    '<div class="gaplg"><span><i class="pg"></i>Gestor</span><span><i class="pa"></i>Autoavaliação</span>' +
-      '<span><i class="haste"></i>A distância entre as duas</span></div>';
+    '<table class="gatab">' +
+      '<thead><tr><th class="ga-k">Parâmetro</th>' +
+        '<th>Autoavaliação</th><th>Gestor</th><th>Δ</th></tr></thead>' +
+      '<tbody>' +
+        eixos.map(r => linha(r, 'ga-eixo')).join('') +
+        '<tr class="ga-sec"><td colspan="4">Por valor</td></tr>' +
+        valores.map(r => linha(r, 'ga-val')).join('') +
+      '</tbody>' +
+    '</table>';
+
   const acima = gapRows.filter(r => r.gap > 0.004).length;
   const maiorG = gapRows.slice().sort((x, y) => (y.gap ?? -9) - (x.gap ?? -9))[0];
-  $('#gapCap').innerHTML = 'A autoavaliação fica acima do gestor em <b>' + acima + ' dos 6 valores</b>, ' +
-    'com a maior distância em <b>' + esc(maiorG.nome) + '</b> (' + nf2(maiorG.gap) + ').';
+  $('#gapCap').innerHTML = 'Δ positivo: a autoavaliação está acima da nota do gestor. ' +
+    'Acontece em <b>' + acima + ' dos 6 valores</b>, com a maior distância em <b>' +
+    esc(maiorG.nome) + '</b> (' + nf2(maiorG.gap) + ').';
+  }
 }
 
 /* ============================================================
@@ -2033,7 +2216,6 @@ function renderNineBox(sel, pessoas, grande, opc){
     h += '<div class="ylab">' + YL[r] + '</div>';
     for (let c = 0; c < 3; c++){
       const lista = balde[r][c], nome = MATRIZ[r][c];
-      const exc = lista.filter(p => p.conc === 'Excepcional').length;
       let dots;
       if (grande){
         /* fotos entram em fluxo, não espalhadas ao acaso: rosto sobreposto
@@ -2062,14 +2244,12 @@ function renderNineBox(sel, pessoas, grande, opc){
         const k = d > 0 ? 'pos' : d < 0 ? 'neg' : 'eqz';
         const seta = d > 0 ? '▲' : d < 0 ? '▼' : '=';
         mud = '<div class="nbd ' + k + '" title="' + opc.antes[r][c] + ' no ciclo anterior, ' +
-              opc.agora[r][c] + ' neste, na coorte pareada">' + seta + ' ' +
+              opc.agora[r][c] + ' neste, no grupo comparável">' + seta + ' ' +
               (d === 0 ? '0' : Math.abs(d)) + '</div>';
       }
       h += '<div class="nbc ' + CONC[nome].cls + '">' +
              '<div class="nbh">' +
-               '<div class="nbt">' + ((opc && opc.curto) ? CONC_CURTO[nome] : nome) +
-                 (exc ? '<span class="exctag">' + exc + ' excepcional' + (exc > 1 ? 'is' : '') + ' · 5×5</span>' : '') +
-               '</div>' +
+               '<div class="nbt">' + ((opc && opc.curto) ? CONC_CURTO[nome] : nome) + '</div>' +
                '<div class="nbn">' + (lista.length || '') + mud + '</div>' +
              '</div>' +
              (lista.length ? '<div class="nbp">' + pc(lista.length, total) + '%</div>' : '') +
@@ -2109,22 +2289,29 @@ function escondeTip(){ tip().style.opacity = 0; }
 /* ============================================================
    PÁGINA 3
    ============================================================ */
-/* Quem entra na lista de cards por padrão. Os demais 173 continuam na base
-   e no 9-box: chegam pela busca, que ignora este recorte de propósito. */
-const SENIOR = new Set(['ESPECIALISTA', 'COORDENADOR', 'GERENTE', 'HEAD']);
-const ORDEM_SENIOR = { 'HEAD':0, 'GERENTE':1, 'COORDENADOR':2, 'ESPECIALISTA':3 };
-const F = { area:'', busca:'' };
+/* Quem tem card. O recorte vale para a lista E para a busca: quem nao esta
+   nesses niveis nao aparece como card, digite-se o nome que for.
+   DIRETOR entra no conjunto por robustez — na base de 03/09 nao existe esse
+   nivel, e quem tem cargo de diretor esta classificado como HEAD, mas uma base
+   futura pode separar os dois e o recorte nao pode depender disso. */
+const SENIOR = new Set(['DIRETOR', 'HEAD', 'GERENTE', 'COORDENADOR', 'ESPECIALISTA']);
+const ORDEM_SENIOR = { 'DIRETOR':0, 'HEAD':1, 'GERENTE':2, 'COORDENADOR':3, 'ESPECIALISTA':4 };
+/* foco = uma pessoa fora do recorte aberta por clique no 9-box. Sem esta porta,
+   restringir a busca deixaria os pontos do 9-box sem card para abrir. */
+const F = { area:'', busca:'', foco:'' };
 
 const seniores = () => P.filter(p => SENIOR.has(p.nivel));
 const daArea = a => P.filter(p => p.area === a);
 
-/* A busca alcança as 234 pessoas; sem busca, a lista é a dos 61 seniores,
-   recortada pela área selecionada. */
 function listaCards(){
   const q = F.busca.toLowerCase().trim();
-  if (q) return P.filter(p => p.nome.toLowerCase().includes(q));
-  const base = seniores();
-  return F.area ? base.filter(p => p.area === F.area) : base;
+  let base = seniores();
+  if (F.foco && !base.some(p => p.nome === F.foco)){
+    const ex = P.find(p => p.nome === F.foco);
+    if (ex) base = base.concat([ex]);
+  }
+  if (F.area) base = base.filter(p => p.area === F.area || p.nome === F.foco);
+  return q ? base.filter(p => p.nome.toLowerCase().includes(q)) : base;
 }
 
 /* barra empilhada de conceitos, com a contagem dentro do segmento que couber */
@@ -2171,7 +2358,7 @@ function renderPagina3(){
   $$('#areas .arc').forEach(b => b.addEventListener('click', ev => {
     if (ev.target.closest('[data-nb9]')) return;      /* o link do 9-box não filtra */
     F.area = (F.area === b.dataset.area) ? '' : b.dataset.area;
-    F.busca = ''; $('#fBusca').value = '';
+    F.busca = ''; F.foco = ''; $('#fBusca').value = '';
     renderPagina3();
   }));
   $$('#areas [data-nb9]').forEach(el => {
@@ -2183,13 +2370,17 @@ function renderPagina3(){
   /* 02 · cards */
   const q = F.busca.trim();
   const ps = listaCards().slice();
+  const nSen = seniores().length;
+  /* a contagem sai da base carregada, nao de um numero escrito no HTML:
+     trocar de planilha muda quantas lideranças existem. */
+  $('#btnNbSenior').textContent = '9-box dos ' + nSen;
   $('#cardSub').textContent = q
-    ? ps.length + ' pessoa' + (ps.length === 1 ? '' : 's') + ' encontrada' + (ps.length === 1 ? '' : 's') + ' na base inteira'
-    : ps.length + ' de ' + seniores().length + (F.area ? ' · ' + tc(F.area) : ' · companhia inteira');
+    ? ps.length + ' de ' + nSen + ' com esse nome'
+    : ps.length + ' de ' + nSen + (F.area ? ' · ' + tc(F.area) : ' · companhia inteira');
   if (!ps.length){
     $('#cards').innerHTML = '<div class="empty">' + (q
-      ? 'Ninguém com esse nome na base.'
-      : 'Esta área não tem especialista nem liderança. Use a busca para chegar a qualquer pessoa dela.') + '</div>';
+      ? 'Ninguém com esse nome entre especialistas, coordenadores, gerentes, heads e diretores.'
+      : 'Esta área não tem especialista nem liderança.') + '</div>';
     return;
   }
   /* ordem: hierarquia primeiro, depois conceito, depois nome */
@@ -2248,13 +2439,17 @@ function card(p, idx){
         dado('Business unit', tc(p.bu)) + dado('Área', tc(p.area)) + dado('Cargo', tc(p.cargo)) +
         dado('Agrupamento', nomeNivel(p.nivel)) + dado('Liderança', tc(p.lider)) +
         dado('Localização', tc(p.loc)) + dado('Tempo de casa', tempoCasa(p.adm)) + '</div>' +
-      '<div><div class="section-label">Histórico e comitê</div>' +
+      /* Saiu daqui a visão pós-calibragem: as linhas "Calibragem" (realizada /
+         pendente) e "Conceito final do comitê". Enquanto o comitê não roda elas
+         dizem "pendente" e "ainda não registrado" nas 234 pessoas, ou seja,
+         ocupam duas linhas do card para não informar nada. O histórico do ciclo
+         anterior fica: é dado, não estado de processo. */
+      '<div><div class="section-label">Histórico</div>' +
         dado('Ciclo anterior · entregas', p.pE ?? '—') +
         dado('Ciclo anterior · valores', p.pV ?? '—') +
         dado('Conceito anterior', p.pC || '—') +
         dado('Movimento', mov) +
-        dado('Calibragem', p.calDone === 'Sim' ? 'realizada' : 'pendente') +
-        dado('Conceito final do comitê', p.calConc || 'ainda não registrado') + '</div>' +
+        dado('Plano de ação', p.plano ? chipPlano(p.plano) : '—') + '</div>' +
     '</div>' + blocoComentario(p) +
     '</div></div>';
 }
@@ -2263,7 +2458,10 @@ function card(p, idx){
    não estiver lá, cai na anotação que veio da planilha de calibragem. O
    bloco aparece mesmo vazio: o espaço reservado é o pedido. */
 function blocoComentario(p){
-  const txt = (COMENTARIOS[p.nome] || '').trim() || (p.calNota || '').trim();
+  /* String(...) no calNota nao e zelo: o leitor converte essa coluna para
+     numero quando a celula e numerica, e ai o .trim() estouraria com TypeError,
+     derrubando a renderizacao de TODOS os cards de uma vez. */
+  const txt = (COMENTARIOS[p.nome] || '').trim() || String(p.calNota ?? '').trim();
   return '<div class="coment"><div class="coment-k">Comentário qualitativo</div>' +
     (txt ? '<div class="coment-t">' + esc(txt) + '</div>'
          : '<div class="coment-t vazio">ainda não registrado</div>') + '</div>';
@@ -2275,9 +2473,12 @@ function blocoComentario(p){
    ciclos. O filtro vale para os dois de uma vez. */
 const ORDEM_NIVEL_TODOS = ['HEAD','GERENTE','COORDENADOR','ESPECIALISTA','ANALISTA SR','ANALISTA PL',
   'ANALISTA JR','ASSISTENTE','OPERADOR','ESTAGIARIO','JOVEM APRENDIZ','NAO INFORMADO'];
-const MODAL = { base:[], titulo:'', sub:'', nivel:'' };
+const MODAL = { base:[], titulo:'', sub:'', nivel:'', conc:'' };
 
 const conceitoDe = p => (p.gE == null || p.gV == null) ? null : MATRIZ[2 - bucket(p.gV)][bucket(p.gE)];
+/* mesma matriz sobre as notas do ciclo passado, para que os dois ciclos sejam
+   lidos pela mesma régua e a comparação meça desempenho, não troca de régua */
+const conceitoAnteriorDe = p => (p.pE == null || p.pV == null) ? null : MATRIZ[2 - bucket(p.pV)][bucket(p.pE)];
 
 /* nota do ciclo com a do ciclo anterior colada: 3 → 4, com a seta do lado */
 function parNotas(rot, antes, agora){
@@ -2299,6 +2500,12 @@ function linhaModal(p){
     '<div class="nbl-n"><div class="nbl-1">' + esc(tc(p.nome)) + '</div>' +
       '<div class="nbl-2">' + esc(tc(p.cargo || '—')) + '</div>' +
       '<div class="nbl-3">' + parNotas('E', p.pE, p.gE) + parNotas('V', p.pV, p.gV) + '</div></div>' +
+    /* no recorte por conceito o badge do conceito seria a mesma palavra em toda
+       linha; ali a coluna vira o plano de ação, que é o que se quer decidir */
+    (MODAL.conc
+      ? '<span class="nbl-p">' + (p.plano ? chipPlano(p.plano) :
+          '<span class="pa pa-vazio">sem plano</span>') + '</span>'
+      : '') +
     '<span class="nbl-c" style="background:' + (c ? c.bg : 'var(--gray-100)') + ';color:' +
       (c ? c.ink : 'var(--gray-500)') + '">' + (k || 'sem nota') + '</span>' +
   '</div>';
@@ -2309,7 +2516,7 @@ function renderModal(){
   const n = ps.filter(p => p.gE != null && p.gV != null).length;
   $('#modalT').textContent = MODAL.titulo;
   $('#modalS').textContent = MODAL.sub + ' · ' + ps.length + (ps.length === 1 ? ' pessoa, ' : ' pessoas, ') +
-    n + ' com nota do gestor · pré-calibragem';
+    n + ' com nota do gestor';
 
   /* filtro: só os agrupamentos que existem neste conjunto */
   const niveis = ORDEM_NIVEL_TODOS.filter(k => MODAL.base.some(p => p.nivel === k));
@@ -2322,7 +2529,12 @@ function renderModal(){
     renderModal();
   }));
 
-  renderNineBox('#nbModal', ps, true);
+  /* Num recorte por conceito o nine-box não tem o que mostrar: todo mundo cai
+     na mesma célula. A matriz sai e a lista ocupa o modal inteiro. */
+  const soLista = !!MODAL.conc;
+  $('#nbModal').hidden = soLista;
+  $('.nbwrap').classList.toggle('so-lista', soLista);
+  if (!soLista) renderNineBox('#nbModal', ps, true);
 
   const ord = ps.slice().sort((a, b) =>
     (RANK[conceitoDe(a)] ?? 9) - (RANK[conceitoDe(b)] ?? 9) ||
@@ -2330,7 +2542,8 @@ function renderModal(){
     a.nome.localeCompare(b.nome));
   $('#nbLista').innerHTML = ord.length
     ? '<div class="nbl-hd">' + ord.length + ' pessoa' + (ord.length === 1 ? '' : 's') +
-      ' · conceito do box e as notas nos dois ciclos</div>' + ord.map(linhaModal).join('')
+      (soLista ? ' · notas nos dois ciclos e plano de ação' : ' · conceito do box e as notas nos dois ciclos') +
+      '</div>' + ord.map(linhaModal).join('')
     : '<div class="empty">Ninguém neste agrupamento.</div>';
   $$('#nbLista .nbl').forEach(l => {
     l.addEventListener('mouseenter', ev => mostraTip(ev, P[+l.dataset.i]));
@@ -2339,9 +2552,17 @@ function renderModal(){
   });
 }
 
-/* tipo: 'senior' para os 61, ou 'area:<AREA>' para uma área inteira */
+/* tipo: 'senior' para os 61, 'area:<AREA>' para uma área inteira,
+   ou 'conc:<CONCEITO>' para quem está num conceito (aí só a lista, sem matriz) */
 function abreNineBox(tipo){
-  if (tipo.indexOf('area:') === 0){
+  MODAL.conc = '';
+  if (tipo.indexOf('conc:') === 0){
+    const k = tipo.slice(5);
+    MODAL.conc = k;
+    MODAL.base = P.filter(p => p.conc === k);
+    MODAL.titulo = k;
+    MODAL.sub = 'Quem está neste conceito';
+  } else if (tipo.indexOf('area:') === 0){
     const a = tipo.slice(5);
     MODAL.base = daArea(a);
     MODAL.titulo = 'Nine-box de ' + tc(a);
@@ -2361,21 +2582,24 @@ function fechaNineBox(){
   document.body.style.overflow = '';
 }
 $$('[data-nb]').forEach(b => b.addEventListener('click', () => abreNineBox(b.dataset.nb)));
-$('#limpaArea').addEventListener('click', () => { F.area = ''; renderPagina3(); });
+$('#limpaArea').addEventListener('click', () => { F.area = ''; F.foco = ''; renderPagina3(); });
 $$('[data-fecha]').forEach(b => b.addEventListener('click', fechaNineBox));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) fechaNineBox(); });
 
-/* Clicar num ponto do 9-box abre o card. Se a pessoa não está entre os 61,
-   o card não existe: a busca é acionada pelo nome dela, que é o caminho
-   combinado para chegar aos outros 173. */
+/* Clicar num ponto do 9-box abre o card. O 9-box de uma área mostra a área
+   inteira, então a pessoa clicada pode estar fora do recorte de cards — nesse
+   caso ela entra como foco, um card avulso que dura até a próxima busca ou
+   troca de área. Sem isso, metade dos pontos do 9-box não abriria nada. */
 function abreCard(idx, tentou){
   fechaNineBox();
   irPara('p3');
   let el = $('#card-' + idx);
   if (!el && !tentou){
+    /* fora do recorte de cards: entra como foco, sem mexer na busca */
     F.area = '';
-    F.busca = P[idx].nome;
-    $('#fBusca').value = P[idx].nome;
+    F.busca = '';
+    F.foco = P[idx].nome;
+    $('#fBusca').value = '';
     renderPagina3();
     return abreCard(idx, true);
   }
@@ -2395,8 +2619,9 @@ function aplicaMarca(m, salvar){
   if (m === 'giro') root.setAttribute('data-brand', 'giro'); else root.removeAttribute('data-brand');
   $$('[data-brand-set]').forEach(b => b.classList.toggle('is-on', b.dataset.brandSet === m));
   if (salvar !== false) { try { localStorage.setItem('avd-rel-brand', m); } catch(e){} }
-  /* os rótulos dos seis valores mudam com a empresa */
-  if ($('#valChips')) $('#valChips').innerHTML = (m === 'giro' ? VALORES_GIRO : VALORES_YAN).map(v => '<span>' + v + '</span>').join('');
+  /* os seis valores da pagina 1 trocam por CSS, via data-brand: nao ha o que
+     reescrever aqui. VALORES_YAN/GIRO seguem em uso pelo leitor de planilha e
+     pela pagina 2. */
   if (BOOTED) renderPagina2();
 }
 function aplicaTema(t, salvar){
@@ -2420,7 +2645,7 @@ $$('nav button').forEach(b => b.addEventListener('click', () => irPara(b.dataset
 let deb;
 $('#fBusca').addEventListener('input', e => {
   clearTimeout(deb);
-  deb = setTimeout(() => { F.busca = e.target.value; renderPagina3(); }, 170);
+  deb = setTimeout(() => { F.busca = e.target.value; F.foco = ''; renderPagina3(); }, 170);
 });
 $('#toggleAll').addEventListener('click', () => {
   const abrir = $('#toggleAll').textContent === 'Abrir todos';
@@ -2468,6 +2693,7 @@ const CAL = ['CALIBR'];
 let MAPA_COLS = [];
 try { MAPA_COLS = JSON.parse(sessionStorage.getItem('avd_mapa') || '[]'); } catch(e){}
 let DERIVADOS = 0, RECUSADOS = 0, AMOSTRA_RECUSA = '';
+let DIVERGENTES = 0, AMOSTRA_DIVERG = '';
 
 /* So passa o que e conceito de verdade. Texto qualquer na coluna CONCEITO nao
    vira aviso nem erro: vira uma categoria a mais na distribuicao e uma celula
@@ -2513,8 +2739,28 @@ const IMP_COLS = [
   ['gV',      [{tem:['VALOR'],   um:['GESTOR','GEST.'], nao:['AUTO'].concat(CAL), semNum:true}]],
   ['conc',    [{tem:['CONCEITO FINAL'], nao:CAL},
                {tem:['CONCEITO'],       nao:CAL},
-               {tem:['NINE BOX']}, {tem:['QUADRANTE']}]]
+               {tem:['NINE BOX']}, {tem:['QUADRANTE']}]],
+  ['plano',   [{tem:['PLANO']}, {tem:['ENCAMINHAMENTO']}, {tem:['ACAO'], nao:['PLANILHA']}]]
 ];
+
+/* Plano de ação: texto livre, mas quatro palavras conhecidas ganham cor, para
+   leitura de relance em comitê. O resto aparece em cinza, sem ser recusado —
+   quem conduz o ciclo escreve o que precisar. */
+const PLANO_CORES = [
+  { chave:'DESLIG',    cls:'pa-des' },
+  { chave:'RECUPER',   cls:'pa-rec' },
+  { chave:'SUCESS',    cls:'pa-suc' },
+  { chave:'PROMO',     cls:'pa-pro' }
+];
+function planoCls(txt){
+  const n = impNorm(txt);
+  const achado = PLANO_CORES.find(c => n.indexOf(c.chave) >= 0);
+  return achado ? achado.cls : 'pa-out';
+}
+function chipPlano(txt){
+  if (!txt) return '';
+  return '<span class="pa ' + planoCls(txt) + '">' + esc(txt) + '</span>';
+}
 
 function impNorm(s){
   return String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g,'')
@@ -2523,6 +2769,7 @@ function impNorm(s){
 
 function leExcelBase(buffer){
   DERIVADOS = 0; RECUSADOS = 0; AMOSTRA_RECUSA = '';
+  DIVERGENTES = 0; AMOSTRA_DIVERG = '';
   const wb = XLSX.read(buffer, { type:'array', cellDates:true });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:null });
@@ -2620,10 +2867,11 @@ function leExcelBase(buffer){
       nome, emp: txt(r, idx.emp), bu: txt(r, idx.bu), area: txt(r, idx.area),
       lider: txt(r, idx.lider), cargo: txt(r, idx.cargo), nivel: txt(r, idx.nivel),
       loc: txt(r, idx.loc), adm: serial(cel(r, idx.adm)),
-      pE: nota(r, idx.pE), pV: nota(r, idx.pV), pC: txt(r, idx.pC),
+      pE: nota(r, idx.pE), pV: nota(r, idx.pV), pC: conceito(txt(r, idx.pC)),
       aE: nota(r, idx.aE), aV: nota(r, idx.aV), avals: iAuto.map(i2 => nota(r, i2)),
       gE: nota(r, idx.gE), gV: nota(r, idx.gV), gvals: iGest.map(i2 => nota(r, i2)),
       conc: conceito(txt(r, idx.conc)), nb: '',
+      plano: txt(r, idx.plano),
       calDone: impNorm(txt(r, idx.calDone)).indexOf('SIM') >= 0 ? 'Sim' : 'Não',
       calConc: conceito(txt(r, idx.calConc)),
       calNota: (function(){ const v = cel(r, idx.calNota); const n = Number(String(v).replace(',','.'));
@@ -2638,12 +2886,40 @@ function leExcelBase(buffer){
     };
     if (p.aV == null) p.aV = medNotas(p.avals);
     if (p.gV == null) p.gV = medNotas(p.gvals);
-    /* Conceito ausente ou recusado pela validacao: deriva das duas notas do
-       gestor pela matriz oficial, que e a mesma regra que o relatorio aplica.
-       Derivar e mais seguro do que confiar na coluna: numa base real a coluna
-       CONCEITO ja veio com "Não" (o valor da calibragem) nas 233 linhas, e um
-       texto invalido atravessaria calado ate virar barra em grafico. */
-    if (!p.conc){ p.conc = conceitoDe(p) || ''; if (p.conc) DERIVADOS++; }
+
+    /* O conceito sai SEMPRE da matriz, nunca da coluna da planilha. Uma regua
+       so, aplicada no mesmo lugar, para a pagina 1 explicar exatamente o que as
+       paginas 2 e 3 fazem.
+       Dois motivos concretos, os dois ja vistos nesta base:
+         · a coluna CONCEITO chegou preenchida com "Não" nas 233 linhas;
+         · qualquer planilha gerada antes de 04/09/2026 traz o conceito pela
+           regua antiga (Excepcional so no 5×5) e contaminaria o ciclo novo.
+       O que a planilha trazia nao e descartado em silencio: quando e um
+       conceito valido e diferente do calculado, conta como divergencia e
+       aparece em "Conferir colunas".
+       A calibragem (calConc) segue intacta — aquilo e decisao de comite, nao
+       resultado de formula. */
+    const daPlanilha = p.conc;
+    p.conc = conceitoDe(p) || '';
+    if (p.conc) DERIVADOS++;
+    if (daPlanilha && p.conc && daPlanilha !== p.conc){
+      DIVERGENTES++;
+      if (!AMOSTRA_DIVERG) AMOSTRA_DIVERG = p.nome + ': planilha dizia "' + daPlanilha +
+        '", matriz dá "' + p.conc + '" (E' + p.gE + '·V' + p.gV + ')';
+    }
+
+    /* O conceito do ciclo anterior passa pela MESMA matriz, pelo mesmo motivo.
+       A base guarda as duas notas daquele ciclo, entao da para recalcular. Sem
+       isso o card mostraria, lado a lado, o conceito de hoje pela regua nova e
+       o de antes pela antiga — e a diferenca entre os dois seria lida como
+       evolucao da pessoa, quando e so troca de regua. */
+    const antesPlanilha = p.pC;
+    p.pC = conceitoAnteriorDe(p) || '';
+    if (antesPlanilha && p.pC && antesPlanilha !== p.pC){
+      DIVERGENTES++;
+      if (!AMOSTRA_DIVERG) AMOSTRA_DIVERG = p.nome + ' (ciclo anterior): planilha dizia "' +
+        antesPlanilha + '", matriz dá "' + p.pC + '" (E' + p.pE + '·V' + p.pV + ')';
+    }
     out.push(p);
   }
   if (!out.length) throw new Error('Nenhuma linha com NOME preenchido.');
@@ -2679,7 +2955,8 @@ $('#impFile').addEventListener('change', ev => {
       sessionStorage.setItem('avd_P_arq', f.name);
       sessionStorage.setItem('avd_mapa', JSON.stringify(MAPA_COLS));
       sessionStorage.setItem('avd_diag', JSON.stringify(
-        { der:DERIVADOS, rec:RECUSADOS, am:AMOSTRA_RECUSA }));
+        { der:DERIVADOS, rec:RECUSADOS, am:AMOSTRA_RECUSA,
+          div:DIVERGENTES, amd:AMOSTRA_DIVERG }));
       guardou = sessionStorage.getItem('avd_P') != null;
     } catch(e){ guardou = false; }
 
@@ -2753,15 +3030,22 @@ $('#impCols').addEventListener('click', () => {
       criticos.map(m => LBL_CAMPO[m.campo] || m.campo).join(', ') +
       '\nSem eles as páginas Resultados e Área & liderança saem erradas.';
   }
-  if (RECUSADOS){
-    txt += '\n\n⚠ CONCEITO RECUSADO EM ' + RECUSADOS + ' CÉLULA(S)' +
-      (AMOSTRA_RECUSA ? '\nO que veio na coluna, por exemplo: "' + AMOSTRA_RECUSA + '"' : '') +
-      '\nSó valem: ' + ORDEM_CONC.join(', ') + '.' +
-      '\nConfira se a coluna CONCEITO da planilha nao ficou deslocada.';
-  }
   if (DERIVADOS){
-    txt += '\n\nConceito calculado a partir das notas do gestor em ' + DERIVADOS +
-      ' pessoa(s), pela matriz oficial — porque a planilha nao trouxe um conceito valido.';
+    txt += '\n\nCONCEITO: calculado pela matriz oficial em ' + DERIVADOS + ' pessoa(s).' +
+      '\nA coluna CONCEITO da planilha é ignorada de propósito — a régua é uma só,' +
+      '\ne é a mesma que a página 1 explica.';
+  }
+  if (DIVERGENTES){
+    txt += '\n\n⚠ A PLANILHA DISCORDA DA MATRIZ EM ' + DIVERGENTES + ' PESSOA(S)' +
+      (AMOSTRA_DIVERG ? '\nExemplo — ' + AMOSTRA_DIVERG : '') +
+      '\nValeu o cálculo. Se a planilha foi gerada antes de 04/09/2026, ela traz a régua' +
+      '\nantiga (Excepcional só no par 5×5) e a divergência é esperada.';
+  }
+  if (RECUSADOS){
+    txt += '\n\nTexto fora do padrão na coluna CONCEITO em ' + RECUSADOS + ' célula(s)' +
+      (AMOSTRA_RECUSA ? ' — por exemplo: "' + AMOSTRA_RECUSA + '"' : '') + '.' +
+      '\nSem efeito no resultado, já que o conceito vem do cálculo. Vale conferir se a' +
+      '\ncoluna não ficou deslocada na planilha.';
   }
   alert(txt);
 });
@@ -2780,8 +3064,8 @@ $('#impTemplate').addEventListener('click', () => {
     .concat(VALORES_YAN.map((v,i) => 'VALOR ' + (i+1) + ' AUTO (' + v + ')'))
     .concat(['GESTOR - ENTREGAS','GESTOR - VALORES'])
     .concat(VALORES_YAN.map((v,i) => 'VALOR ' + (i+1) + ' GESTOR (' + v + ')'))
-    .concat(['CONCEITO','CALIBRAGEM FEITA?','CONCEITO CALIBRADO','NOTA FINAL CALIBRADA',
-             'ENTREGAS CALIBRADO','VALORES CALIBRADO']);
+    .concat(['CONCEITO','PLANO DE AÇÃO','CALIBRAGEM FEITA?','CONCEITO CALIBRADO',
+             'NOTA FINAL CALIBRADA','ENTREGAS CALIBRADO','VALORES CALIBRADO']);
 
   /* Exemplos conferidos contra a propria matriz do relatorio:
      linha 1 · gestor 4 e 3  -> Forte Desempenho  (valores 4,3,3,4,3,3 = media 3)
@@ -2789,10 +3073,10 @@ $('#impTemplate').addEventListener('click', () => {
      Modelo com exemplo incoerente ensina a preencher errado. */
   const ex1 = ['ANA CAROLINA GOMES DE OLIVEIRA','YANDEH S.A','TECH SOLUTIONS','ARTY',
     'LUANA LOPES DA SILVA','DESIGNER PL','ANALISTA PL','SÃO PAULO','12/05/2023',
-    3,3,'Pleno', 4,4, 4,4,4,4,3,4, 4,3, 4,3,3,4,3,3, 'Forte Desempenho','Não','','','',''];
+    3,3,'Pleno', 4,4, 4,4,4,4,3,4, 4,3, 4,3,3,4,3,3, 'Forte Desempenho','Sucessão','Não','','','',''];
   const ex2 = ['JOÃO DA SILVA','GIROTRADE S/A','GIROTRADE CD','PICKING',
     'CRISTOVAO DA SILVA','CONFERENTE PL','ASSISTENTE','EXTREMA - MG','01/02/2025',
-    3,3,'Pleno', 3,3, 3,3,3,3,3,3, 3,2, 2,2,3,2,2,1, 'Insuficiente','Não','','','',''];
+    3,3,'Pleno', 3,3, 3,3,3,3,3,3, 3,2, 2,2,3,2,2,1, 'Insuficiente','Recuperação','Não','','','',''];
 
   /* Aba de instrucoes vem depois da base: o leitor usa sempre a primeira aba. */
   const guia = [
@@ -2807,6 +3091,9 @@ $('#impTemplate').addEventListener('click', () => {
     ['Notas de eixo','AUTO AVD - VALORES e GESTOR - VALORES podem ficar vazias: saem da'],
     ['','media dos seis valores do proprio lado.'],
     ['Datas','dd/mm/aaaa.'],
+    ['Plano de acao','Texto livre. Quatro palavras ganham cor no relatorio:'],
+    ['','Desligamento (vermelho) · Recuperacao (ambar) · Sucessao (roxo) · Promocao (verde).'],
+    ['','Qualquer outro texto aparece em cinza, sem ser recusado.'],
     ['Colunas de calibragem','Deixe vazias enquanto o comite nao rodar.'],
     [],
     ['CONFERENCIA ANTES DE SUBIR'],
@@ -2832,26 +3119,33 @@ let ARQ_NOME = '';
 try { ARQ_NOME = sessionStorage.getItem('avd_P_arq') || ''; } catch(e){}
 try {
   const d = JSON.parse(sessionStorage.getItem('avd_diag') || 'null');
-  if (d){ DERIVADOS = d.der; RECUSADOS = d.rec; AMOSTRA_RECUSA = d.am; }
+  if (d){ DERIVADOS = d.der; RECUSADOS = d.rec; AMOSTRA_RECUSA = d.am;
+          DIVERGENTES = d.div || 0; AMOSTRA_DIVERG = d.amd || ''; }
 } catch(e){}
 
-/* Sem base nao renderizamos nada: as tres paginas sairiam com zero em tudo, e
-   zero num slide de comite se le como resultado, nao como falta de dado. */
+/* Sem base, as paginas 2 e 3 sairiam com zero em tudo — e zero num slide de
+   comite se le como resultado, nao como falta de dado. Ficam escondidas.
+   A pagina 1 continua no ar: ela e texto fixo, explica o metodo do ciclo e
+   nao depende de planilha nenhuma. */
 function mostraSemBase(){
-  $$('.page').forEach(s => { s.hidden = true; });
-  $('nav').hidden = true;
+  $$('.page').forEach(s => { if (s.id !== 'p1') s.hidden = true; });
+  $('#p1').hidden = false;
+  irPara('p1', true);
+  $$('nav button').forEach(b => { b.hidden = b.dataset.p !== 'p1'; });
   $('#stamp').textContent = 'sem base carregada';
   if ($('#semBase')) return;
   const av = document.createElement('div');
   av.id = 'semBase';
-  av.innerHTML = '<h2>Carregue a base do ciclo</h2>' +
-    '<p>Este relatorio le a base de uma planilha, escolhida no botao <b>Carregar planilha</b> ' +
-    'na faixa preta do topo. Nada fica gravado na maquina: o conteudo vive na sessao do ' +
-    'navegador e some quando a aba e fechada.</p>' +
-    '<p>Se ainda nao tem o arquivo no formato certo, use <b>Baixar modelo</b> — ele sai com o ' +
-    'cabecalho exato que o leitor espera e uma linha de exemplo.</p>' +
-    '<p style="margin-top:14px;font-size:12.5px;color:var(--gray-500)">Unica coluna obrigatoria: ' +
-    '<code>NOME</code>. As demais entram em branco se faltarem.</p>';
+  av.innerHTML = '<h2>Falta a base do ciclo</h2>' +
+    '<p>Esta primeira página é fixa e não depende de planilha: explica o método do ' +
+    'ciclo e está sempre disponível. <b>Resultados</b> e <b>Área &amp; liderança</b> ' +
+    'aparecem quando você carregar a base, no botão <b>Carregar planilha</b> da faixa ' +
+    'preta do topo.</p>' +
+    '<p>Nada fica gravado na máquina: o conteúdo vive na sessão do navegador e some ' +
+    'quando a aba é fechada.</p>' +
+    '<p style="margin-top:14px;font-size:12.5px;color:var(--gray-500)">Única coluna ' +
+    'obrigatória: <code>NOME</code>. As demais entram em branco se faltarem. Se ainda ' +
+    'não tem o arquivo no formato certo, use <b>Baixar modelo</b>.</p>';
   document.body.appendChild(av);
 }
 
@@ -2859,6 +3153,7 @@ function pintaRelatorio(){
   const av = $('#semBase'); if (av) av.remove();
   $$('.page').forEach(s => { s.hidden = false; });
   $('nav').hidden = false;
+  $$('nav button').forEach(b => { b.hidden = false; });
   $('#impLimpar').hidden = false;
   $('#impCols').hidden = false;
   const rot = P.length + ' pessoas' + (ARQ_NOME ? ' · ' + ARQ_NOME : '');
@@ -2875,16 +3170,18 @@ function pintaRelatorio(){
     impDiz('faltam colunas: ' + faltam.map(k => LBL_CAMPO[k] || k).join(', ') + ' — ver "Conferir colunas"', 'err');
   } else if (semNota === P.length && P.length){
     impDiz('nenhuma pessoa com nota do gestor — ver "Conferir colunas"', 'err');
-  } else if (RECUSADOS){
-    impDiz(rot + ' · conceito da planilha recusado em ' + RECUSADOS + ' célula' +
-           (RECUSADOS > 1 ? 's' : '') + ' — ver "Conferir colunas"', 'err');
   } else if (semNota){
     impDiz(rot + ' · ' + semNota + ' sem nota do gestor', 'ok');
   } else {
-    impDiz(rot, 'ok');
+    /* Divergencia entre a coluna CONCEITO e o calculo NAO e erro: desde a
+       troca de regua ela acontece para dezenas de pessoas por construcao, em
+       qualquer planilha gerada antes de 04/09/2026. Fica como nota de rodape,
+       nao em vermelho. O vermelho continua reservado a coluna essencial que
+       faltou, que e o unico caso em que o relatorio sai mentindo. */
+    impDiz(rot + (DIVERGENTES ? ' · conceito recalculado em ' + DIVERGENTES : ''), 'ok');
   }
   $('#stamp').textContent = rot;
-  renderPagina1();
+  /* a pagina 1 nao entra aqui: e HTML fixo, ja esta na tela antes de existir base */
   renderPagina2();
   renderPagina3();
   BOOTED = true;
