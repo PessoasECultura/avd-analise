@@ -575,7 +575,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
 
   <div class="cover">
     <div class="eyebrow">Como funciona</div>
-    <h1>Avaliação de <br><em>Desempenho</em></h1>
+    <h1>Duas notas, uma régua,<br><em>um conceito.</em></h1>
     <!-- [EDITE] situação do ciclo, mostrada na pílula da capa -->
   </div>
 
@@ -600,7 +600,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
         <div class="tln">Calibragem</div><div class="tld">24/08 a 09/09</div>
         <div class="tlnow">estamos aqui</div></div>
       <div class="tli todo"><b>4</b>
-        <div class="tln">Devolutiva</div><div class="tld">21 a 29/09</div></div>
+        <div class="tln">Devolutiva</div><div class="tld">14 a 29/09</div></div>
       <div class="tli todo"><b>5</b>
         <div class="tln">PDI</div><div class="tld">a partir de 25/09</div></div>
     </div>
@@ -641,7 +641,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
     </div>
 
     <div class="bloco">
-      <div class="bloco-k">Nossa régua de avaliação</div>
+      <div class="bloco-k">Toda nota sai desta régua, nos dois eixos</div>
       <!-- [EDITE] a régua. A classe r1..r5 é a cor de cada degrau. -->
       <div class="reg5" id="ruler">
         <div class="rg r1"><b>1</b><span>Insatisfatório<br><small>Performance e comportamento abaixo do esperado, com impacto negativo nos resultados ou no time.
@@ -656,7 +656,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
   </div>
 
   <div class="panel">
-    <div class="phd"><span class="pn">03</span><span class="pt">Cruzamento entre as duas notas</span>
+    <div class="phd"><span class="pn">03</span><span class="pt">Onde as duas notas se cruzam</span>
       <span class="ps">E = entregas, V = valores</span></div>
     <div class="m9" id="m9">
       <div class="ylab">Valores 4–5</div>
@@ -697,7 +697,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
       <div class="fato"><div class="fk">Tempo mínimo de casa</div><b>3<small> meses</small></b></div>
       <div class="fato"><div class="fk">Data de corte</div><b>30/05</b>
         <div class="fs">admitidos até essa data entram no ciclo</div></div>
-      <div class="fato"><div class="fk">Elegíveis no H2 2026</div><b>234</b>
+      <div class="fato"><div class="fk">Elegíveis no H2 2026</div><b>233</b>
               <div class="fs">Yandecos avaliados</div></div>
     </div>
   </div>
@@ -2457,11 +2457,10 @@ function card(p, idx){
         dado('Business unit', tc(p.bu)) + dado('Área', tc(p.area)) + dado('Cargo', tc(p.cargo)) +
         dado('Agrupamento', nomeNivel(p.nivel)) + dado('Liderança', tc(p.lider)) +
         dado('Localização', tc(p.loc)) + dado('Tempo de casa', tempoCasa(p.adm)) + '</div>' +
-      /* Saiu daqui a visão pós-calibragem: as linhas "Calibragem" (realizada /
-         pendente) e "Conceito final do comitê". Enquanto o comitê não roda elas
-         dizem "pendente" e "ainda não registrado" nas 234 pessoas, ou seja,
-         ocupam duas linhas do card para não informar nada. O histórico do ciclo
-         anterior fica: é dado, não estado de processo. */
+      /* O card não mostra o de-para da calibragem: o que interessa é a nota que
+         vale, e ela já está no cabeçalho e na tabela de valores. A nota do
+         gestor continua guardada em gEges/gVges — o dado não se perde, só não
+         ocupa espaço na tela. */
       '<div><div class="section-label">Histórico</div>' +
         dado('Ciclo anterior · entregas', p.pE ?? '—') +
         dado('Ciclo anterior · valores', p.pV ?? '—') +
@@ -2712,6 +2711,7 @@ let MAPA_COLS = [];
 try { MAPA_COLS = JSON.parse(sessionStorage.getItem('avd_mapa') || '[]'); } catch(e){}
 let DERIVADOS = 0, RECUSADOS = 0, AMOSTRA_RECUSA = '';
 let DIVERGENTES = 0, AMOSTRA_DIVERG = '';
+let CALIBRADOS = 0, CONC_COMITE = 0;
 
 /* So passa o que e conceito de verdade. Texto qualquer na coluna CONCEITO nao
    vira aviso nem erro: vira uma categoria a mais na distribuicao e uma celula
@@ -2787,6 +2787,7 @@ function impNorm(s){
 
 function leExcelBase(buffer){
   DERIVADOS = 0; RECUSADOS = 0; AMOSTRA_RECUSA = '';
+  CALIBRADOS = 0; CONC_COMITE = 0;
   DIVERGENTES = 0; AMOSTRA_DIVERG = '';
   const wb = XLSX.read(buffer, { type:'array', cellDates:true });
   const ws = wb.Sheets[wb.SheetNames[0]];
@@ -2892,8 +2893,13 @@ function leExcelBase(buffer){
       plano: txt(r, idx.plano),
       calDone: impNorm(txt(r, idx.calDone)).indexOf('SIM') >= 0 ? 'Sim' : 'Não',
       calConc: conceito(txt(r, idx.calConc)),
-      calNota: (function(){ const v = cel(r, idx.calNota); const n = Number(String(v).replace(',','.'));
-                            return (v != null && !isNaN(n)) ? n : ''; })(),
+      /* Esta coluna guarda a ANOTAÇÃO do comitê, não uma nota. O nome na
+         planilha ("NOTA FINAL CALIBRADA") diz outra coisa, mas quem preenche
+         escreve texto ali, e é assim que ela é usada: como fallback do
+         comentário qualitativo no card. Antes o parse invertia isso — passava
+         adiante só quando era número, e o número aparecia no card como se
+         fosse um comentário escrito por alguém. Agora aceita o texto. */
+      calNota: txt(r, idx.calNota),
       calE: nota(r, idx.calE), calV: nota(r, idx.calV)
     };
     /* nota final de eixo em branco: cai na media das 6 do proprio eixo, que e
@@ -2904,6 +2910,22 @@ function leExcelBase(buffer){
     };
     if (p.aV == null) p.aV = medNotas(p.avals);
     if (p.gV == null) p.gV = medNotas(p.gvals);
+
+    /* CALIBRAGEM: a nota do comite passa a valer, e nao so no card — ela entra
+       em gE/gV, que e de onde saem o conceito, as medias, os graficos e o
+       nine-box. Calibrar e o comite dizer qual e a nota; se o relatorio
+       continuasse mostrando a do gestor, mostraria a versao errada do ciclo.
+       A nota do gestor nao se perde: fica em gEges/gVges, e o card mostra o
+       de-para de quem foi calibrado.
+       Calibragem parcial vale: preencher so entregas calibra so entregas.
+       A coluna CALIBRAGEM FEITA? nao e o gatilho — o gatilho e ter nota. Uma
+       linha com "Sim" e nenhuma nota nao calibra nada, e uma com nota e o "Sim"
+       esquecido calibra: o dado manda, nao o marcador. */
+    p.gEges = p.gE; p.gVges = p.gV;
+    p.calibrado = false;
+    if (p.calE != null){ p.gE = p.calE; p.calibrado = true; }
+    if (p.calV != null){ p.gV = p.calV; p.calibrado = true; }
+    if (p.calibrado) CALIBRADOS++;
 
     /* O conceito sai SEMPRE da matriz, nunca da coluna da planilha. Uma regua
        so, aplicada no mesmo lugar, para a pagina 1 explicar exatamente o que as
@@ -2924,6 +2946,17 @@ function leExcelBase(buffer){
       DIVERGENTES++;
       if (!AMOSTRA_DIVERG) AMOSTRA_DIVERG = p.nome + ': planilha dizia "' + daPlanilha +
         '", matriz dá "' + p.conc + '" (E' + p.gE + '·V' + p.gV + ')';
+    }
+
+    /* CONCEITO CALIBRADO vence a matriz. É o único caminho para um conceito que
+       a régua não produz: o comitê pode decidir caso a caso, e essa decisão não
+       é fórmula. Guarda o que a matriz daria, para o card poder mostrar o que
+       o comitê mudou. */
+    if (p.calConc){
+      p.concMatriz = p.conc;
+      p.conc = p.calConc;
+      p.calibrado = true;
+      if (!p.concMatriz || p.concMatriz !== p.calConc) CONC_COMITE++;
     }
 
     /* O conceito do ciclo anterior passa pela MESMA matriz, pelo mesmo motivo.
@@ -2974,7 +3007,8 @@ $('#impFile').addEventListener('change', ev => {
       sessionStorage.setItem('avd_mapa', JSON.stringify(MAPA_COLS));
       sessionStorage.setItem('avd_diag', JSON.stringify(
         { der:DERIVADOS, rec:RECUSADOS, am:AMOSTRA_RECUSA,
-          div:DIVERGENTES, amd:AMOSTRA_DIVERG }));
+          div:DIVERGENTES, amd:AMOSTRA_DIVERG,
+          cal:CALIBRADOS, cc:CONC_COMITE }));
       guardou = sessionStorage.getItem('avd_P') != null;
     } catch(e){ guardou = false; }
 
@@ -3053,6 +3087,19 @@ $('#impCols').addEventListener('click', () => {
       '\nA coluna CONCEITO da planilha é ignorada de propósito — a régua é uma só,' +
       '\ne é a mesma que a página 1 explica.';
   }
+  txt += '\n\nCALIBRAGEM' +
+    (CALIBRADOS
+      ? '\n' + CALIBRADOS + ' pessoa(s) com nota calibrada. Onde ENTREGAS ou VALORES' +
+        '\nCALIBRADO estão preenchidos, essa nota substitui a do gestor em tudo:' +
+        '\nconceito, médias, gráficos e nine-box. A do gestor fica guardada e' +
+        '\naparece no card, riscada, ao lado da nova.' +
+        (CONC_COMITE ? '\n' + CONC_COMITE + ' com CONCEITO CALIBRADO diferente do que a matriz daria:' +
+          '\nnesses, vale a decisão do comitê.' : '')
+      : '\nNenhuma linha calibrada. Enquanto as colunas ficarem vazias, vale a nota' +
+        '\ndo gestor. Preencher ENTREGAS ou VALORES CALIBRADO faz a nota do comitê' +
+        '\npassar a valer; nada é apagado.') +
+    '\nO gatilho é a nota, não a coluna CALIBRAGEM FEITA?: linha com "Sim" e sem' +
+    '\nnota não calibra, e linha com nota calibra mesmo sem o "Sim".';
   if (DIVERGENTES){
     txt += '\n\n⚠ A PLANILHA DISCORDA DA MATRIZ EM ' + DIVERGENTES + ' PESSOA(S)' +
       (AMOSTRA_DIVERG ? '\nExemplo — ' + AMOSTRA_DIVERG : '') +
@@ -3112,12 +3159,25 @@ $('#impTemplate').addEventListener('click', () => {
     ['Plano de acao','Texto livre. Quatro palavras ganham cor no relatorio:'],
     ['','Desligamento (vermelho) · Recuperacao (ambar) · Sucessao (roxo) · Promocao (verde).'],
     ['','Qualquer outro texto aparece em cinza, sem ser recusado.'],
-    ['Colunas de calibragem','Deixe vazias enquanto o comite nao rodar.'],
+    [],
+    ['CALIBRAGEM (as 5 ultimas colunas)'],
+    ['ENTREGAS CALIBRADO','A nota do comite. Preenchida, ela SUBSTITUI a do gestor em tudo:'],
+    ['VALORES CALIBRADO','conceito, medias, graficos e nine-box. Vazia, vale a do gestor.'],
+    ['','Nada e apagado: a nota do gestor fica guardada e aparece no card,'],
+    ['','riscada, ao lado da nova. Da para calibrar so um dos dois eixos.'],
+    ['','Repetir a mesma nota do gestor nao muda nada — e o mesmo que deixar vazio.'],
+    ['CONCEITO CALIBRADO','So quando o comite decide um conceito que a regua nao daria.'],
+    ['','Preenchido, vence a matriz. Vazio, o conceito sai das notas.'],
+    ['CALIBRAGEM FEITA?','Apenas um marcador de controle: nao liga nem desliga nada.'],
+    ['','O que faz a calibragem valer e ter nota nas colunas acima.'],
+    ['NOTA FINAL CALIBRADA','Apesar do nome, e campo de ANOTACAO do comite: o texto aparece'],
+    ['','no card, no bloco "Comentario qualitativo".'],
     [],
     ['CONFERENCIA ANTES DE SUBIR'],
     ['1','Selecione a ultima coluna e va ate o fim: nenhuma celula pode ter nome de pessoa.'],
     ['2','A coluna CONCEITO nao pode conter "Sim" ou "Nao" — isso e da calibragem.'],
-    ['3','No relatorio, use "Conferir colunas" depois de carregar.']
+    ['3','No relatorio, use "Conferir colunas" depois de carregar: ele diz quantas'],
+    ['','pessoas entraram calibradas.']
   ];
 
   try {
@@ -3138,7 +3198,8 @@ try { ARQ_NOME = sessionStorage.getItem('avd_P_arq') || ''; } catch(e){}
 try {
   const d = JSON.parse(sessionStorage.getItem('avd_diag') || 'null');
   if (d){ DERIVADOS = d.der; RECUSADOS = d.rec; AMOSTRA_RECUSA = d.am;
-          DIVERGENTES = d.div || 0; AMOSTRA_DIVERG = d.amd || ''; }
+          DIVERGENTES = d.div || 0; AMOSTRA_DIVERG = d.amd || '';
+          CALIBRADOS = d.cal || 0; CONC_COMITE = d.cc || 0; }
 } catch(e){}
 
 /* Sem base, as paginas 2 e 3 sairiam com zero em tudo — e zero num slide de
@@ -3184,21 +3245,24 @@ function pintaRelatorio(){
     return MAPA_COLS.length && (!m || m.col < 0);
   });
   const semNota = P.filter(p => p.gE == null || p.gV == null).length;
+  /* a calibragem entra no rotulo: sem isso, ela vale em silencio e ninguem
+     sabe se o numero na tela ja e o do comite ou ainda o do gestor */
+  const cal = CALIBRADOS ? ' · ' + CALIBRADOS + ' calibrada' + (CALIBRADOS > 1 ? 's' : '') : '';
   if (faltam.length){
     impDiz('faltam colunas: ' + faltam.map(k => LBL_CAMPO[k] || k).join(', ') + ' — ver "Conferir colunas"', 'err');
   } else if (semNota === P.length && P.length){
     impDiz('nenhuma pessoa com nota do gestor — ver "Conferir colunas"', 'err');
   } else if (semNota){
-    impDiz(rot + ' · ' + semNota + ' sem nota final', 'ok');
+    impDiz(rot + cal + ' · ' + semNota + ' sem nota final', 'ok');
   } else {
     /* Divergencia entre a coluna CONCEITO e o calculo NAO e erro: desde a
        troca de regua ela acontece para dezenas de pessoas por construcao, em
        qualquer planilha gerada antes de 04/09/2026. Fica como nota de rodape,
        nao em vermelho. O vermelho continua reservado a coluna essencial que
        faltou, que e o unico caso em que o relatorio sai mentindo. */
-    impDiz(rot + (DIVERGENTES ? ' · conceito recalculado em ' + DIVERGENTES : ''), 'ok');
+    impDiz(rot + cal + (DIVERGENTES ? ' · conceito recalculado em ' + DIVERGENTES : ''), 'ok');
   }
-  $('#stamp').textContent = rot;
+  $('#stamp').textContent = rot + (CALIBRADOS ? ' · ' + CALIBRADOS + ' calibradas' : '');
   /* a pagina 1 nao entra aqui: e HTML fixo, ja esta na tela antes de existir base */
   renderPagina2();
   renderPagina3();
