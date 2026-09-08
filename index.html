@@ -974,7 +974,7 @@ h1 em{font-style:normal;color:var(--gray-500)}
 
   <div class="panel">
     <div class="phd"><span class="pn">06</span><span class="pt">Evolução de cada valor</span>
-      <span class="ps">Nota do gestor: onde cada valor estava e onde está.</span></div>
+      <span class="ps">Nota final: onde cada valor estava e onde está.</span></div>
     <div class="chart" id="chValores"></div>
     <div class="read" id="valNote"></div>
   </div>
@@ -1824,10 +1824,10 @@ function renderPagina2(){
 
   $('#kpis').innerHTML =
     fato('Pessoas avaliadas', com.length + '<small> / ' + P.length + '</small>',
-         'com nota do gestor nos dois eixos') +
+         'com nota final nos dois eixos') +
     fato('Com histórico', histC.length + '<small> / ' + P.length + '</small>',
          'nota nos dois ciclos, base de toda comparação') +
-    fato('Média de entregas', nf2(mE), 'nota do gestor, régua de 1 a 5') +
+    fato('Média de entregas', nf2(mE), 'nota final, régua de 1 a 5') +
     fato('Média de valores', nf2(mV), 'média dos seis valores') +
     fato('Nota máxima 5 × 5', cincoCinco.length + (exc ? '<small> / ' + exc + '</small>' : ''),
          'entregas 5 e valores 5' + (exc ? ', dentro dos excepcionais' : ''));
@@ -1879,7 +1879,7 @@ function renderPagina2(){
      dentro do cartão (essa com outra escala, normalizada pelo maior conceito e
      não pelo total, o que fazia duas grandezas diferentes parecerem a mesma).
      Ficou uma leitura só: a faixa mostra a proporção, o número mostra o número. */
-  $('#distSub').textContent = com.length + ' com conceito · ' + (P.length - com.length) + ' sem nota do gestor';
+  $('#distSub').textContent = com.length + ' com conceito · ' + (P.length - com.length) + ' sem nota final';
   const distRows = ORDEM_CONC.map(k => ({ k, n: P.filter(p => p.conc === k).length, bg: CONC[k].bg, ink: CONC[k].ink }));
   const semC = P.length - com.length;
   $('#dist2').innerHTML =
@@ -1981,14 +1981,14 @@ function renderPagina2(){
     const g = gNp[i];
     const d = dlSen(g[kc], g[kp]);
     return '<b>' + esc(nomeNivel(g.k)) + '</b>' +
-      '<div class="tl">' + eixo + ' · nota do gestor</div>' +
+      '<div class="tl">' + eixo + ' · nota final</div>' +
       '<div style="margin-top:5px">Ciclo anterior: <b>' + nf2(g[kp]) + '</b></div>' +
       '<div>Este ciclo: <b>' + nf2(g[kc]) + '</b>' +
         (d == null ? '' : ' (' + (d >= 0 ? '+' : '−') + nf2(Math.abs(d)) + ')') + '</div>' +
       '<div class="tl">' + g.n + ' pessoas no grupo comparável</div>';
   };
   columnChart('#chSen', {
-    titulo: 'Nota média do gestor, por senioridade',
+    titulo: 'Nota final média, por senioridade',
     sub: 'Barra: média de hoje. Traço: onde o nível estava no ciclo passado.',
     xs: gNp.map(g => nomeNivel(g.k)),
     esc: { min:1, max:5, ticks:[1, 2, 3, 4, 5] },
@@ -2051,7 +2051,7 @@ function renderPagina2(){
   /* O subtitulo do painel dizia a mesma coisa que o titulo e que a legenda do
      grafico, tres vezes em poucos pixels. Ficou so a legenda. */
   columnChart('#chBU', {
-    titulo: 'Nota média do gestor, por business unit',
+    titulo: 'Nota final média, por business unit',
     sub: 'Barra: média de hoje. Traço: onde a BU estava no ciclo passado.',
     xs: linhasBU.map(r => r.n),
     esc: { min:1, max:5, ticks:[1, 2, 3, 4, 5] },
@@ -2069,14 +2069,33 @@ function renderPagina2(){
         vals:linhasBU.map(r => r.pV), tip: dicaLinha('Valores', 'cV', 'pV') }
     ]
   });
-  const comparBU = linhasBU.filter(r => r.pE != null && r.cE != null);
-  const subiuBU = comparBU.filter(r => r.cE - r.pE > 0.004).length;
-  const caiuBU  = comparBU.filter(r => r.cE - r.pE < -0.004).length;
-  const conj = (q, sg, pl) => '<b>' + q + '</b> ' + (q === 1 ? sg : pl);
-  $('#buNote').innerHTML = comparBU.length
-    ? 'Em entregas, das ' + comparBU.length + ' BUs com ciclo anterior, ' +
-      conj(subiuBU, 'subiu', 'subiram') + ' e ' + conj(caiuBU, 'caiu', 'caíram') + '.'
-    : '';
+  /* Antes esta frase contava só entregas, e a conta não fechava: "das 7 BUs,
+     5 subiram e 0 caíram" deixava 2 sem explicação (as estáveis). Agora nomeia
+     quem mais andou em cada eixo, que é o que o comitê procura na tela. */
+  const topo = (kc, kp) => {
+    const c = linhasBU.filter(r => r[kp] != null && r[kc] != null)
+                      .map(r => ({ n:r.n, d:r[kc] - r[kp] }))
+                      .sort((a, b) => b.d - a.d);
+    return c.length ? c : null;
+  };
+  const sinal = d => (d >= 0 ? '+' : '−') + nf2(Math.abs(d));
+  const tE = topo('cE', 'pE'), tV = topo('cV', 'pV');
+  const destaque = (rot, t) => {
+    if (!t) return '';
+    const alta = t[0], baixa = t[t.length - 1];
+    let s = rot + ': <b>' + esc(alta.n) + '</b> (' + sinal(alta.d) + ')';
+    /* a maior queda só entra quando existe queda de verdade: senão o "menor
+       avanço" vira notícia ruim de uma BU que também subiu */
+    if (baixa.d < -0.004 && baixa.n !== alta.n)
+      s += ', maior queda em <b>' + esc(baixa.n) + '</b> (' + sinal(baixa.d) + ')';
+    return s;
+  };
+  /* o rótulo depende da posição: sem dado de entregas, a frase começaria com
+     "em valores" minúsculo */
+  const partes = [];
+  if (tE) partes.push(destaque('Maior avanço em entregas', tE));
+  if (tV) partes.push(destaque(partes.length ? 'em valores' : 'Maior avanço em valores', tV));
+  $('#buNote').innerHTML = partes.length ? partes.join('. ') + '.' : '';
   const foraBU = linhasBU.filter(r => r.pE == null || r.cE == null).map(r => r.n);
   $('#capBU').innerHTML = foraBU.length
     ? 'Sem coluna por não ter os dois ciclos: <b>' + foraBU.join(', ') + '</b>.'
@@ -2092,7 +2111,7 @@ function renderPagina2(){
   /* 07 · de-para por valor, só nota do gestor. A autoavaliação saiu daqui:
      ela vive num painel só dela, logo abaixo. */
   columnChart('#chValores', {
-    titulo: 'Nota do gestor por valor · de-para',
+    titulo: 'Nota final por valor · de-para',
     sub: 'Coluna é este ciclo. A linha é o mesmo valor no ciclo Set/25 a Fev/26.',
     xs: gapRows.map(r => r.nome),
     /* coluna é comprimento, e comprimento cortado embaixo mente sobre
@@ -2109,7 +2128,7 @@ function renderPagina2(){
   const movV = gapRows.map((r, i) => ({ nome:r.nome, d:(r.g == null ? null : r.g - ANT_VALORES.gestor[i]) }))
                       .filter(r => r.d != null).sort((a, b) => b.d - a.d);
   $('#valNote').innerHTML = movV.length
-    ? 'A nota do gestor subiu em <b>' + subiuV + ' dos ' + movV.length + ' valores</b>. Maior avanço em <b>' +
+    ? 'A nota final subiu em <b>' + subiuV + ' dos ' + movV.length + ' valores</b>. Maior avanço em <b>' +
       esc(movV[0].nome) + '</b> (' + (movV[0].d >= 0 ? '+' : '') + nf2(movV[0].d) + '), menor em <b>' +
       esc(movV[movV.length - 1].nome) + '</b> (' + (movV[movV.length - 1].d >= 0 ? '+' : '') +
       nf2(movV[movV.length - 1].d) + ').'
@@ -2516,7 +2535,7 @@ function renderModal(){
   const n = ps.filter(p => p.gE != null && p.gV != null).length;
   $('#modalT').textContent = MODAL.titulo;
   $('#modalS').textContent = MODAL.sub + ' · ' + ps.length + (ps.length === 1 ? ' pessoa, ' : ' pessoas, ') +
-    n + ' com nota do gestor';
+    n + ' com nota final';
 
   /* filtro: só os agrupamentos que existem neste conjunto */
   const niveis = ORDEM_NIVEL_TODOS.filter(k => MODAL.base.some(p => p.nivel === k));
@@ -3171,7 +3190,7 @@ function pintaRelatorio(){
   } else if (semNota === P.length && P.length){
     impDiz('nenhuma pessoa com nota do gestor — ver "Conferir colunas"', 'err');
   } else if (semNota){
-    impDiz(rot + ' · ' + semNota + ' sem nota do gestor', 'ok');
+    impDiz(rot + ' · ' + semNota + ' sem nota final', 'ok');
   } else {
     /* Divergencia entre a coluna CONCEITO e o calculo NAO e erro: desde a
        troca de regua ela acontece para dezenas de pessoas por construcao, em
