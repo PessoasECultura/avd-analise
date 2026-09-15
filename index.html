@@ -277,6 +277,28 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 /* o separador entre os dois comportamentos ganha a cor do acento */
 .vs span i{font-style:normal;color:var(--b-acc);font-weight:700;padding:0 2px}
 
+/* De-para dos seis valores, Yandeh <-> Girotrade — só existe pergunta a
+   responder no recorte da Girotrade, onde os nomes trocam mas nem todo
+   comportamento trocou junto (ver DE_PARA_VALORES no JS). <details> nativo:
+   fica fechado por padrão sem precisar de JS de abrir/fechar, e some do card
+   sozinho fora do recorte, mesma regra do #valChips lá em cima. */
+.depara{display:none;margin-top:14px;border:1.5px solid var(--gray-100);border-radius:10px;
+  background:var(--gray-50);overflow:hidden}
+:root[data-brand="giro"] .depara{display:block}
+.depara summary{cursor:pointer;list-style:none;padding:11px 14px;font-size:12px;font-weight:700;
+  color:var(--gray-900);display:flex;align-items:center;gap:8px;user-select:none}
+.depara summary::-webkit-details-marker{display:none}
+.depara summary::before{content:'▸';color:var(--b-acc);font-size:10px;transition:transform .15s;display:inline-block}
+.depara[open] summary::before{transform:rotate(90deg)}
+.dptab{width:100%;border-collapse:collapse;font-size:11.5px}
+.dptab th,.dptab td{padding:8px 14px;text-align:left;border-top:1px solid var(--gray-100)}
+.dptab th{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gray-500)}
+.dptab .dp-tag{font-weight:700;font-size:10.5px;white-space:nowrap}
+.dptab tr.ok .dp-tag{color:var(--nb-for-ink)}
+.dptab tr.no .dp-tag{color:var(--nb-ins-ink)}
+.dptab td.dp-mot{color:var(--gray-500);font-size:11px}
+@media(max-width:640px){ .dptab td.dp-mot{display:none} .dptab th:last-child{display:none} }
+
 /* os dois eixos, e o conceito que sai do cruzamento */
 .eixos2{display:grid;grid-template-columns:minmax(0,1fr) 50px minmax(0,1fr);align-items:stretch}
 .ex{background:var(--gray-50);border:1.5px solid var(--gray-100);border-radius:14px;padding:20px 22px;
@@ -1262,6 +1284,10 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
     <div class="chart" id="chValores"></div>
     <div class="vsobre" id="valSobre"></div>
     <div class="read" id="valNote"></div>
+    <details class="depara" id="deParaValores">
+      <summary>De-para dos seis valores · Yandeh ↔ Girotrade</summary>
+      <table class="dptab" id="dpTab"></table>
+    </details>
   </div>
 
   <div class="panel">
@@ -2858,6 +2884,16 @@ function renderPagina2(){
       esc(movV[movV.length - 1].nome) + '</b> (' + (movV[movV.length - 1].d >= 0 ? '+' : '') +
       nf2(movV[movV.length - 1].d) + ').'
     : '';
+
+  /* tabela do <details> acima. Renderiza sempre — o <details> some sozinho
+     fora do recorte Girotrade via CSS (:root[data-brand="giro"]), então não
+     precisa de JS pra decidir se aparece, só pra preencher a linha. */
+  $('#dpTab').innerHTML =
+    '<tr><th>Valor Yandeh</th><th>Valor Girotrade</th><th>Comparável</th><th>Por quê</th></tr>' +
+    DE_PARA_VALORES.map(d => '<tr class="' + (d.comparavel ? 'ok' : 'no') + '">' +
+      '<td>' + esc(d.yan) + '</td><td>' + esc(d.giro) + '</td>' +
+      '<td class="dp-tag">' + (d.comparavel ? 'Sim' : 'Não') + '</td>' +
+      '<td class="dp-mot">' + esc(d.motivo) + '</td></tr>').join('');
 
   /* ---------- 08 · o gap, num lugar só ----------
      A autoavaliação foi tirada de todos os outros painéis. Aqui ela aparece
