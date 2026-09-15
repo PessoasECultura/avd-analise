@@ -1626,7 +1626,7 @@ const COMENTARIOS = {
   'k1w0vjxh15dwbos': 'Pontos fortes\n• Conhecimento técnico e negócio\n• Protagonismo como Head\n• Comunicação e relacionamento\n• Direcionamento e desenvolvimento\n\nPontos de oportunidade\n• Delegação e autonomia\n• Estrutura e consistência\n• Evolução do papel\n• Contexto e reconhecimento',
   'k1xkk1qt12qjrng': 'Pontos fortes\n• Visão de negócio\n• Resolução de problemas\n• Autonomia e confiança\n• Orientação ao cliente\n\nPontos de oportunidade\n• Comunicação e governança\n• Contexto e transparência\n• Gestão de performance\n• Consistência na decisão',
   'k2aqey4f8qcpj': 'Pontos fortes\n• Comunicação e visão\n• Desenvolvimento e gestão\n• Autonomia e protagonismo\n• Colaboração e resolução\n\nPontos de oportunidade\n• Condução de feedbacks\n• Gestão de pressões\n• Disponibilidade e presença',
-  'k35j9r92ealyk': 'Pontos fortes\nNenhum ponto positivo registrado pelo avaliador neste ciclo.\n\nPontos de oportunidade\n• Proximidade e confiança\n• Autonomia e desenvolvimento',
+  'k35j9r92ealyk': 'Pontos fortes\n• Visão estratégica de Pessoas e capacidade de execução.\n• Estruturação de processos e soluções.\n•Influência com lideranças e desenvolvimento do time.\n\nPontos de oportunidade\n• Proximidade e confiança\n• Autonomia e desenvolvimento',
   'k5he2x7s9ayda': 'Pontos fortes\n• Liderança próxima\n• Gestão e desenvolvimento\n• Conhecimento técnico e negócio\n• Resolução de conflitos\n\nPontos de oportunidade\n• Gestão de prioridades\n• Feedback individual\n• Visibilidade e reconhecimento',
   'k7yva4fee4nh6': 'Pontos fortes\n• Conhecimento e inovação\n• Proximidade e gestão humanizada\n• Resolução e suporte\n\nPontos de oportunidade\n• Priorização e demandas\n• Clareza e acompanhamento\n• Evolução de processos\n• Postura e imparcialidade',
   'kajxb9gacdrxb': 'Pontos fortes\n• Liderança próxima\n• Decisão e direcionamento\n• Conhecimento da área\n• Foco em resultados\n\nPontos de oportunidade\n• Comunicação e contexto\n• Acompanhamento e engajamento\n• Desenvolvimento e capacitação\n• Metas e realidade',
@@ -1634,7 +1634,7 @@ const COMENTARIOS = {
   'keag1611xsqeyg': 'Pontos fortes\n• Entrega individual\n• Evolução no ciclo\n• Orientação a dado\n\nPontos de oportunidade\n• Planejamento e antecipação\n• Formalização de marcos\n• Execução e gestão',
   'keeifx31l22tgi': 'Pontos fortes\nNenhum ponto positivo registrado pelo avaliador neste ciclo.\n\nPontos de oportunidade\n• Padrão, não isolado\n• Autonomia na execução\n• Profundidade analítica\n• Colaboração entre áreas',
   'kervdq9564340': 'Pontos fortes\n• Execução ponta a ponta\n• Qualidade e confiabilidade\n• Orientação a resultado\n\nPontos de oportunidade\n• Gestão da demanda\n• Colaboração horizontal\n• Agilidade de comunicação',
-  'kfffbg9i0hn6w': 'Pontos fortes\nNenhum ponto positivo registrado pelo avaliador neste ciclo.\n\nPontos de oportunidade\nNenhum ponto de oportunidade registrado.',
+  'kfffbg9i0hn6w': 'Pontos fortes\n• Visão estratégica de Pessoas e capacidade de execução\n• Estruturação de processos e soluções\n• Influência com lideranças e desenvolvimento do time\n\nPontos de oportunidade\n• Comunicação em situações de pressão\n• Maior imparcialidade e análise de contexto nas decisões',
   'kh88scvlnqefe': 'Pontos fortes\n• Adaptabilidade e flexibilidade\n• Empatia e proximidade\n• Objetividade e resolução\n\nPontos de oportunidade\n• Priorização e foco\n• Protagonismo na liderança\n• Conexão com estratégia\n• Estrutura e governança',
   'kigkga5b6wn44': 'Pontos fortes\n• Senso de dono\n• Desenvolvimento de time\n\nPontos de oportunidade\n• Contexto estrutural',
   'kijx89fnryel2': 'Pontos fortes\n• Articulação e influência\n• Orientação a resultados\n• Visão de negócio\n• Gestão e desenvolvimento\n\nPontos de oportunidade\n• Presença e rituais\n• Desenvolvimento e PDI\n• Organização e tempo\n• Processos e documentação',
@@ -1744,6 +1744,32 @@ const SOBRE_GIRO = [
   'A organização de cada detalhe faz a operação fluir.'
 ];
 const sobreDe = i => (BRAND === 'giro' ? SOBRE_GIRO : SOBRE_YAN)[i] || '';
+
+/* ============================================================
+   DE-PARA SEMÂNTICO Yandeh <-> Girotrade, POR SIGNIFICADO — não pela posição
+   da coluna. Confirmado pelo usuário em 15/09/2026, revendo os 4 valores que
+   trocaram de nome na troca de marca: 3 deles continuam sendo o MESMO
+   comportamento com outro nome ("No Ritmo Certo" é a Girotrade falando de
+   execução e cadência, do mesmo jeito que "Sede por Resultados" fala pela
+   Yandeh; "Nós pela Giro" só troca a marca no nome de "Nós pela Yandeh";
+   "Aqui Tudo Tem Lugar" e "Melhor e Mais longe com Dados" são os dois sobre
+   padrão e método). Só UM par não é comparável de verdade: "Presença que faz
+   a Diferença" e "Inovar para Liderar" apenas dividem a posição da coluna,
+   o comportamento por trás é outro.
+   Índice = mesma posição de VALORES_YAN / VALORES_GIRO / SOBRE_YAN / SOBRE_GIRO.
+   Isto é só o de-para (dado). Nenhum painel foi religado pra usar
+   `comparavel` ainda — ver [[avd-cd-ciclo-anterior-valores]] antes de ligar,
+   porque o painel 06 e o ANT_VALORES documentam por que a comparação foi
+   desligada pro recorte do CD, e essa decisão pode precisar ser revista com
+   o usuário, não só destravada em silêncio. */
+const DE_PARA_VALORES = [
+  { yan:'Encantar o Cliente',              giro:'Encantar o Cliente',              comparavel:true,  motivo:'nome igual' },
+  { yan:'Sede por Resultados',             giro:'No Ritmo Certo',                  comparavel:true,  motivo:'os dois são sobre execução e cadência' },
+  { yan:'Nós pela Yandeh',                 giro:'Nós pela Giro',                   comparavel:true,  motivo:'só muda a marca no nome' },
+  { yan:'Inovar para Liderar',             giro:'Presença que faz a Diferença',    comparavel:false, motivo:'só dividem a coluna — comportamento diferente' },
+  { yan:'Ser Dono',                        giro:'Ser Dono',                        comparavel:true,  motivo:'nome igual' },
+  { yan:'Melhor e Mais longe com Dados',   giro:'Aqui Tudo Tem Lugar',             comparavel:true,  motivo:'os dois são sobre padrão e método' }
+];
 /* ============================================================
    CICLO ANTERIOR, VALOR POR VALOR (Set/2025 a Fev/2026)
    A base do H2 só guarda as duas notas de eixo do ciclo passado, então a
@@ -1759,12 +1785,18 @@ const sobreDe = i => (BRAND === 'giro' ? SOBRE_GIRO : SOBRE_YAN)[i] || '';
    por valor, e essas notas estão dentro das médias abaixo (o recorte do CD
    sozinho daria 3,05 · 3,04 · 3,06 · 2,91 · 3,11 · 2,81 no lado do gestor).
 
-   O que impede a comparação no recorte do CD é outra coisa, e é a que vale:
-   NAQUELE CICLO O CD FOI AVALIADO NOS SEIS VALORES DA YANDEH. Hoje ele é
-   avaliado nos seis da Girotrade, e quatro dos seis nomes mudaram. Comparar
-   por posição de coluna colocaria "No Ritmo Certo" de hoje contra "Sede por
-   Resultados" de um ano atrás. Sobram "Encantar o Cliente" e "Ser Dono", que
-   repetem o nome mas trocaram os comportamentos (ver SOBRE_YAN e SOBRE_GIRO).
+   O que limitava a comparação no recorte do CD: NAQUELE CICLO O CD FOI
+   AVALIADO NOS SEIS VALORES DA YANDEH, hoje é avaliado nos seis da
+   Girotrade, e quatro dos seis nomes mudaram. Comparar por posição de
+   coluna, sem mais nada, colocaria "No Ritmo Certo" de hoje contra "Sede
+   por Resultados" de um ano atrás às cegas.
+   ATUALIZADO EM 15/09/2026: isso não quer dizer que só "Encantar o Cliente"
+   e "Ser Dono" (os dois com nome igual) dão pra comparar. Revendo os seis
+   pares com o usuário, 5 dos 6 SÃO o mesmo comportamento com nome novo —
+   ver `DE_PARA_VALORES`, logo acima. Só "Presença que faz a Diferença" /
+   "Inovar para Liderar" é de fato incomparável; os outros quatro trocaram
+   de nome mas não de comportamento. `comparavel`, em `DE_PARA_VALORES`,
+   é quem decide isso por índice — não confiar mais só no nome bater.
    ============================================================ */
 const ANT_VALORES = {
   auto:   [3.4405, 3.5286, 3.5947, 3.4317, 3.6167, 3.3216],
@@ -2763,24 +2795,32 @@ function renderPagina2(){
        Daí o sinal invertido, e daí a maioria dos deltas ser negativa. */
     return { i, v, nome: BRAND === 'giro' ? VALORES_GIRO[i] : v, a, g, gap: (a != null && g != null) ? g - a : null };
   });
-  /* NO RECORTE DO CD A TAG NÃO APARECE, E NÃO É POR FALTA DE DADO. O CD
-     participou do ciclo Set/25 a Fev/26 e as notas dele estão em ANT_VALORES.
-     O problema é que lá ele foi avaliado nos seis valores da YANDEH e aqui é
-     avaliado nos seis da GIROTRADE: comparar por posição de coluna poria
-     "No Ritmo Certo" de hoje contra "Sede por Resultados" de um ano atrás.
-     Número que parecia certo e não era. Os outros painéis continuam
-     comparando normalmente no recorte do CD, porque ali a comparação sai de
-     pE/pV, que são notas de EIXO e não mudaram de significado. */
-  const temAntVal = BRAND !== 'giro';
-  const antDe = (g, i) => g == null ? null : g - ANT_VALORES.gestor[i];
+  /* NO RECORTE DO CD A COMPARAÇÃO É POR VALOR, NÃO TUDO OU NADA. O CD
+     participou do ciclo Set/25 a Fev/26 e as notas dele estão em ANT_VALORES,
+     na ordem de VALORES_YAN. Comparar por posição de coluna, sem mais, poria
+     "No Ritmo Certo" de hoje contra "Sede por Resultados" de um ano atrás —
+     mas revendo os seis pares com o usuário em 15/09/2026 (ver
+     DE_PARA_VALORES, logo acima de ANT_VALORES), 5 dos 6 SÃO o mesmo
+     comportamento com nome novo, e só "Presença que faz a Diferença" é de
+     fato outra coisa que "Inovar para Liderar". `comparavel` decide, por
+     índice, se a tag de variação aparece naquela coluna.
+     Os outros painéis continuam comparando normalmente no recorte do CD,
+     porque ali a comparação sai de pE/pV, que são notas de EIXO e não
+     mudaram de significado — isso nunca teve o problema do de-para. */
+  const podeComparar = i => BRAND !== 'giro' || DE_PARA_VALORES[i].comparavel;
+  const antDe = (g, i) => (g == null || !podeComparar(i)) ? null : g - ANT_VALORES.gestor[i];
+  const naoComparaveis = BRAND === 'giro'
+    ? DE_PARA_VALORES.filter(d => !d.comparavel).map(d => d.giro) : [];
 
   /* 07 · de-para por valor, só nota do gestor. A autoavaliação saiu daqui:
      ela vive num painel só dela, logo abaixo. */
   columnChart('#chValores', {
-    titulo: temAntVal ? 'Nota final por valor · de-para' : 'Nota final por valor',
-    sub: temAntVal
-      ? 'Coluna é este ciclo. A tag em cima é a variação sobre Set/25 a Fev/26.'
-      : 'Coluna é este ciclo. Sem comparação com Set/25 a Fev/26: naquele ciclo o CD foi avaliado nos seis valores da Yandeh, e quatro deles mudaram.',
+    titulo: 'Nota final por valor · de-para',
+    sub: naoComparaveis.length
+      ? 'Coluna é este ciclo. A tag em cima é a variação sobre Set/25 a Fev/26 — ' +
+        'exceto em ' + naoComparaveis.map(n => '"' + n + '"').join(' e ') +
+        ', que trocou de comportamento na troca de marca e não tem comparável.'
+      : 'Coluna é este ciclo. A tag em cima é a variação sobre Set/25 a Fev/26.',
     xs: gapRows.map(r => r.nome),
     /* coluna é comprimento, e comprimento cortado embaixo mente sobre
        tamanho: o eixo fica ancorado no piso da régua, que é 1, e não num
@@ -2788,7 +2828,7 @@ function renderPagina2(){
     esc: { min:1, max:5, ticks:[1, 2, 3, 4, 5] },
     geo: { w:1080, h:340, l:46, r:22, t:26, b:78 },
     series: [{ n:'Este ciclo', cls:'c-gest', vals:gapRows.map(r => r.g),
-               deltas: gapRows.map((r, i) => temAntVal ? antDe(r.g, i) : null) }]
+               deltas: gapRows.map((r, i) => antDe(r.g, i)) }]
   });
 
   /* O que cada valor quer dizer, na ordem das colunas do gráfico acima. Sem
@@ -2802,8 +2842,11 @@ function renderPagina2(){
       esc(s).split(' · ').join('<i>·</i>') + '</span></div>';
   }).join('');
 
-  const subiuV = !temAntVal ? 0 : gapRows.filter((r, i) => r.g != null && antDe(r.g, i) > 0.004).length;
-  const movV = !temAntVal ? [] : gapRows.map((r, i) => ({ nome:r.nome, d:antDe(r.g, i) }))
+  /* antDe(r.g, i) já devolve null pra coluna sem comparável (podeComparar),
+     então o filter(r.d != null) abaixo já exclui sozinho quem não tem par —
+     não precisa mais de um interruptor geral por marca. */
+  const subiuV = gapRows.filter((r, i) => r.g != null && antDe(r.g, i) > 0.004).length;
+  const movV = gapRows.map((r, i) => ({ nome:r.nome, d:antDe(r.g, i) }))
                       .filter(r => r.d != null).sort((a, b) => b.d - a.d);
   /* A faixa de leitura tem fundo e barra lateral próprios, então quando o texto
      é vazio ela fica na tela como um retângulo sem conteúdo — foi o que apareceu
