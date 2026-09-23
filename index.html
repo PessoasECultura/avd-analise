@@ -396,6 +396,106 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .dot:hover{transform:scale(1.7);z-index:9;background:#fff;border-color:#1a1a1a}
 .dot.giro{border-color:var(--giro-mark);border-width:2px}
 
+/* ---------- 09 · matriz de risco de saída ----------
+   Matriz de materialidade, não nine-box: eixos contínuos (conceito final ×
+   risco de saída), fundo em gradiente diagonal seguro→crítico, e cada
+   liderança é uma bolota espalhada dentro da própria célula (jitter
+   determinístico pelo nome, não aleatório a cada render) — o desenho que se
+   usa em matriz de risco/impacto, não uma grade quadriculada. */
+.rkwrap{display:grid;grid-template-columns:80px 1fr;grid-template-rows:1fr auto;
+  grid-template-areas:"y plot" ". x";gap:4px 10px;margin-top:4px}
+.rky{grid-area:y;display:flex;flex-direction:column;justify-content:space-around;
+  align-items:flex-end;text-align:right;padding:6px 0}
+.rkx{grid-area:x;display:flex;justify-content:space-around;padding-top:6px}
+.rky div,.rkx div{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--gray-500);max-width:96px}
+.rkx div{text-align:center}
+.rkplot{grid-area:plot;position:relative;aspect-ratio:16/9;min-height:260px;border-radius:12px;
+  overflow:hidden;background:linear-gradient(135deg,var(--nb-for) 0%,var(--nb-ple) 48%,var(--nb-ins) 100%)}
+.rkgl{position:absolute;background:rgba(var(--b-ink-rgb),.14)}
+.rkzone{position:absolute;top:0;right:0;width:50%;height:33.333%;
+  background:rgba(var(--b-acc-rgb),.16);box-shadow:inset 0 0 0 1.5px rgba(var(--b-acc-rgb),.55);
+  display:flex;align-items:flex-start;justify-content:flex-end;padding:8px}
+.rkzone span{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--b-acc);
+  background:var(--card-bg);padding:3px 8px;border-radius:20px;white-space:nowrap;text-align:right}
+.rkpt{position:absolute;transform:translate(-50%,-50%);cursor:pointer;transition:transform .12s;z-index:2}
+.rkpt:hover{transform:translate(-50%,-50%) scale(1.4);z-index:9}
+.av.rkav{width:27px;height:27px;font-size:9.5px}
+/* enquadramento por risco: três quadros (Alto/Médio/Baixo), cada um com quem
+   está naquele risco — só leitura, sem clique. Passar o mouse no chip mostra
+   o mesmo tooltip da bolota (conceito, risco pelo gestor e por P&C) */
+.rk-all-box{margin-top:16px}
+.rk-all-box h4{font-size:11px;font-weight:700;color:var(--gray-700);text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:9px}
+.rk-all-box h4 span{text-transform:none;font-weight:500;color:var(--gray-500);letter-spacing:0}
+.rk-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rk-frame{border-radius:10px;padding:12px 14px}
+.rk-frame.r-alto{background:var(--nb-ins)}
+.rk-frame.r-medio{background:var(--nb-ple)}
+.rk-frame.r-baixo{background:var(--nb-for)}
+.rk-frame h5{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+.rk-frame.r-alto h5{color:var(--nb-ins-ink)}
+.rk-frame.r-medio h5{color:var(--nb-ple-ink)}
+.rk-frame.r-baixo h5{color:var(--nb-for-ink)}
+.rk-frame-body{display:flex;flex-wrap:wrap;gap:7px}
+.rk-chip{display:inline-flex;align-items:center;gap:6px;background:var(--card-bg);border-radius:20px;
+  padding:3px 11px 3px 3px;font-size:11.5px;font-weight:600;color:var(--gray-900)}
+.av.rkchipav{width:22px;height:22px;font-size:8.5px}
+
+/* ---------- 10 · liderança ----------
+   Panorama saiu (rodada seguinte): o espaço que ele ocupava vai para os
+   comentários qualitativos dentro dos cards de competência, que é onde o
+   usuário quis o peso do painel. */
+.lid-headline{font-size:14px;font-weight:700;color:var(--gray-900);margin:2px 0 18px;line-height:1.4}
+
+.lid-sec{font-size:11px;font-weight:700;color:var(--b-acc);text-transform:uppercase;
+  letter-spacing:.6px;padding-bottom:7px;margin:20px 0 9px;border-bottom:1px solid var(--gray-100)}
+.lid-sec:first-of-type{margin-top:0}
+
+/* competência dos heads vs. liderança geral (ASSESS.lid, painel 08): cards
+   por competência, só as duas com sinal de verdade (diferença ≥ 0,01) —
+   as que empatam viram nota de rodapé, não card sem sentido nenhum */
+.lid-grp{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  padding-bottom:6px;margin:14px 0 9px;border-bottom:2px solid}
+.lid-grp:first-child{margin-top:0}
+.lid-grp.sev-positivo{color:var(--nb-for-ink);border-color:var(--nb-for-ink)}
+.lid-grp.sev-alerta{color:var(--nb-ins-ink);border-color:var(--nb-ins-ink)}
+/* dois cards por linha em vez de "auto-fit": em duas colunas internas
+   (nota | quali), cartão estreito demais espreme o texto todo numa coluna
+   fina */
+.lid-cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:760px){ .lid-cardgrid{grid-template-columns:1fr} }
+.lid-pcard{border-radius:10px;padding:13px 15px}
+.lid-pcard.sev-positivo{background:var(--nb-for);color:var(--nb-for-ink)}
+.lid-pcard.sev-alerta{background:var(--nb-ins);color:var(--nb-ins-ink)}
+.lid-pcard h6{font-size:12.5px;font-weight:700;line-height:1.3;margin-bottom:9px}
+/* nota | quali lado a lado, a pedido do usuário — nota fica numa coluna
+   estreita fixa, o quali ocupa o resto e é quem dá o tom do card */
+.lid-pcard-cols{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:start}
+.lid-pcard-nota{display:flex;flex-direction:column;gap:7px}
+.lid-pcard-nota .n{font-size:9.5px;line-height:1.25}
+.lid-pcard-nota .n b{display:block;font-size:16px;font-weight:700;line-height:1.15}
+.lid-pcard-nota .n span{opacity:.75}
+.lid-pcard-nota .diffn{font-size:11.5px;font-weight:700;padding-top:5px;border-top:1px solid rgba(0,0,0,.15)}
+/* quali virou bullet assertivo, não parágrafo — uma frase por linha,
+   quadrado pequeno no lugar de hífen (regra de lista do resto do material) */
+.lid-pcard-qual{list-style:none;font-size:12.5px;line-height:1.4;border-left:1px solid rgba(0,0,0,.15);
+  padding-left:13px;display:grid;gap:7px}
+.lid-pcard-qual li{position:relative;padding-left:12px}
+.lid-pcard-qual li::before{content:'';position:absolute;left:0;top:5px;width:5px;height:5px;
+  border-radius:1px;background:currentColor;opacity:.6}
+
+/* lista curta de fontes, mesma mecânica dos bullets acima só sem cor de
+   severidade (bolinha neutra) — "pontuar tudo que temos", não parágrafo */
+.lid-src-wrap{margin-top:22px;padding-top:16px;border-top:1px solid var(--gray-100)}
+.lid-src-wrap h5{font-size:10.5px;font-weight:700;color:var(--gray-500);text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:9px}
+.lid-src{list-style:none;display:grid;gap:7px;margin-bottom:14px}
+.lid-src li{position:relative;padding-left:15px;font-size:12px;line-height:1.45;color:var(--gray-700)}
+.lid-src li::before{content:'';position:absolute;left:0;top:6px;width:6px;height:6px;border-radius:50%;
+  background:var(--gray-300)}
+.lid-src li b{color:var(--gray-900);font-weight:600}
+
 /* ---------- avatares: foto quando existe, iniciais quando não ---------- */
 .dots.fluxo{display:flex;flex-wrap:wrap;align-content:flex-start;gap:3px}
 .av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden;
@@ -724,9 +824,14 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
       <input type="file" id="impFotos" accept="image/*" webkitdirectory directory multiple hidden>
       Carregar fotos
     </label>
+    <label>
+      <input type="file" id="impRisco" accept=".xlsx,.xls" hidden>
+      Carregar risco de saída
+    </label>
     <button class="imp-lim" type="button" id="impTemplate">Baixar modelo</button>
     <button class="imp-lim" type="button" id="impCols" hidden>Conferir colunas</button>
     <button class="imp-lim" type="button" id="impFotosRel" hidden>Conferir fotos</button>
+    <button class="imp-lim" type="button" id="impRiscoRel" hidden>Conferir risco</button>
     <button class="imp-lim" type="button" id="impLimpar" hidden>Limpar</button>
   </div>
   <span class="imp-s" id="impStatus">nenhuma planilha carregada</span>
@@ -1314,6 +1419,67 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
       <div class="chart" id="chMandala"></div>
       <div id="asTab"></div>
     </div>
+  </div>
+
+  <!-- ======================================================================
+       09 · MATRIZ DE RISCO DE SAÍDA
+       Cruza o conceito final (desempenho, já decidido pela régua oficial) com
+       o risco de saída voluntária que o gestor enxerga. Não vem da planilha
+       base: é uma segunda planilha, só de lideranças ("Risco de Saída H2
+       2026", aba "Resumo" — Nome / Risco Gestor / Risco P&C), carregada à
+       parte pelo botão "Carregar risco de saída" e casada por nome, do mesmo
+       jeito que as fotos — fica só em memória nesta sessão de tela, nunca no
+       sessionStorage: é avaliação real de gente real.
+       ====================================================================== -->
+  <div class="panel">
+    <div class="phd"><span class="pn">09</span><span class="pt">Matriz de risco de saída</span>
+      <span class="ps" id="rkSub"></span></div>
+    <div class="cap" id="rkVazio"></div>
+    <div id="rkBody" hidden>
+      <div class="rkwrap">
+        <div class="rky" id="rkY"></div>
+        <div class="rkplot" id="rkPlot"></div>
+        <div class="rkx" id="rkX"></div>
+      </div>
+      <div class="rklg" id="rkLeg"></div>
+      <div class="rk-all-box">
+        <h4>Todas as lideranças · <span id="rkTodosSub"></span></h4>
+        <div class="rk-frames" id="rkTodos"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       10 · LIDERANÇA EXECUTIVA: DIAGNÓSTICO PARA O CONSELHO
+       Fonte real: "Assessment de Liderança 2026 · Comitê Executivo" — nome
+       oficial do instrumento (não "360": esse termo saiu do relatório a
+       pedido do usuário, era nomenclatura errada). Dois documentos, mesma
+       aplicação, oito heads/diretoria: `Analise_360_Heads_2026.docx` (o
+       dossiê completo, por head) e `analise_conclusiva_360_2026.html`
+       (a síntese da qual este painel deriva). Cruza com a Pesquisa de Clima
+       2026, dimensão "Liderança Imediata", quando o corte existe.
+       Números fixos em `LID360`, como `ASSESS`: não vêm de planilha.
+       De propósito ficaram de fora: o ranking nomeado por head e o heatmap de
+       competência por head dos documentos originais — isso é o "assessment
+       individual" que já existe, de outra forma, no painel 08 e no nine-box.
+       Aqui entra só o que é comum a mais de um head (padrão estrutural) e o
+       diagnóstico agregado que um conselho precisa, não crítica a uma
+       liderança específica.
+       ====================================================================== -->
+  <div class="panel">
+    <div class="phd"><span class="pn">10</span><span class="pt">Liderança executiva</span>
+      <span class="ps" id="lidSub"></span></div>
+
+    <p class="lid-headline" id="lidDiagnostico"></p>
+
+    <div class="lid-sec">Competências dos heads vs. liderança geral</div>
+    <div id="lidPadroes"></div>
+
+    <div class="lid-src-wrap">
+      <h5>Fontes consideradas</h5>
+      <ul class="lid-src" id="lidFontes"></ul>
+    </div>
+    <p class="cap" id="lidFonteLinha"></p>
   </div>
 
 </section>
@@ -2967,6 +3133,8 @@ function renderPagina2(){
   }
 
   renderAssessment();
+  renderRiscoMatriz();
+  renderLideranca360();
 }
 
 /* ---------- 08 · assessment de liderança ----------
@@ -4484,6 +4652,307 @@ $('#impFotosRel').addEventListener('click', () => {
   alert(t);
 });
 if (FOTOS_DIAG) $('#impFotosRel').hidden = false;
+
+/* ---------- 09 · risco de saída (planilha à parte) ----------
+   Fonte: "Risco de Saída H2 2026.xlsx", aba "Resumo" — Nome / Risco Gestor /
+   Risco P&C, só lideranças (~59 linhas). Não passa pelo IMP_COLS: é outra
+   planilha, com outra grade de linhas, e casa por nome — em memória, do
+   mesmo jeito que FOTOS_IMP. De propósito NÃO vai para o sessionStorage:
+   carrega texto real de avaliação de risco de saída de gente real, e o
+   mesmo cuidado que tira comentário sensível do que persiste vale aqui
+   (ver [[avd-nunca-publicar-artifact]], mesmo espírito). Um F5 ou "Limpar"
+   derruba, e a planilha precisa ser escolhida de novo. */
+const RK_ORDEM = ['Alto', 'Médio', 'Baixo'];
+let RISCO_IMP = {}, RISCO_DIAG = null;
+
+function classificaRisco(txt){
+  const n = impNorm(txt);
+  if (!n) return null;
+  if (n.indexOf('ALTO') >= 0) return 'Alto';
+  if (n.indexOf('MEDIO') >= 0) return 'Médio';
+  if (n.indexOf('BAIXO') >= 0) return 'Baixo';
+  return null;
+}
+
+$('#impRisco').addEventListener('change', ev => {
+  const f = ev.target.files[0];
+  if (!f) return;
+  const fr = new FileReader();
+  fr.onload = () => {
+    try {
+      const wb = XLSX.read(fr.result, { type:'array' });
+      /* procura primeiro uma aba "Resumo"; sem ela, a primeira aba com uma
+         coluna NOME serve de tentativa — e falha com uma mensagem clara se
+         não achar "Risco Gestor", em vez de casar coluna errada em silêncio */
+      const achaCabecalho = sheet => {
+        const rs = XLSX.utils.sheet_to_json(sheet, { header:1, defval:null });
+        const hi = rs.findIndex(r => (r || []).some(c => impNorm(c) === 'NOME'));
+        return hi >= 0 ? { rs, hi } : null;
+      };
+      const nomeResumo = wb.SheetNames.find(n => impNorm(n).indexOf('RESUMO') >= 0);
+      let achado = nomeResumo ? achaCabecalho(wb.Sheets[nomeResumo]) : null;
+      if (!achado){
+        for (const n of wb.SheetNames){
+          achado = achaCabecalho(wb.Sheets[n]);
+          if (achado) break;
+        }
+      }
+      if (!achado) throw new Error('Nao encontrei a coluna NOME em nenhuma aba.');
+
+      const rows = achado.rs;
+      const head = rows[achado.hi].map(impNorm);
+      const iNome = head.findIndex(h => h === 'NOME');
+      const iGestor = head.findIndex(h => h.indexOf('RISCO') >= 0 && h.indexOf('GESTOR') >= 0);
+      const iPC = head.findIndex(h => h.indexOf('RISCO') >= 0 && h.indexOf('GESTOR') < 0 &&
+        (h.indexOf('P&C') >= 0 || h.indexOf('P & C') >= 0 || h.indexOf('PC') >= 0));
+      if (iGestor < 0) throw new Error('Nao encontrei a coluna "Risco Gestor". Use a planilha ' +
+        '"Risco de Saida H2 2026", aba "Resumo".');
+
+      const mapa = {}; let lidos = 0;
+      for (let i = achado.hi + 1; i < rows.length; i++){
+        const r = rows[i]; if (!r || r[iNome] == null) continue;
+        const nome = String(r[iNome]).trim(); if (!nome) continue;
+        const gestorTxt = r[iGestor] != null ? String(r[iGestor]).trim() : '';
+        const pcTxt = iPC >= 0 && r[iPC] != null ? String(r[iPC]).trim() : '';
+        const gestor = classificaRisco(gestorTxt);
+        if (!gestor) continue;
+        mapa[chaveFoto(nome)] = { nome, gestor, gestorTxt, pc: classificaRisco(pcTxt), pcTxt };
+        lidos++;
+      }
+      RISCO_IMP = mapa;
+
+      const naBase = {};
+      P_TODOS.forEach(p => { naBase[chaveFoto(p.nome)] = p.nome; });
+      RISCO_DIAG = {
+        lidos,
+        casou: Object.values(mapa).filter(v => naBase[chaveFoto(v.nome)]).length,
+        sobra: Object.values(mapa).filter(v => !naBase[chaveFoto(v.nome)]).map(v => v.nome).sort()
+      };
+      $('#impRiscoRel').hidden = false;
+      if (BOOTED) renderPagina2();
+      impDiz(RISCO_DIAG.casou + ' de ' + lidos + ' lideranças de risco casaram com a base' +
+        (RISCO_DIAG.sobra.length ? ' · ' + RISCO_DIAG.sobra.length + ' sem pessoa na base' : ''), 'ok');
+    } catch(e){
+      impDiz(e.message, 'err');
+    }
+  };
+  fr.onerror = () => impDiz('nao consegui abrir o arquivo', 'err');
+  fr.readAsArrayBuffer(f);
+});
+
+$('#impRiscoRel').addEventListener('click', () => {
+  if (!RISCO_DIAG){ alert('Carregue a planilha de risco de saida primeiro.'); return; }
+  const d = RISCO_DIAG;
+  let t = 'RISCO DE SAIDA POR PLANILHA\n' +
+    'A ponte e o nome, igual as fotos: precisa bater com a coluna NOME da base.\n\n' +
+    'linhas lidas: ' + d.lidos + '\n' +
+    'casaram com a base: ' + d.casou + '\n';
+  if (d.sobra.length)
+    t += '\nSEM PESSOA NA BASE (' + d.sobra.length + ')\n' + d.sobra.map(n => '  ' + n).join('\n') + '\n';
+  alert(t);
+});
+if (RISCO_DIAG) $('#impRiscoRel').hidden = false;
+
+/* jitter determinístico pelo nome (+ índice, contra nome duplicado): mesma
+   pessoa cai sempre no mesmo ponto dentro da própria célula, então o
+   relatório não "treme" a cada re-render */
+function rkJit(seed){
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
+  return ((h >>> 0) % 2000) / 1000 - 1; /* -1..1 */
+}
+
+/* eixo X contínuo = conceito final (ORDEM_CONC, pior→melhor), eixo Y = risco
+   de saída (RK_ORDEM, alto→baixo, alto em cima). Só entra quem tem os dois:
+   risco (planilha de liderança) e conceito final (base principal) — mesma
+   régua da distribuição dos conceitos, sem recalcular nada. É matriz de
+   materialidade, não nine-box: cada liderança espalha dentro da própria
+   célula em vez de empilhar numa grade. */
+function renderRiscoMatriz(){
+  const vazio = $('#rkVazio'), corpo = $('#rkBody');
+  if (!vazio || !corpo) return;
+  const pares = P.map((p, idx) => {
+    const rk = RISCO_IMP[chaveFoto(p.nome)];
+    return (rk && p.conc) ? { p, rk, idx } : null;
+  }).filter(Boolean);
+  /* mais largo que `pares`: entra quem tem risco mas ainda não tem conceito
+     final (sem nota do gestor neste ciclo) — a listinha é "todo mundo da
+     planilha de risco", a matriz em cima só desenha quem tem os dois eixos */
+  const todosRk = P.map((p, idx) => {
+    const rk = RISCO_IMP[chaveFoto(p.nome)];
+    return rk ? { p, rk, idx } : null;
+  }).filter(Boolean);
+
+  if (!Object.keys(RISCO_IMP).length){
+    vazio.hidden = false; corpo.hidden = true;
+    vazio.textContent = 'Carregue a planilha de risco de saída ("Carregar risco de saída", faixa preta) ' +
+      'para ver esta matriz.';
+    return;
+  }
+  vazio.hidden = true; corpo.hidden = false;
+  $('#rkSub').textContent = pares.length + ' lideranças com risco de saída e conceito final, neste recorte.';
+
+  const nx = ORDEM_CONC.length, ny = RK_ORDEM.length;
+  const xBand = 100 / nx, yBand = 100 / ny;
+  const xCentro = ic => (ic + 0.5) * xBand;
+  const yCentro = ir => (ir + 0.5) * yBand;
+
+  let linhas = '';
+  for (let i = 1; i < nx; i++) linhas += '<div class="rkgl" style="left:' + (i * xBand) + '%;top:0;width:1px;height:100%"></div>';
+  for (let i = 1; i < ny; i++) linhas += '<div class="rkgl" style="top:' + (i * yBand) + '%;left:0;height:1px;width:100%"></div>';
+
+  const pontos = pares.map(({ p, rk, idx }) => {
+    const ic = ORDEM_CONC.indexOf(p.conc), ir = RK_ORDEM.indexOf(rk.gestor);
+    if (ic < 0 || ir < 0) return '';
+    const jx = rkJit(p.nome + '#' + idx + '|x'), jy = rkJit(p.nome + '#' + idx + '|y');
+    const x = Math.max(2, Math.min(98, xCentro(ic) + jx * xBand * 0.32));
+    const y = Math.max(2, Math.min(98, yCentro(ir) + jy * yBand * 0.30));
+    return '<span class="rkpt" data-i="' + P.indexOf(p) + '" style="left:' + x.toFixed(1) + '%;top:' +
+      y.toFixed(1) + '%">' + avatar(p, 'rkav') + '</span>';
+  }).join('');
+
+  $('#rkPlot').innerHTML = linhas +
+    '<div class="rkzone"><span>Prioridade de retenção</span></div>' + pontos;
+  $('#rkPlot').querySelectorAll('[data-i]').forEach(d => {
+    const p = P[+d.dataset.i];
+    d.addEventListener('click', () => abreCard(+d.dataset.i));
+    if (p) d.addEventListener('mouseenter', ev => mostraTipHtml(ev, dicaRisco(p)));
+    d.addEventListener('mouseleave', escondeTip);
+  });
+
+  $('#rkY').innerHTML = RK_ORDEM.map(r => '<div>Risco ' + r + '</div>').join('');
+  $('#rkX').innerHTML = ORDEM_CONC.map(c => '<div>' + esc(c) + '</div>').join('');
+  $('#rkLeg').innerHTML = '<span><i style="background:var(--nb-for)"></i>Seguro</span>' +
+    '<span><i style="background:var(--nb-ple)"></i>Observar</span>' +
+    '<span><i style="background:var(--nb-ins)"></i>Crítico</span>' +
+    '<span style="margin-left:auto;color:var(--gray-500);font-weight:500">' +
+    'eixo horizontal: conceito final · eixo vertical: risco de saída</span>';
+
+  /* enquadramento por risco: três quadros (Alto/Médio/Baixo), cada um com quem
+     está naquele risco, em ordem alfabética — mais largo que `pares`: entra
+     quem ainda não tem conceito final neste ciclo, com "sem conceito" */
+  $('#rkTodosSub').textContent = todosRk.length + (todosRk.length === 1 ? ' liderança' : ' lideranças');
+  $('#rkTodos').innerHTML = RK_ORDEM.map(r => {
+    const grupo = todosRk.filter(({ rk }) => rk.gestor === r).sort((a, b) => a.p.nome.localeCompare(b.p.nome));
+    if (!grupo.length) return '';
+    const chips = grupo.map(({ p }) =>
+      '<span class="rk-chip" data-i="' + P.indexOf(p) + '">' + avatar(p, 'rkchipav') +
+      esc(tc(p.nome)) + '</span>').join('');
+    return '<div class="rk-frame ' + RK_CLS[r] + '"><h5>Risco ' + r + ' · ' + grupo.length +
+      (grupo.length === 1 ? ' liderança' : ' lideranças') + '</h5>' +
+      '<div class="rk-frame-body">' + chips + '</div></div>';
+  }).join('');
+  $('#rkTodos').querySelectorAll('[data-i]').forEach(d => {
+    const p = P[+d.dataset.i];
+    if (p) d.addEventListener('mouseenter', ev => mostraTipHtml(ev, dicaRisco(p)));
+    d.addEventListener('mouseleave', escondeTip);
+  });
+}
+function dicaRisco(p){
+  const rk = RISCO_IMP[chaveFoto(p.nome)];
+  const linha = 'Conceito ' + (p.conc || '–') +
+    ' · risco pelo gestor ' + (rk ? rk.gestor : '–') +
+    ' · risco por P&C ' + (rk && rk.pc ? rk.pc : 'sem leitura');
+  return '<b>' + esc(tc(p.nome)) + '</b><span class="tl">' + esc(linha) + '</span>';
+}
+
+const RK_CLS = { Alto:'r-alto', 'Médio':'r-medio', Baixo:'r-baixo' };
+
+/* ---------- 10 · liderança executiva: diagnóstico para o conselho ----------
+   Não depende de `P`/planilha, igual ao ASSESS do painel 08: números fixos.
+   Nome oficial do instrumento é "Assessment de Liderança 2026" — "360" nunca
+   aparece no texto do painel, só nos nomes de arquivo originais (era erro de
+   nomenclatura minha, corrigido a pedido do usuário em 23/09/2026). Fonte:
+   `Analise_360_Heads_2026.docx` (dossiê completo, por head — Comitê
+   Executivo) e sua síntese `analise_conclusiva_360_2026.html`, cruzados com
+   a Pesquisa de Clima 2026, dimensão "Liderança Imediata". Só os padrões
+   comuns a mais de um head entram aqui — o ranking nomeado e o heatmap de
+   competência por head dos documentos originais ficaram de fora, a pedido
+   do usuário: isso é "assessment individual", que já existe de outra forma
+   no painel 08 e no nine-box da página 3. */
+const LID360 = {
+  sub: '8 heads · Comitê Executivo · Assessment de Liderança 2026',
+  fonteLinha: 'Fonte: Assessment de Liderança 2026 (Comitê Executivo) × Pesquisa de Clima 2026, ' +
+    'dimensão Liderança Imediata. Setembro de 2026.',
+  headline: 'Liderança consistente, com 2 padrões estruturais para pauta do comitê, não individuais.',
+  /* comparação pedida pelo usuário: parâmetro passa a ser a liderança
+     GERAL (ASSESS.lid, painel 08, ~40 líderes avaliados pelo time), não só
+     o grupo de heads entre si. `headsComp` são as médias dos heads por
+     competência (mesma ordem de ASSESS.valores), lidas do dossiê de
+     assessment dos heads. O card compara isso com ASSESS.lid[i] e classifica
+     acima/abaixo — cálculo acontece em renderLideranca360(), não aqui, pra
+     não duplicar os números de ASSESS à mão. */
+  headsComp: [4.43, 4.11, 4.39, 4.45, 4.37, 4.61],
+  /* o quali é o que dá o tom: a nota embasa, o comentário aberto explica.
+     Só entra onde há tema documentado nos comentários abertos do dossiê
+     (Analise_360_Heads_2026.docx) — sem inventar leitura para competência
+     sem sinal qualitativo próprio (caso de Inovar para Liderar, cujo +0,02
+     já é quase ruído). Chave é o nome exato de ASSESS.valores. */
+  qualPorCompetencia: {
+    'Melhor e Mais longe com Dados': [
+      'Forte em quase todo o grupo, não é média puxada por poucos.',
+      'Não falta decisão com dados. Falta virar desenvolvimento do time.'
+    ],
+    'Inovar para Liderar': [
+      'Diferença de +0,02 é ruído, não sinal.',
+      'Nenhum tema qualitativo recorrente aqui.'
+    ],
+    'Sede por Resultados': [
+      'Pergunta mais fraca do assessment em 5 dos 8 heads: "ajuda a construir plano de desenvolvimento".',
+      'Competência mais citada como oportunidade individual nos comentários abertos.',
+      'Padrão real. Não é recorte estatístico.'
+    ],
+    'Ser Dono': [
+      'Dois heads, mesma tensão, direções opostas: um evita cobrança e exposição do time.',
+      'O outro fiscaliza sem construir coletivamente.',
+      'O papel esperado da liderança sênior não está claro.'
+    ]
+  },
+  /* "pontuar tudo que temos": lista curta do que entrou na conta, uma
+     linha por fonte — não parágrafo, não caixa, só bullet */
+  fontes: [
+    '<b>Assessment de Liderança 2026, pontuação:</b> notas por competência, autoavaliação e avaliação pelo time.',
+    '<b>Assessment de Liderança 2026, qualitativo:</b> comentários abertos, pontos fortes e de oportunidade.',
+    '<b>Pesquisa de Clima 2026, Liderança Imediata:</b> e-NPS e favorabilidade, usada como confirmação cruzada.',
+    '<b>Avaliação do ciclo (AVD):</b> não entra aqui, é outra população e outra régua, nos painéis 1 a 9 desta aba.'
+  ]
+};
+function renderLideranca360(){
+  const L = LID360;
+  $('#lidSub').textContent = L.sub;
+  $('#lidFonteLinha').textContent = L.fonteLinha;
+  $('#lidDiagnostico').textContent = L.headline;
+
+  /* heads vs. liderança geral, por competência: só vira card quando a
+     diferença é real (≥ 0,01) — abaixo disso é empate, não sinal */
+  const linhas = L.headsComp.map((v, i) => {
+    const geral = ASSESS.lid[i];
+    return { nome: ASSESS.valores[i], heads: v, geral, diff: v - geral };
+  });
+  const cardHtml = l => {
+    const sev = l.diff > 0 ? 'sev-positivo' : 'sev-alerta';
+    const sinal = l.diff > 0 ? '+' : '−';
+    const qual = L.qualPorCompetencia[l.nome] || [];
+    return '<div class="lid-pcard ' + sev + '"><h6>' + esc(l.nome) + '</h6>' +
+      '<div class="lid-pcard-cols">' +
+        '<div class="lid-pcard-nota">' +
+          '<div class="n"><b>' + nf2(l.heads) + '</b><span>heads</span></div>' +
+          '<div class="n"><b>' + nf2(l.geral) + '</b><span>liderança geral</span></div>' +
+          '<div class="diffn">' + sinal + nf2(Math.abs(l.diff)) + '</div>' +
+        '</div>' +
+        '<ul class="lid-pcard-qual">' + qual.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul>' +
+      '</div></div>';
+  };
+  const fortes = linhas.filter(l => l.diff >= 0.01).sort((a, b) => b.diff - a.diff);
+  const atencao = linhas.filter(l => l.diff <= -0.01).sort((a, b) => a.diff - b.diff);
+  $('#lidPadroes').innerHTML =
+    (fortes.length ? '<div class="lid-grp sev-positivo">Pontos fortes</div>' +
+      '<div class="lid-cardgrid">' + fortes.map(cardHtml).join('') + '</div>' : '') +
+    (atencao.length ? '<div class="lid-grp sev-alerta">Pontos de atenção</div>' +
+      '<div class="lid-cardgrid">' + atencao.map(cardHtml).join('') + '</div>' : '');
+
+  $('#lidFontes').innerHTML = L.fontes.map(f => '<li>' + f + '</li>').join('');
+}
 
 /* ---------- boot ---------- */
 let ARQ_NOME = '';
