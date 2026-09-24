@@ -1529,9 +1529,8 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
        [[avd-comentarios-lider-liderado]]) pode ser recolocado.
        ====================================================================== -->
   <div class="panel">
-    <div class="phd"><span class="pn">10</span><span class="pt">Liderança executiva</span></div>
+    <div class="phd"><span class="pn">10</span><span class="pt">Liderança Yandeh</span></div>
 
-    <div class="lid-sec">Temas mais citados nos comentários qualitativos, 42 lideranças</div>
     <div id="lidPadroesGeral"></div>
 
     <div class="lid-src-wrap">
@@ -5082,52 +5081,78 @@ const RK_CLS = { Alto:'r-alto', 'Médio':'r-medio', Baixo:'r-baixo' };
    mais fraco, também sob a ótica de quem é liderado, não só nos
    comentários abertos. Entrou como bullet no card "Ampliar protagonismo
    do time" — o mais próximo tematicamente, sem forçar equivalência com
-   "gestão de prioridades". */
+   "gestão de prioridades".
+
+   FUSÃO "Ampliar protagonismo do time" + "Delegação" (24/09/2026, mesmo
+   dia, a pedido do usuário: "não dá pra juntar delegação junto com
+   protagonismo do time?"). Os parágrafos acima documentam os dois como
+   temas separados porque foi assim que a leitura original das 42 abas os
+   contou — mas são a mesma direção (menos concentração de decisão na
+   liderança), e viraram um card só, "Delegar mais decisões ao time" (ver
+   comentário ao lado da entrada em `LID_GERAL_QUALI.oport`, logo abaixo). */
 const LID_GERAL_QUALI = {
   totalFortes: 175, totalOport: 192,
   fortes: [
     { tema:'Confiança e autonomia dadas ao time', n:28, de:175, bullets:[
-      'Tema isolado mais citado entre os pontos fortes — quase 1 em cada 6 comentários.',
-      'É o motivo mais repetido para o time descrever segurança para decidir sozinho.'
+      'Time decide sem necessidade de validação prévia da liderança.'
     ]},
     { tema:'Comunicação clara', n:20, de:175, bullets:[
-      'Feedback direto e transparência aparecem juntos na maioria desses relatos.'
+      'Feedback direto e transparência marcam a relação entre liderança e time.'
     ]},
     { tema:'Proximidade e acessibilidade', n:18, de:175, bullets:[
-      'Liderança disponível para o time, sem formalidade excessiva no dia a dia.'
+      'Liderança acessível no dia a dia, sem barreiras hierárquicas para o time.'
     ]}
   ],
   /* ordem manual pedida pelo usuário pro grid fixo 3×2 do painel 10
      ("Gestão de Prioridade; Ampliar protagonismo; o outro" / "Feedback;
-     Evoluir; o outro") — não é mais por frequência (`n`) decrescente. */
+     Evoluir; o outro") — não é mais por frequência (`n`) decrescente.
+
+     Texto reescrito em 24/09/2026 a pedido do usuário: "esses termos 'De
+     longe o mais citado' nada a ver, é pra um conselho executivo" — critério
+     acordado antes de alterar (ver AskUserQuestion da mesma rodada): cortar
+     hedges ("de longe", "quase 1 em cada X", "na maioria", "bastante").
+
+     Reescrito de novo no mesmo dia, a pedido do usuário: "foca mais em
+     evidências e menos em recorrências". A % de quantos comentários citam
+     o tema já aparece em destaque no número grande do próprio card — não
+     precisa ser repetida em texto ("tema mais citado, com X%"). Cada bullet
+     agora abre com o COMPORTAMENTO ou o FATO que a evidência aponta (o que
+     o time relata, o que a liderança faz ou deixa de fazer), e os
+     cruzamentos com AVD/Clima viram confirmação direta do mesmo padrão —
+     sem repetir quantos comentários também citam aquilo, que é recorrência,
+     não evidência nova. */
   oport: [
     { tema:'Gestão de prioridades', n:49, de:192, bullets:[
-      'De longe o mais citado — 1 em cada 4 comentários de oportunidade.',
-      'Mesmo tema mais fraco identificado nos Heads (Sede por Resultados): padrão real, não recorte de população pequena.',
-      'Confirmado numa fonte independente: também o mais citado nos comentários do ciclo AVD sobre 23 desses líderes (14 de 46, 30%), escritos pelo chefe deles, não pelo time.'
-    ]},
-    { tema:'Ampliar protagonismo do time', n:23, de:192, bullets:[
-      'Pedido recorrente de mais espaço de decisão para o time, não de mais acompanhamento.',
-      'Autonomia do time aparece com o mesmo peso nos comentários do ciclo AVD sobre 23 desses líderes (12 de 46, 26%).',
-      'Na Pesquisa de Clima 2026, a pergunta mais fraca entre 29 desses líderes é sobre apoio ao PDI e ao ' +
-        'desenvolvimento de carreira (78,3% de favorabilidade, a menor das 8 de Liderança Imediata) — mesma ' +
-        'direção: o time pede mais investimento da liderança no crescimento das pessoas.'
+      'Time relata dificuldade da liderança em priorizar demandas no dia a dia.',
+      'Avaliação do gestor imediato no ciclo AVD aponta o mesmo padrão nesses líderes.'
     ]},
     { tema:'Comunicação, como oportunidade', n:28, de:192, bullets:[
-      'O mesmo traço que aparece como força em 20 relatos aparece como oportunidade em 28 outros.',
-      'Não é uniforme: a experiência de comunicação varia bastante de time para time.'
+      'Mesmo traço citado como força também aparece como oportunidade, a depender do time.',
+      'Indica variação relevante na experiência de comunicação conforme a liderança direta.'
+    ]},
+    /* "Ampliar protagonismo do time" (23/192) e "Delegação" (13/192) fundidos
+       em 24/09/2026 a pedido do usuário ("não dá pra juntar delegação junto
+       com protagonismo do time?") — são a mesma direção: menos concentração
+       de decisão na liderança, mais espaço para o time decidir. n somado
+       (23+13=36, 19% de 192) é uma aproximação, não uma contagem verificada
+       livre de sobreposição — os dois temas foram contados separadamente na
+       leitura original das 42 abas, e não dá pra garantir que nenhum
+       comentário citava os dois ao mesmo tempo sem reabrir o texto bruto
+       célula a célula. Aceitável aqui porque a granularidade da contagem já
+       era aproximada desde a origem (tema recorrente por leitura, não por
+       marcação exata no texto-fonte). */
+    { tema:'Delegar mais decisões ao time', n:36, de:192, bullets:[
+      'Time pede mais espaço de decisão, não mais controle da liderança.',
+      'Avaliação do gestor no ciclo AVD reforça a mesma leitura de autonomia limitada.',
+      'Pesquisa de Clima 2026 aponta menor favorabilidade em apoio ao desenvolvimento de carreira do time.'
     ]},
     { tema:'Feedback mais estruturado', n:19, de:192, bullets:[
-      'Pedido de rotina de feedback, não só de conversa pontual quando surge um problema.',
-      'Mesmo tema nos comentários do ciclo AVD sobre 23 desses líderes (6 de 46, 13%).'
+      'Time pede rotina de feedback, não apenas conversas pontuais diante de problemas.',
+      'Avaliação do gestor no ciclo AVD reforça a mesma leitura.'
     ]},
     { tema:'Evoluir de atuação operacional para estratégica', n:23, de:192, bullets:[
-      'Mesma tensão vista nos Heads: tempo dividido entre execução direta e direcionamento de médio prazo.',
-      'Também recorrente nos comentários do ciclo AVD sobre 23 desses líderes (9 de 46, 20%).'
-    ]},
-    { tema:'Delegação', n:13, de:192, bullets:[
-      'Menos citado que protagonismo, mas na mesma direção: menos concentração de decisão na liderança.',
-      'Mesmo tema nos comentários do ciclo AVD sobre 23 desses líderes (6 de 46, 13%).'
+      'Liderança ainda concentra tempo em execução direta, não em direcionamento de médio prazo.',
+      'Mesma tensão observada nos Heads e na avaliação do gestor no ciclo AVD.'
     ]}
   ]
 };
@@ -5135,16 +5160,15 @@ function renderLiderancaGeral(){
   const Q = LID_GERAL_QUALI;
 
   $('#lidFonteLinha').textContent = 'Fonte: Assessment de Liderança 2026 (42 lideranças) × Avaliação do ciclo (AVD), Líder > Liderado × Pesquisa de Clima 2026, Liderança Imediata. Setembro de 2026.';
+  /* Lista de fontes enxuta a pedido do usuário ("deixa só tipo Assessment de
+     Liderança / Avaliação do Ciclo / Pesquisa de Clima") — a descrição de
+     cada uma (o quê, quantas pessoas casaram, como foi cruzado) já está no
+     comentário do bloco `LID_GERAL_QUALI`, não precisa repetir na tela. */
   $('#lidFontes').innerHTML = [
-    '<b>Assessment de Liderança 2026, qualitativo:</b> comentários abertos de pontos fortes e de oportunidade, ' +
-      'contados por tema recorrente nas 42 abas individuais.',
-    '<b>Avaliação do ciclo (AVD), comentários Líder &gt; Liderado:</b> usada como confirmação cruzada — 23 dos 42 líderes ' +
-      'também são avaliados no ciclo AVD regular, pelo próprio chefe (não pelo time); os mesmos temas aparecem nos ' +
-      'comentários de entregas e de valores dessas 23 pessoas.',
-    '<b>Pesquisa de Clima 2026, dimensão Liderança Imediata:</b> usada como confirmação cruzada — 38 dos 42 líderes ' +
-      'aparecem na aba "Liderança1" do planilhão, 29 com volume suficiente para calcular a dimensão; a pergunta com ' +
-      'menor favorabilidade entre elas é sobre apoio ao desenvolvimento de carreira do time.'
-  ].map(f => '<li>' + f + '</li>').join('');
+    'Assessment de Liderança',
+    'Avaliação do Ciclo',
+    'Pesquisa de Clima'
+  ].map(f => '<li><b>' + f + '</b></li>').join('');
 
   const cardHtml = (t, sev) => {
     const pct = Math.round(t.n / t.de * 100);
