@@ -421,14 +421,15 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .rkpt{position:absolute;transform:translate(-50%,-50%);cursor:pointer;transition:transform .12s;z-index:2}
 .rkpt:hover{transform:translate(-50%,-50%) scale(1.4);z-index:9}
 .av.rkav{width:27px;height:27px;font-size:9.5px}
-/* enquadramento por risco: três quadros (Alto/Médio/Baixo), cada um com quem
-   está naquele risco — só leitura, sem clique. Passar o mouse no chip mostra
-   o mesmo tooltip da bolota (conceito, risco pelo gestor e por P&C) */
+/* enquadramento por risco: três blocos empilhados (Alto/Médio/Baixo), cada um
+   com quem está naquele risco em cards de 2 por linha — só leitura, sem
+   clique. Cada card já mostra o risco pelo gestor e por P&C direto, sem
+   precisar do hover; o hover continua mostrando o conceito final também. */
 .rk-all-box{margin-top:16px}
 .rk-all-box h4{font-size:11px;font-weight:700;color:var(--gray-700);text-transform:uppercase;
   letter-spacing:.5px;margin-bottom:9px}
 .rk-all-box h4 span{text-transform:none;font-weight:500;color:var(--gray-500);letter-spacing:0}
-.rk-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rk-frames{display:grid;gap:16px}
 .rk-frame{border-radius:10px;padding:12px 14px}
 .rk-frame.r-alto{background:var(--nb-ins)}
 .rk-frame.r-medio{background:var(--nb-ple)}
@@ -437,10 +438,16 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .rk-frame.r-alto h5{color:var(--nb-ins-ink)}
 .rk-frame.r-medio h5{color:var(--nb-ple-ink)}
 .rk-frame.r-baixo h5{color:var(--nb-for-ink)}
-.rk-frame-body{display:flex;flex-wrap:wrap;gap:7px}
-.rk-chip{display:inline-flex;align-items:center;gap:6px;background:var(--card-bg);border-radius:20px;
-  padding:3px 11px 3px 3px;font-size:11.5px;font-weight:600;color:var(--gray-900)}
-.av.rkchipav{width:22px;height:22px;font-size:8.5px}
+/* dois cards por linha, a pedido do usuário */
+.rk-cards{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:560px){ .rk-cards{grid-template-columns:1fr} }
+.rk-card{display:flex;align-items:center;gap:11px;background:var(--card-bg);border-radius:10px;padding:9px 13px}
+.av.rkcardav{width:36px;height:36px;font-size:12px;flex:none}
+.rk-card-info{min-width:0}
+.rk-card-name{font-size:12.5px;font-weight:600;color:var(--gray-900);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.rk-card-riscos{display:flex;gap:13px;margin-top:3px;font-size:10.5px;color:var(--gray-700)}
+.rk-card-riscos b{color:var(--gray-900);font-weight:700}
 
 /* ---------- 10 · liderança ----------
    Panorama saiu (rodada seguinte): o espaço que ele ocupava vai para os
@@ -452,35 +459,53 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
   letter-spacing:.6px;padding-bottom:7px;margin:20px 0 9px;border-bottom:1px solid var(--gray-100)}
 .lid-sec:first-of-type{margin-top:0}
 
-/* competência dos heads vs. liderança geral (ASSESS.lid, painel 08): cards
-   por competência, só as duas com sinal de verdade (diferença ≥ 0,01) —
-   as que empatam viram nota de rodapé, não card sem sentido nenhum */
+/* agrupamento dos cards de tema (Pontos fortes / Pontos de atenção),
+   painel 10 · Lideranças Gerais */
 .lid-grp{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
   padding-bottom:6px;margin:14px 0 9px;border-bottom:2px solid}
 .lid-grp:first-child{margin-top:0}
 .lid-grp.sev-positivo{color:var(--nb-for-ink);border-color:var(--nb-for-ink)}
 .lid-grp.sev-alerta{color:var(--nb-ins-ink);border-color:var(--nb-ins-ink)}
-/* dois cards por linha em vez de "auto-fit": em duas colunas internas
-   (nota | quali), cartão estreito demais espreme o texto todo numa coluna
-   fina */
-.lid-cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-@media(max-width:760px){ .lid-cardgrid{grid-template-columns:1fr} }
+/* Nem grid de linhas (card curto esticava ou desalinhava com o vizinho —
+   "ficou torto") nem coluna nativa do CSS (`column-count`, bagunçava a
+   ordem de leitura). N colunas explícitas (`N_COLUNAS` em
+   `renderLiderancaGeral`, hoje 3): o JS (`distribuiEmColunas`) decide o
+   conteúdo de cada `.lid-cardcol` de antemão, colocando o card maior no
+   topo da coluna mais vazia e empilhando os menores embaixo dela,
+   balanceando pelo total de texto. Foram 2 colunas largas a princípio
+   ("deixa um maior de cada lado..."), depois o usuário pediu pra deixar
+   "o card todo verticalizado" — não só o conteúdo interno (que já tinha
+   virado empilhado), o formato do card em si: mais colunas mais finas dá
+   isso, cada card fica mais alto e estreito, sem mexer no
+   `.lid-pcard-cols`. */
+.lid-cardgrid{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
+.lid-cardcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:12px}
+@media(max-width:760px){ .lid-cardgrid{flex-direction:column} }
 .lid-pcard{border-radius:10px;padding:13px 15px}
 .lid-pcard.sev-positivo{background:var(--nb-for);color:var(--nb-for-ink)}
 .lid-pcard.sev-alerta{background:var(--nb-ins);color:var(--nb-ins-ink)}
 .lid-pcard h6{font-size:12.5px;font-weight:700;line-height:1.3;margin-bottom:9px}
-/* nota | quali lado a lado, a pedido do usuário — nota fica numa coluna
-   estreita fixa, o quali ocupa o resto e é quem dá o tom do card */
-.lid-pcard-cols{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:start}
-.lid-pcard-nota{display:flex;flex-direction:column;gap:7px}
-.lid-pcard-nota .n{font-size:9.5px;line-height:1.25}
-.lid-pcard-nota .n b{display:block;font-size:16px;font-weight:700;line-height:1.15}
-.lid-pcard-nota .n span{opacity:.75}
-.lid-pcard-nota .diffn{font-size:11.5px;font-weight:700;padding-top:5px;border-top:1px solid rgba(0,0,0,.15)}
+/* nota em cima, quali embaixo — verticalizado a pedido do usuário ("cards
+   mais verticalizados ao invés de horizontais"). Antes era nota numa coluna
+   estreita fixa ao lado do quali; a vantagem de virar vertical é o quali
+   ganhar a largura inteira do card pra quebrar linha, em vez de espremer
+   nos ~180px que sobravam ao lado da nota — ajuda justamente os bullets
+   mais longos (como o cruzamento com o Clima) a não empurrar o card muito
+   mais alto que os vizinhos. */
+.lid-pcard-cols{display:flex;flex-direction:column;gap:10px}
+/* número em destaque + rótulo na mesma linha da observação (N de M),
+   separados por uma linha embaixo — a observação continua pequena, só que
+   agora ao lado em vez de embaixo, a pedido do usuário, "é legal deixar
+   esse obs pequeninho" */
+.lid-pcard-nota{display:flex;align-items:baseline;gap:10px;padding-bottom:8px;
+  border-bottom:1px solid rgba(0,0,0,.15)}
+.lid-pcard-nota .n-heads{display:flex;align-items:baseline;gap:6px}
+.lid-pcard-nota .n-heads b{font-size:22px;font-weight:700;line-height:1}
+.lid-pcard-nota .n-heads span{font-size:9.5px;opacity:.75}
+.lid-pcard-nota .obs{font-size:9px;line-height:1.35;opacity:.7;margin-left:auto;text-align:right}
 /* quali virou bullet assertivo, não parágrafo — uma frase por linha,
    quadrado pequeno no lugar de hífen (regra de lista do resto do material) */
-.lid-pcard-qual{list-style:none;font-size:12.5px;line-height:1.4;border-left:1px solid rgba(0,0,0,.15);
-  padding-left:13px;display:grid;gap:7px}
+.lid-pcard-qual{list-style:none;font-size:12.5px;line-height:1.4;display:grid;gap:7px}
 .lid-pcard-qual li{position:relative;padding-left:12px}
 .lid-pcard-qual li::before{content:'';position:absolute;left:0;top:5px;width:5px;height:5px;
   border-radius:1px;background:currentColor;opacity:.6}
@@ -495,6 +520,17 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .lid-src li::before{content:'';position:absolute;left:0;top:6px;width:6px;height:6px;border-radius:50%;
   background:var(--gray-300)}
 .lid-src li b{color:var(--gray-900);font-weight:600}
+
+/* .lid-tabs (botão Lideranças Gerais/Heads) removida em 24/09/2026 — regras
+   guardadas em AVD_Painel10_Heads_backup.md, mesma pasta do relatório. */
+
+/* Lideranças Gerais reaproveita as classes de card dos Heads (`.lid-pcard`,
+   `.lid-pcard-cols`, `.lid-pcard-nota`, `.lid-pcard-qual`, `.lid-grp`) sem
+   nenhuma classe própria — "consolida quali com quanti, pra ficar parecido
+   com o de heads" foi pedido explícito, e ter um segundo conjunto de
+   classes quase idêntico seria o oposto de "parecido". Só o conteúdo muda
+   (tema recorrente em vez de competência, % de comentários em vez de nota
+   1–5) — ver `renderLiderancaGeral`. */
 
 /* ---------- avatares: foto quando existe, iniciais quando não ---------- */
 .dots.fluxo{display:flex;flex-wrap:wrap;align-content:flex-start;gap:3px}
@@ -598,6 +634,16 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .rklg{display:flex;flex-wrap:wrap;gap:7px 15px;align-items:center;margin-top:14px;font-size:11px;color:var(--gray-700)}
 .rklg span{display:inline-flex;align-items:center;gap:6px;font-weight:600}
 .rklg i{width:11px;height:11px;border-radius:3px}
+/* glossário dos 3 níveis de risco (Alto/Médio/Baixo) — a pedido do usuário,
+   "abaixo da matriz e antes dos nomes" */
+.rk-conceitos{margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-100)}
+.rk-conceitos h5{font-size:10.5px;font-weight:700;color:var(--gray-500);text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:9px}
+.rk-conceitos ul{list-style:none;display:grid;gap:7px}
+.rk-conceitos li{position:relative;padding-left:15px;font-size:12px;line-height:1.45;color:var(--gray-700)}
+.rk-conceitos li::before{content:'';position:absolute;left:0;top:6px;width:6px;height:6px;
+  border-radius:50%;background:var(--gray-300)}
+.rk-conceitos li b{color:var(--gray-900);font-weight:600}
 
 /* campo de busca solto no cabeçalho do painel: alcança os 234, não só os 61 */
 .busca{flex:0 1 240px;min-width:158px}
@@ -825,13 +871,13 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
       Carregar fotos
     </label>
     <label>
-      <input type="file" id="impRisco" accept=".xlsx,.xls" hidden>
-      Carregar risco de saída
+      <input type="file" id="impComents" accept=".xlsx,.xls" hidden>
+      Carregar comentários
     </label>
     <button class="imp-lim" type="button" id="impTemplate">Baixar modelo</button>
     <button class="imp-lim" type="button" id="impCols" hidden>Conferir colunas</button>
     <button class="imp-lim" type="button" id="impFotosRel" hidden>Conferir fotos</button>
-    <button class="imp-lim" type="button" id="impRiscoRel" hidden>Conferir risco</button>
+    <button class="imp-lim" type="button" id="impComentsRel" hidden>Conferir comentários</button>
     <button class="imp-lim" type="button" id="impLimpar" hidden>Limpar</button>
   </div>
   <span class="imp-s" id="impStatus">nenhuma planilha carregada</span>
@@ -1424,12 +1470,10 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
   <!-- ======================================================================
        09 · MATRIZ DE RISCO DE SAÍDA
        Cruza o conceito final (desempenho, já decidido pela régua oficial) com
-       o risco de saída voluntária que o gestor enxerga. Não vem da planilha
-       base: é uma segunda planilha, só de lideranças ("Risco de Saída H2
-       2026", aba "Resumo" — Nome / Risco Gestor / Risco P&C), carregada à
-       parte pelo botão "Carregar risco de saída" e casada por nome, do mesmo
-       jeito que as fotos — fica só em memória nesta sessão de tela, nunca no
-       sessionStorage: é avaliação real de gente real.
+       o risco de saída voluntária que o gestor (e, em segundo plano, P&C)
+       enxerga. Vem da própria planilha base, colunas RISCO GESTOR / RISCO
+       P&C (ver IMP_COLS) — unificado ali em 23/09/2026, junto com as demais
+       colunas de talent. Ver [[avd-matriz-risco-saida]].
        ====================================================================== -->
   <div class="panel">
     <div class="phd"><span class="pn">09</span><span class="pt">Matriz de risco de saída</span>
@@ -1442,6 +1486,7 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
         <div class="rkx" id="rkX"></div>
       </div>
       <div class="rklg" id="rkLeg"></div>
+      <div class="rk-conceitos" id="rkConceitos"></div>
       <div class="rk-all-box">
         <h4>Todas as lideranças · <span id="rkTodosSub"></span></h4>
         <div class="rk-frames" id="rkTodos"></div>
@@ -1451,29 +1496,43 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 
   <!-- ======================================================================
        10 · LIDERANÇA EXECUTIVA: DIAGNÓSTICO PARA O CONSELHO
-       Fonte real: "Assessment de Liderança 2026 · Comitê Executivo" — nome
-       oficial do instrumento (não "360": esse termo saiu do relatório a
-       pedido do usuário, era nomenclatura errada). Dois documentos, mesma
-       aplicação, oito heads/diretoria: `Analise_360_Heads_2026.docx` (o
-       dossiê completo, por head) e `analise_conclusiva_360_2026.html`
-       (a síntese da qual este painel deriva). Cruza com a Pesquisa de Clima
-       2026, dimensão "Liderança Imediata", quando o corte existe.
-       Números fixos em `LID360`, como `ASSESS`: não vêm de planilha.
-       De propósito ficaram de fora: o ranking nomeado por head e o heatmap de
-       competência por head dos documentos originais — isso é o "assessment
-       individual" que já existe, de outra forma, no painel 08 e no nine-box.
-       Aqui entra só o que é comum a mais de um head (padrão estrutural) e o
-       diagnóstico agregado que um conselho precisa, não crítica a uma
-       liderança específica.
+       Até 24/09/2026 tinha duas abas (Lideranças Gerais / Heads, alternadas
+       por botão). O usuário pediu pra tirar o botão e o "textinho de
+       introdução" (`#lidSub`) e deixar só Lideranças Gerais — a aba Heads
+       (`LID360`, `renderLideranca360`, `#lidTabs`) foi pro arquivo
+       `AVD_Painel10_Heads_backup.md`, na mesma pasta deste relatório, com o
+       passo a passo pra religar se precisar voltar.
+
+       Consolidado (24/09/2026) no mesmo formato de card que os Heads
+       tinham — nota grande + quali ao lado (`.lid-pcard-cols`), agrupado em
+       "Pontos fortes" / "Pontos de atenção" — a pedido do usuário: "consolida
+       o quali com o quanti, pra ficar parecido com o de heads". Cada card é
+       um TEMA recorrente, não uma competência: os 6 valores não fazem
+       sentido aqui porque a fonte do quali (ver abaixo) não abre comentário
+       por valor, só por pessoa. A "nota" de cada card é a fração de
+       comentários que citam aquele tema — o quanti — e o quali é a
+       descrição curta do que esse tema significa na prática, fundamentada
+       em exemplos reais lidos das 42 abas, não invenção solta.
+       Fonte: `Assessment_Lideranca_2026_ajustado (1).xlsx`, bloco
+       "COMENTÁRIOS QUALITATIVOS" das 42 abas individuais (mesma fonte dos
+       38 nomes já embutidos em `COMENTARIOS`, página 3) — 175 comentários
+       de "pontos fortes" e 192 de "pontos de oportunidade", contados por
+       tema recorrente.
+
+       SEM PARÁGRAFO DE DIAGNÓSTICO (removido a pedido do usuário em
+       24/09/2026 — só os cards ficam). Ele cruzava o achado do quali com o
+       gap autoavaliação × liderados de `ASSESS` (painel 08); esse cálculo
+       saiu de `renderLiderancaGeral` junto com o texto, então hoje o painel
+       não lê mais `ASSESS.auto`/`ASSESS.lid` — só `ASSESS.nLideres`
+       aparecia no `#lidSub`, que também já tinha saído antes. Se o
+       parágrafo voltar, o cálculo do gap (comentado no histórico de
+       [[avd-comentarios-lider-liderado]]) pode ser recolocado.
        ====================================================================== -->
   <div class="panel">
-    <div class="phd"><span class="pn">10</span><span class="pt">Liderança executiva</span>
-      <span class="ps" id="lidSub"></span></div>
+    <div class="phd"><span class="pn">10</span><span class="pt">Liderança executiva</span></div>
 
-    <p class="lid-headline" id="lidDiagnostico"></p>
-
-    <div class="lid-sec">Competências dos heads vs. liderança geral</div>
-    <div id="lidPadroes"></div>
+    <div class="lid-sec">Temas mais citados nos comentários qualitativos, 42 lideranças</div>
+    <div id="lidPadroesGeral"></div>
 
     <div class="lid-src-wrap">
       <h5>Fontes consideradas</h5>
@@ -1650,8 +1709,12 @@ const NIVEIS_OFICIAIS = [
   /* analistas: "Analista" do CD e os três degraus do corporativo */
   'ANALISTA JR', 'ANALISTA PL', 'ANALISTA SR',
   'ESPECIALISTA', 'SUPERVISOR', 'COORDENADOR', 'GERENTE',
-  /* não estão na V0, mas existem na coluna CLASSIFICAÇÃO da aba ATIVOS */
-  'DIRETOR', 'CEO',
+  /* não estão na V0, mas existem na coluna CLASSIFICAÇÃO da aba ATIVOS.
+     HEAD estava faltando aqui (só existia em SENIOR/ORDEM_SENIOR), o que
+     tirava o cargo da lista de chips de filtro da página 3 — o filtro de
+     cargo nunca mostrava um botão "Head" porque os chips nascem de
+     `nivPresentes = NIVEIS_OFICIAIS.filter(...)`, não de SENIOR. */
+  'HEAD', 'DIRETOR', 'CEO',
   'NAO INFORMADO'
 ];
 function canonizaBase(base){
@@ -3134,7 +3197,7 @@ function renderPagina2(){
 
   renderAssessment();
   renderRiscoMatriz();
-  renderLideranca360();
+  renderLiderancaGeral();
 }
 
 /* ---------- 08 · assessment de liderança ----------
@@ -3683,7 +3746,9 @@ function card(p, idx){
         dado('Empresa', p.emp === 'YANDEH S.A' ? 'Yandeh S.A.' : tc(p.emp)) +
         dado('Business unit', tc(p.bu)) + dado('Área', tc(p.area)) + dado('Cargo', tc(p.cargo)) +
         dado('Agrupamento', nomeNivel(p.nivel)) + dado('Liderança', tc(p.lider)) +
-        dado('Tempo de casa', tempoCasa(p.adm)) + '</div>' +
+        dado('Tempo de casa', tempoCasa(p.adm)) +
+        dado('Última movimentação', [p.movTipo, p.movData].filter(Boolean).join(' · ')) +
+        dado('% na faixa salarial', p.faixaPct) + '</div>' +
       /* O card não mostra o de-para da calibragem: o que interessa é a nota que
          vale, e ela já está no cabeçalho e na tabela de valores. A nota do
          gestor continua guardada em gEges/gVges — o dado não se perde, só não
@@ -3698,14 +3763,14 @@ function card(p, idx){
     '</div></div>';
 }
 
-/* O comentário vem de COMENTARIOS (editado à mão, lá em cima). Se a pessoa
-   não estiver lá, cai na anotação que veio da planilha de calibragem. O
+/* O comentário vem de COMENTARIOS (editado à mão, lá em cima) primeiro. Se a
+   pessoa não estiver lá, cai no que foi importado de "Carregar comentários"
+   (`COM_LIDER`, ver bloco COMENTÁRIOS LÍDER > LIDERADO perto do fim) — a
+   avaliação do líder sobre esse liderado, direto da planilha do ciclo. O
    bloco aparece mesmo vazio: o espaço reservado é o pedido. */
 function blocoComentario(p){
-  /* String(...) no calNota nao e zelo: o leitor converte essa coluna para
-     numero quando a celula e numerica, e ai o .trim() estouraria com TypeError,
-     derrubando a renderizacao de TODOS os cards de uma vez. */
-  const txt = (COMENTARIOS[chaveNome(p.nome)] || '').trim() || String(p.calNota ?? '').trim();
+  const hard = (COMENTARIOS[chaveNome(p.nome)] || '').trim();
+  const txt = hard || textoComLiderado(p);
   return '<div class="coment"><div class="coment-k">Comentário qualitativo</div>' +
     (txt ? '<div class="coment-t">' + esc(txt) + '</div>'
          : '<div class="coment-t vazio">ainda não registrado</div>') + '</div>';
@@ -3965,6 +4030,9 @@ function irPara(id, semScroll){
 }
 $$('nav button').forEach(b => b.addEventListener('click', () => irPara(b.dataset.p)));
 
+/* alterna Lideranças Gerais / Heads no painel 10. Botões são HTML estático
+   (não nascem de innerHTML a cada render), então o listener é ligado uma
+   vez só aqui — igual ao nav e ao brand-switch, não dentro de render nenhum. */
 let deb;
 $('#fBusca').addEventListener('input', e => {
   clearTimeout(deb);
@@ -4037,8 +4105,7 @@ const CAL = ['CALIBR'];
 let MAPA_COLS = [];
 try { MAPA_COLS = JSON.parse(sessionStorage.getItem('avd_mapa') || '[]'); } catch(e){}
 let DERIVADOS = 0, RECUSADOS = 0, AMOSTRA_RECUSA = '';
-let DIVERGENTES = 0, AMOSTRA_DIVERG = '';
-let CALIBRADOS = 0, CONC_COMITE = 0;
+let CALIBRADOS = 0;
 
 /* So passa o que e conceito de verdade. Texto qualquer na coluna CONCEITO nao
    vira aviso nem erro: vira uma categoria a mais na distribuicao e uma celula
@@ -4054,6 +4121,19 @@ function conceito(s){
   if (!AMOSTRA_RECUSA) AMOSTRA_RECUSA = String(s).trim();
   return '';
 }
+/* mesma ideia de `conceito()`, régua própria: RISCO GESTOR / RISCO P&C só
+   valem Alto, Médio ou Baixo — mas aceitam a célula vir com a frase inteira
+   ("Baixo risco: a pessoa está motivada..."), então a classificação é por
+   substring, não por igualdade exata. Usada em `leExcelBase` logo abaixo e
+   no painel 09 ([[avd-matriz-risco-saida]]). */
+function classificaRisco(txt){
+  const n = impNorm(txt);
+  if (!n) return null;
+  if (n.indexOf('ALTO') >= 0) return 'Alto';
+  if (n.indexOf('MEDIO') >= 0) return 'Médio';
+  if (n.indexOf('BAIXO') >= 0) return 'Baixo';
+  return null;
+}
 const IMP_COLS = [
   ['nome',    [{tem:['NOME'], nao:['NIVEL','GESTOR','LIDER','ARQUIVO']}, {tem:['COLABORADOR']}]],
   ['emp',     [{tem:['EMPRESA']}]],
@@ -4065,16 +4145,16 @@ const IMP_COLS = [
                {tem:['GESTOR'],    nao:['NOTA','ENTREGA','VALOR','CONCEITO','GEST.']}]],
   ['cargo',   [{tem:['CARGO']}]],
   ['nivel',   [{tem:['NIVEL']}, {tem:['AGRUPAMENTO']}]],
-  ['loc',     [{tem:['LOCALIZACAO']}, {tem:['CIDADE']}, {tem:['LOCAL']}]],
   ['adm',     [{tem:['ADMISSAO']}, {tem:['DATA DE ENTRADA']}]],
   /* ciclo anterior antes do atual: reserva as colunas com "ANTERIOR"/"ULT." */
   ['pC',      [{tem:['CONCEITO'], um:ANT, nao:CAL}]],
   ['pE',      [{tem:['ENTREGA'],  um:ANT, nao:CAL}]],
   ['pV',      [{tem:['VALORES'],  um:ANT, nao:CAL}]],
-  /* calibragem antes do atual, pelo mesmo motivo */
-  ['calDone', [{tem:['CALIBRAGEM'], nao:['CONCEITO','NOTA']}, {tem:['CALIBRADO?']}]],
-  ['calConc', [{tem:['CONCEITO'], um:CAL}]],
-  ['calNota', [{tem:['NOTA'],     um:CAL, nao:['ENTREGA','VALOR']}]],
+  /* calibragem antes do atual, pelo mesmo motivo. So ENTREGAS/VALORES
+     CALIBRADO sobrevivem aqui: CALIBRAGEM FEITA?, CONCEITO CALIBRADO e
+     NOTA FINAL CALIBRADA saíram da planilha em 23/09/2026, a pedido do
+     usuário ("vamos limpar um pouco do excel") — ver
+     [[avd-niveis-oficiais-e-movimentacao]] para o que cada uma fazia. */
   ['calE',    [{tem:['ENTREGA'],  um:CAL}]],
   ['calV',    [{tem:['VALOR'],    um:CAL}]],
   /* ciclo atual */
@@ -4082,10 +4162,26 @@ const IMP_COLS = [
   ['aV',      [{tem:['AUTO','VALOR'],   nao:CAL, semNum:true}]],
   ['gE',      [{tem:['ENTREGA'], um:['GESTOR','GEST.'], nao:['AUTO'].concat(CAL)}]],
   ['gV',      [{tem:['VALOR'],   um:['GESTOR','GEST.'], nao:['AUTO'].concat(CAL), semNum:true}]],
-  ['conc',    [{tem:['CONCEITO FINAL'], nao:CAL},
-               {tem:['CONCEITO'],       nao:CAL},
-               {tem:['NINE BOX']}, {tem:['QUADRANTE']}]],
-  ['plano',   [{tem:['PLANO']}, {tem:['ENCAMINHAMENTO']}, {tem:['ACAO'], nao:['PLANILHA']}]]
+  ['plano',   [{tem:['PLANO']}, {tem:['ENCAMINHAMENTO']}, {tem:['ACAO'], nao:['PLANILHA']}]],
+
+  /* ---------------------------------------------------------------------
+     TALENT: movimentação, faixa salarial e risco de saída. Três assuntos,
+     mesmo motivo pra estarem juntos aqui: os três vieram de planilhas à
+     parte que hoje foram unificadas nesta base única (histórico em
+     [[avd-niveis-oficiais-e-movimentacao]] e [[avd-matriz-risco-saida]]).
+     Nomes de coluna iguais aos que "Card Comitê.html" já usa, para as
+     planilhas continuarem compatíveis entre as duas ferramentas.
+     Nenhum dos seis passa por `conceito()`: são réguas próprias (texto
+     livre, ou Alto/Médio/Baixo via `classificaRisco`), não a régua de
+     Insuficiente…Excepcional.
+     --------------------------------------------------------------------- */
+  ['movTipo',    [{tem:['TIPO DE REAJUSTE']}, {tem:['TIPO DE MOVIMENTA']}, {tem:['TIPO MOVIMENTA']},
+                  {tem:['CLASSIFICACAO'], nao:['CONCEITO','FAIXA','RISCO']}]],
+  ['movData',    [{tem:['DATA DA MOVIMENTA']}, {tem:['DATA MOVIMENTA']},
+                  {tem:['DATA DO REAJUSTE']}, {tem:['DATA REAJUSTE']}]],
+  ['faixaPct',   [{tem:['POSICIONAMENTO NA FAIXA']}, {tem:['% NA FAIXA']}, {tem:['FAIXA']}, {tem:['COMPA']}]],
+  ['riscoGestor',[{tem:['RISCO'], um:['GESTOR']}]],
+  ['riscoPC',    [{tem:['RISCO'], nao:['GESTOR'], um:['P&C', 'P & C', 'PC', 'PESSOAS E CULTURA']}]]
 ];
 
 /* Plano de ação: texto livre, mas quatro palavras conhecidas ganham cor, para
@@ -4114,8 +4210,7 @@ function impNorm(s){
 
 function leExcelBase(buffer){
   DERIVADOS = 0; RECUSADOS = 0; AMOSTRA_RECUSA = '';
-  CALIBRADOS = 0; CONC_COMITE = 0;
-  DIVERGENTES = 0; AMOSTRA_DIVERG = '';
+  CALIBRADOS = 0;
   const wb = XLSX.read(buffer, { type:'array', cellDates:true });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:null });
@@ -4201,6 +4296,28 @@ function leExcelBase(buffer){
     }
     return String(v).trim();
   };
+  /* data da movimentação: mostrada direto no card, então já sai formatada
+     "dd/mm/aaaa" em vez de serial — diferente de `adm`, que ainda passa por
+     tempoCasa() e por isso precisa ficar em serial. */
+  const dataMov = v => {
+    if (v == null || v === '') return '';
+    const pad = n => (n < 10 ? '0' : '') + n;
+    if (v instanceof Date && !isNaN(v)) return pad(v.getDate()) + '/' + pad(v.getMonth()+1) + '/' + v.getFullYear();
+    if (typeof v === 'number' && v > 20000 && v < 80000){
+      const d = new Date(Date.UTC(1899,11,30)); d.setUTCDate(d.getUTCDate() + Math.round(v));
+      return pad(d.getUTCDate()) + '/' + pad(d.getUTCMonth()+1) + '/' + d.getUTCFullYear();
+    }
+    return String(v).trim();
+  };
+  /* percentual em texto: a planilha guarda como razão (0,08 = 8%) ou já em
+     percentual (8) — a mesma ambiguidade que Card Comitê.html resolve, aqui
+     com o mesmo critério: acima de 2 já está em percentual. */
+  const pctTxt = v => {
+    if (v == null || v === '') return '';
+    const n = parseFloat(String(v).replace('%','').replace(',','.'));
+    if (isNaN(n)) return String(v).trim();
+    return (Math.abs(n) <= 2 ? n * 100 : n).toFixed(1).replace('.', ',') + '%';
+  };
 
   const out = [];
   for (let i = hr + 1; i < rows.length; i++){
@@ -4212,22 +4329,20 @@ function leExcelBase(buffer){
     const p = {
       nome, emp: txt(r, idx.emp), bu: txt(r, idx.bu), area: txt(r, idx.area),
       lider: txt(r, idx.lider), cargo: txt(r, idx.cargo), nivel: txt(r, idx.nivel),
-      loc: txt(r, idx.loc), adm: serial(cel(r, idx.adm)),
+      adm: serial(cel(r, idx.adm)),
       pE: nota(r, idx.pE), pV: nota(r, idx.pV), pC: conceito(txt(r, idx.pC)),
       aE: nota(r, idx.aE), aV: nota(r, idx.aV), avals: iAuto.map(i2 => nota(r, i2)),
       gE: nota(r, idx.gE), gV: nota(r, idx.gV), gvals: iGest.map(i2 => nota(r, i2)),
-      conc: conceito(txt(r, idx.conc)), nb: '',
-      plano: txt(r, idx.plano),
-      calDone: impNorm(txt(r, idx.calDone)).indexOf('SIM') >= 0 ? 'Sim' : 'Não',
-      calConc: conceito(txt(r, idx.calConc)),
-      /* Esta coluna guarda a ANOTAÇÃO do comitê, não uma nota. O nome na
-         planilha ("NOTA FINAL CALIBRADA") diz outra coisa, mas quem preenche
-         escreve texto ali, e é assim que ela é usada: como fallback do
-         comentário qualitativo no card. Antes o parse invertia isso — passava
-         adiante só quando era número, e o número aparecia no card como se
-         fosse um comentário escrito por alguém. Agora aceita o texto. */
-      calNota: txt(r, idx.calNota),
-      calE: nota(r, idx.calE), calV: nota(r, idx.calV)
+      nb: '', plano: txt(r, idx.plano),
+      calE: nota(r, idx.calE), calV: nota(r, idx.calV),
+      movTipo: txt(r, idx.movTipo), movData: dataMov(cel(r, idx.movData)),
+      faixaPct: pctTxt(cel(r, idx.faixaPct)),
+      /* risco de saída: a célula pode trazer só a palavra (Alto/Médio/Baixo)
+         ou a frase inteira do gestor/P&C — `classificaRisco` extrai a
+         categoria dos dois casos, e o texto cru fica guardado ao lado para
+         quem quiser a frase completa. */
+      riscoGestor: classificaRisco(txt(r, idx.riscoGestor)), riscoGestorTxt: txt(r, idx.riscoGestor),
+      riscoPC: classificaRisco(txt(r, idx.riscoPC)), riscoPCTxt: txt(r, idx.riscoPC)
     };
     /* nota final de eixo em branco: cai na media das 6 do proprio eixo, que e
        como a planilha calcula quando a formula esta preenchida. */
@@ -4257,41 +4372,15 @@ function leExcelBase(buffer){
     /* O conceito sai SEMPRE da matriz (`conceitoDe`), calculada em cima de
        gE/gV — que a esta altura já são ENTREGAS/VALORES CALIBRADO quando essas
        colunas existem (ver duas linhas acima), ou a nota semi-final do gestor
-       quando não. Só isso perde para CONCEITO CALIBRADO (`calConc`), a decisão
-       explícita do comitê numa coluna separada.
-
-       A COLUNA "CONCEITO" DA PLANILHA (sem "CALIBRADO" no nome) NUNCA VALE.
-       Corrigido em 14/09/2026, no mesmo dia em que foi trocado para o
-       contrário — e o contrário estava errado: essa coluna, nesta planilha,
-       é uma fórmula da PRÓPRIA planilha em cima da nota semi-final do gestor,
-       de ANTES da calibração. Confiar nela ignora a calibração inteira
-       sempre que a coluna CONCEITO CALIBRADO estiver vazia mas
-       ENTREGAS/VALORES CALIBRADO não — exatamente o caso mais comum. A regra
-       oficial é: CONCEITO CALIBRADO manda; vazia essa, a matriz sobre
-       ENTREGAS/VALORES CALIBRADO manda; a coluna CONCEITO simples não entra
-       na conta em nenhum momento, só serve pra registrar divergência em
-       "Conferir colunas" (pode sinalizar um desalinhamento de fórmula na
-       própria planilha, vale olhar, mas não é o que a tela mostra). */
-    const daPlanilha = p.conc;
-    const daMatriz = conceitoDe(p) || '';
-    p.concMatriz = daMatriz;
-    p.conc = daMatriz;
+       quando não.
+       Até 23/09/2026 existiam duas colunas de planilha capazes de vencer essa
+       conta: CONCEITO (sem "CALIBRADO" no nome — nunca valia, era fórmula da
+       própria planilha sobre a nota de ANTES da calibração) e CONCEITO
+       CALIBRADO (essa sim valia, override explícito do comitê). As duas
+       saíram do modelo a pedido do usuário ("vamos limpar um pouco do
+       excel") — hoje o conceito final é sempre o da matriz, sem exceção. */
+    p.conc = conceitoDe(p) || '';
     if (p.conc) DERIVADOS++;
-    if (daPlanilha && daMatriz && daPlanilha !== daMatriz){
-      DIVERGENTES++;
-      if (!AMOSTRA_DIVERG) AMOSTRA_DIVERG = p.nome + ': coluna CONCEITO diz "' + daPlanilha +
-        '", matriz (sobre as notas calibradas quando existem) dá "' + daMatriz +
-        '" (E' + p.gE + '·V' + p.gV + ') — valeu a matriz';
-    }
-
-    /* CONCEITO CALIBRADO vence a matriz. É o único caminho para um conceito
-       que nem a matriz produziria sozinha: o comitê decide caso a caso, numa
-       coluna separada, e essa decisão não é fórmula. */
-    if (p.calConc){
-      p.conc = p.calConc;
-      p.calibrado = true;
-      if (!daMatriz || daMatriz !== p.calConc) CONC_COMITE++;
-    }
 
     /* CONCEITO ANTERIOR: AO CONTRÁRIO do de hoje — aqui vale a coluna da
        planilha (CONCEITO CICLO ANTERIOR), não a matriz. Mudou em 14/09/2026,
@@ -4343,9 +4432,7 @@ $('#impFile').addEventListener('change', ev => {
       sessionStorage.setItem('avd_P_arq', f.name);
       sessionStorage.setItem('avd_mapa', JSON.stringify(MAPA_COLS));
       sessionStorage.setItem('avd_diag', JSON.stringify(
-        { der:DERIVADOS, rec:RECUSADOS, am:AMOSTRA_RECUSA,
-          div:DIVERGENTES, amd:AMOSTRA_DIVERG,
-          cal:CALIBRADOS, cc:CONC_COMITE }));
+        { der:DERIVADOS, rec:RECUSADOS, am:AMOSTRA_RECUSA, cal:CALIBRADOS }));
       guardou = sessionStorage.getItem('avd_P') != null;
     } catch(e){ guardou = false; }
 
@@ -4379,12 +4466,14 @@ $('#impLimpar').addEventListener('click', () => {
    deixar o mapeamento visivel antes de o numero virar decisao de comite. */
 const LBL_CAMPO = {
   nome:'Nome', emp:'Empresa', bu:'Business Unit', area:'Área', lider:'Liderança',
-  cargo:'Cargo', nivel:'Nível', loc:'Localização', adm:'Admissão',
+  cargo:'Cargo', nivel:'Nível', adm:'Admissão',
   pE:'Entregas · ciclo anterior', pV:'Valores · ciclo anterior', pC:'Conceito · ciclo anterior',
   aE:'Entregas · auto', aV:'Valores · auto',
-  gE:'Entregas · gestor', gV:'Valores · gestor', conc:'Conceito do ciclo',
-  calDone:'Calibragem feita', calConc:'Conceito calibrado', calNota:'Nota calibrada',
-  calE:'Entregas calibrado', calV:'Valores calibrado'
+  gE:'Entregas · gestor', gV:'Valores · gestor',
+  calE:'Entregas calibrado', calV:'Valores calibrado',
+  movTipo:'Última movimentação · classificação', movData:'Última movimentação · data',
+  faixaPct:'Posicionamento na faixa salarial',
+  riscoGestor:'Risco de saída · gestor', riscoPC:'Risco de saída · P&C'
 };
 /* sem estes o relatorio nao tem o que dizer: conceito, distribuicao e 9-box
    saem todos de gE/gV, e a pagina 3 agrupa por area e lideranca. */
@@ -4424,69 +4513,71 @@ $('#impCols').addEventListener('click', () => {
   if (DERIVADOS){
     txt += '\n\nCONCEITO: calculado pela matriz oficial em ' + DERIVADOS + ' pessoa(s),' +
       '\nsobre ENTREGAS/VALORES CALIBRADO quando existem, senão sobre a nota do' +
-      '\ngestor. A coluna CONCEITO da planilha (sem "CALIBRADO" no nome) é' +
-      '\nignorada de propósito: ela não sabe nada sobre calibração.';
+      '\ngestor. Não existe mais coluna de conceito na planilha — o cálculo' +
+      '\né sempre a régua oficial, sem exceção.';
   }
   txt += '\n\nCALIBRAGEM' +
     (CALIBRADOS
       ? '\n' + CALIBRADOS + ' pessoa(s) com nota calibrada. Onde ENTREGAS ou VALORES' +
         '\nCALIBRADO estão preenchidos, essa nota substitui a do gestor em tudo:' +
         '\nconceito, médias, gráficos e nine-box. A do gestor fica guardada e' +
-        '\naparece no card, riscada, ao lado da nova.' +
-        (CONC_COMITE ? '\n' + CONC_COMITE + ' com CONCEITO CALIBRADO diferente do que a matriz daria:' +
-          '\nnesses, vale a decisão do comitê.' : '')
+        '\naparece no card, riscada, ao lado da nova.'
       : '\nNenhuma linha calibrada. Enquanto as colunas ficarem vazias, vale a nota' +
         '\ndo gestor. Preencher ENTREGAS ou VALORES CALIBRADO faz a nota do comitê' +
-        '\npassar a valer; nada é apagado.') +
-    '\nO gatilho é a nota, não a coluna CALIBRAGEM FEITA?: linha com "Sim" e sem' +
-    '\nnota não calibra, e linha com nota calibra mesmo sem o "Sim".';
-  if (DIVERGENTES){
-    txt += '\n\n⚠ A COLUNA CONCEITO DISCORDA DA MATRIZ EM ' + DIVERGENTES + ' PESSOA(S)' +
-      (AMOSTRA_DIVERG ? '\nExemplo — ' + AMOSTRA_DIVERG : '') +
-      '\nValeu a matriz — a coluna CONCEITO da planilha não entra na conta.' +
-      '\nA divergência costuma ser calibração que essa coluna não enxerga (ela' +
-      '\nnão olha ENTREGAS/VALORES CALIBRADO), mas também pode ser régua antiga' +
-      '\nse a planilha foi gerada antes de 04/09/2026. Vale olhar o exemplo acima.';
-  }
+        '\npassar a valer; nada é apagado.');
   if (RECUSADOS){
-    txt += '\n\nTexto fora do padrão na coluna CONCEITO em ' + RECUSADOS + ' célula(s)' +
+    txt += '\n\nTexto fora do padrão na coluna CONCEITO CICLO ANTERIOR em ' + RECUSADOS + ' célula(s)' +
       (AMOSTRA_RECUSA ? ' — por exemplo: "' + AMOSTRA_RECUSA + '"' : '') + '.' +
-      '\nSem efeito no resultado, já que o conceito vem do cálculo. Vale conferir se a' +
-      '\ncoluna não ficou deslocada na planilha.';
+      '\nEssa pessoa entra sem conceito anterior. Vale conferir se a coluna não' +
+      '\nficou deslocada na planilha.';
   }
   alert(txt);
 });
 
 /* modelo em branco, com o cabecalho exato que o leitor espera */
-/* O modelo repete, letra por letra, o cabecalho da base que ja circula na area
-   (inclusive os acentos e o "?" de CALIBRAGEM FEITA?). Duas grafias para a
-   mesma planilha e o comeco de um preenchimento deslocado — que foi o que
-   estragou a coluna CONCEITO na base de 03/09. O leitor aceita as duas, mas o
-   modelo so oferece uma. */
+/* O modelo repete, letra por letra, o cabecalho da base que ja circula na area.
+   Sem LOCALIZAÇÃO, CONCEITO, CALIBRAGEM FEITA?, CONCEITO CALIBRADO e NOTA
+   FINAL CALIBRADA (23/09/2026, a pedido do usuário — "vamos limpar um pouco
+   do excel"): nenhuma das cinco entra em cálculo nenhum hoje (conceito é
+   sempre a matriz, sem override por coluna; ver leExcelBase), então tirar
+   do modelo não perde comportamento, só menos coluna pra preencher. */
 $('#impTemplate').addEventListener('click', () => {
   const cab = ['NOME','EMPRESA','BUSINESS UNIT (BU)','ÁREA','LIDERANÇA','CARGO','NÍVEL',
-    'LOCALIZAÇÃO','DATA ADMISSÃO',
+    'DATA ADMISSÃO',
+    /* última movimentação e faixa salarial logo depois da admissão, a pedido
+       do usuário ("pra facilitar") — mesmos nomes de coluna que "Card
+       Comitê.html" já usa no template dele, para as duas planilhas falarem
+       a mesma língua. Sem coluna de percentual do reajuste: removida a
+       pedido do usuário, "pode tirar". */
+    'TIPO DE REAJUSTE','DATA DA MOVIMENTAÇÃO','% POSICIONAMENTO NA FAIXA',
     'AUTO ENTREGAS CICLO ANTERIOR','AUTO VALORES CICLO ANTERIOR','CONCEITO CICLO ANTERIOR',
     'AUTO AVD - ENTREGAS','AUTO AVD - VALORES']
     .concat(VALORES_YAN.map((v,i) => 'VALOR ' + (i+1) + ' AUTO (' + v + ')'))
     .concat(['GESTOR - ENTREGAS','GESTOR - VALORES'])
     .concat(VALORES_YAN.map((v,i) => 'VALOR ' + (i+1) + ' GESTOR (' + v + ')'))
-    .concat(['CONCEITO','PLANO DE AÇÃO','CALIBRAGEM FEITA?','CONCEITO CALIBRADO',
-             'NOTA FINAL CALIBRADA','ENTREGAS CALIBRADO','VALORES CALIBRADO']);
+    .concat(['PLANO DE AÇÃO','ENTREGAS CALIBRADO','VALORES CALIBRADO'])
+    /* risco de saída: mesmo nome de coluna do Card Comitê.html */
+    .concat(['RISCO GESTOR','RISCO P&C']);
 
-  /* Exemplos conferidos contra a propria matriz do relatorio:
-     linha 1 · gestor 4 e 3  -> Forte Desempenho  (valores 4,3,3,4,3,3 = media 3)
-     linha 2 · gestor 3 e 2  -> Insuficiente      (valores 2,2,3,2,2,1 = media 2)
+  /* Exemplos conferidos contra a propria matriz do relatorio — nao ha mais
+     coluna de conceito pra escrever, entao a conferencia e so mental, na
+     hora de mexer nos numeros:
+     linha 1 · gestor 4 e 3  -> vira Forte Desempenho  (valores 4,3,3,4,3,3 = media 3)
+     linha 2 · gestor 3 e 2  -> vira Insuficiente      (valores 2,2,3,2,2,1 = media 2)
      Modelo com exemplo incoerente ensina a preencher errado. */
   /* Nome de exemplo e inventado de proposito. Aqui havia gente de verdade, com
      nota e conceito inventados colados no nome: quem abrisse o modelo leria
      "Insuficiente" ao lado de uma pessoa que existe. */
   const ex1 = ['MARIA DE EXEMPLO','YANDEH S.A','TECH SOLUTIONS','ARTY',
-    'JOANA DE EXEMPLO','DESIGNER PL','ANALISTA PL','SÃO PAULO','12/05/2023',
-    3,3,'Pleno', 4,4, 4,4,4,4,3,4, 4,3, 4,3,3,4,3,3, 'Forte Desempenho','Sucessão','Não','','','',''];
+    'JOANA DE EXEMPLO','DESIGNER PL','ANALISTA PL','12/05/2023',
+    'Promoção','15/03/2025',0.916,
+    3,3,'Pleno', 4,4, 4,4,4,4,3,4, 4,3, 4,3,3,4,3,3, 'Sucessão','','',
+    'Baixo','Baixo'];
   const ex2 = ['JOAO DE EXEMPLO','GIROTRADE S/A','GIROTRADE CD','PICKING',
-    'PEDRO DE EXEMPLO','CONFERENTE PL','ASSISTENTE','EXTREMA - MG','01/02/2025',
-    3,3,'Pleno', 3,3, 3,3,3,3,3,3, 3,2, 2,2,3,2,2,1, 'Insuficiente','Recuperação','Não','','','',''];
+    'PEDRO DE EXEMPLO','CONFERENTE PL','ASSISTENTE','01/02/2025',
+    'Mérito','01/06/2025',1.0,
+    3,3,'Pleno', 3,3, 3,3,3,3,3,3, 3,2, 2,2,3,2,2,1, 'Recuperação','','',
+    'Alto','Médio'];
 
   /* Aba de instrucoes vem depois da base: o leitor usa sempre a primeira aba. */
   const guia = [
@@ -4494,8 +4585,8 @@ $('#impTemplate').addEventListener('click', () => {
     ['Regra','Detalhe'],
     ['Uma linha por pessoa','A aba BASE e a que o relatorio le. Nao mude a ordem das colunas.'],
     ['Notas','Somente 1, 2, 3, 4 ou 5. Vazio significa "sem avaliacao", nao zero.'],
-    ['Conceito','Deixe em branco: o relatorio calcula pela matriz oficial a partir das'],
-    ['','duas notas do gestor. Se preencher, so valem: ' + ORDEM_CONC.join(', ') + '.'],
+    ['Conceito','Nao ha coluna disso na planilha: o relatorio sempre calcula pela'],
+    ['','matriz oficial (' + ORDEM_CONC.join(', ') + '), a partir das notas do gestor.'],
     ['Nivel','E o nivel (Analista Pl, Coordenador, Gerente...), nao o cargo.'],
     ['','O recorte de senioridade do relatorio depende desta coluna.'],
     ['Notas de eixo','AUTO AVD - VALORES e GESTOR - VALORES podem ficar vazias: saem da'],
@@ -4505,23 +4596,31 @@ $('#impTemplate').addEventListener('click', () => {
     ['','Desligamento (vermelho) · Recuperacao (ambar) · Sucessao (roxo) · Promocao (verde).'],
     ['','Qualquer outro texto aparece em cinza, sem ser recusado.'],
     [],
-    ['CALIBRAGEM (as 5 ultimas colunas)'],
+    ['CALIBRAGEM (as 2 ultimas colunas)'],
     ['ENTREGAS CALIBRADO','A nota do comite. Preenchida, ela SUBSTITUI a do gestor em tudo:'],
     ['VALORES CALIBRADO','conceito, medias, graficos e nine-box. Vazia, vale a do gestor.'],
     ['','Nada e apagado: a nota do gestor fica guardada e aparece no card,'],
     ['','riscada, ao lado da nova. Da para calibrar so um dos dois eixos.'],
     ['','Repetir a mesma nota do gestor nao muda nada — e o mesmo que deixar vazio.'],
-    ['CONCEITO CALIBRADO','So quando o comite decide um conceito que a regua nao daria.'],
-    ['','Preenchido, vence a matriz. Vazio, o conceito sai das notas.'],
-    ['CALIBRAGEM FEITA?','Apenas um marcador de controle: nao liga nem desliga nada.'],
-    ['','O que faz a calibragem valer e ter nota nas colunas acima.'],
-    ['NOTA FINAL CALIBRADA','Apesar do nome, e campo de ANOTACAO do comite: o texto aparece'],
-    ['','no card, no bloco "Comentario qualitativo".'],
+    [],
+    ['ULTIMA MOVIMENTACAO E FAIXA SALARIAL (logo apos DATA ADMISSAO)'],
+    ['TIPO DE REAJUSTE','Classificacao da mudanca: Merito, Promocao, Ajuste de mercado... Texto'],
+    ['','livre, aparece no card em "Ultima movimentacao".'],
+    ['DATA DA MOVIMENTACAO','dd/mm/aaaa. Fica vazia para quem nao teve movimentacao no periodo.'],
+    ['% POSICIONAMENTO NA FAIXA','Onde a pessoa esta na faixa salarial do cargo. Aceita decimal'],
+    ['','(0,916) ou numero em percentual (91,6) — os dois viram "91,6%" no card.'],
+    [],
+    ['RISCO DE SAIDA (as 2 ultimas colunas)'],
+    ['RISCO GESTOR','So valem Alto, Medio ou Baixo — ou uma frase que contenha uma dessas'],
+    ['','palavras (ex.: "Baixo risco: a pessoa esta motivada"). So lideranca'],
+    ['','costuma ter esta coluna preenchida; o resto da base fica em branco.'],
+    ['RISCO P&C','Segunda leitura, do time de People & Culture. Mesma regra de texto'],
+    ['','do RISCO GESTOR. So aparece no painel "Matriz de risco de saida" —'],
+    ['','nao decide posicao na matriz, so complementa a leitura do gestor.'],
     [],
     ['CONFERENCIA ANTES DE SUBIR'],
     ['1','Selecione a ultima coluna e va ate o fim: nenhuma celula pode ter nome de pessoa.'],
-    ['2','A coluna CONCEITO nao pode conter "Sim" ou "Nao" — isso e da calibragem.'],
-    ['3','No relatorio, use "Conferir colunas" depois de carregar: ele diz quantas'],
+    ['2','No relatorio, use "Conferir colunas" depois de carregar: ele diz quantas'],
     ['','pessoas entraram calibradas.']
   ];
 
@@ -4653,105 +4752,174 @@ $('#impFotosRel').addEventListener('click', () => {
 });
 if (FOTOS_DIAG) $('#impFotosRel').hidden = false;
 
-/* ---------- 09 · risco de saída (planilha à parte) ----------
-   Fonte: "Risco de Saída H2 2026.xlsx", aba "Resumo" — Nome / Risco Gestor /
-   Risco P&C, só lideranças (~59 linhas). Não passa pelo IMP_COLS: é outra
-   planilha, com outra grade de linhas, e casa por nome — em memória, do
-   mesmo jeito que FOTOS_IMP. De propósito NÃO vai para o sessionStorage:
-   carrega texto real de avaliação de risco de saída de gente real, e o
-   mesmo cuidado que tira comentário sensível do que persiste vale aqui
-   (ver [[avd-nunca-publicar-artifact]], mesmo espírito). Um F5 ou "Limpar"
-   derruba, e a planilha precisa ser escolhida de novo. */
-const RK_ORDEM = ['Alto', 'Médio', 'Baixo'];
-let RISCO_IMP = {}, RISCO_DIAG = null;
+/* ============================================================
+   COMENTÁRIOS LÍDER > LIDERADO (planilha à parte)
+   Fonte: export bruto do formulário do ciclo, "Respostas_Avaliação de
+   Desempenho _ Mar - Ago 2026.xlsx", aba "Perguntas computáveis" (apesar do
+   nome, essa aba também carrega as perguntas de texto livre — a aba
+   "Perguntas não computáveis" é inteira sobre risco de saída, não tem nada
+   de comentário qualitativo). Cada linha é UMA resposta a UMA pergunta por
+   UM avaliador; a mesma pessoa aparece em dezenas de linhas.
 
-function classificaRisco(txt){
-  const n = impNorm(txt);
-  if (!n) return null;
-  if (n.indexOf('ALTO') >= 0) return 'Alto';
-  if (n.indexOf('MEDIO') >= 0) return 'Médio';
-  if (n.indexOf('BAIXO') >= 0) return 'Baixo';
-  return null;
+   SÓ ENTRA "Líder > Liderado" (coluna "Relacionamento atual na avaliação"),
+   pedido explícito do usuário — a planilha também traz "Autoavaliação", que
+   fica de fora: aqui o que interessa é o que o GESTOR escreveu sobre o
+   liderado, não o que a pessoa escreveu sobre si mesma.
+
+   Dessa fonte, duas perguntas têm texto livre de verdade (as outras são só
+   nota numérica, 1 a 5, que já está na base principal):
+     · "O que não foi bem... em relação às entregas do seu liderado?"
+       → guardado em `oportunidade`.
+     · "Quais fatos ou evidências do dia a dia sustentam a avaliação
+       atribuída aos valores da Yandeh?" → guardado em `valores` (uma linha
+       só por pessoa, cobrindo os seis valores juntos — a planilha não abre
+       comentário por valor individual).
+
+   Vira o FALLBACK do bloco "Comentário qualitativo" do card: só aparece
+   para quem NÃO está no `COMENTARIOS` fixo (topo do arquivo) — ver
+   `blocoComentario`/`textoComLiderado`. É basicamente o que os 23 nomes sem
+   aba de assessment já usavam, colado à mão no código; agora é sistemático
+   e cobre qualquer um que o líder tenha comentado nesse ciclo, não só esses 23.
+
+   MESMO CUIDADO DAS FOTOS: fica só em memória (`COM_LIDER`), nunca no
+   sessionStorage — é texto de gestor sobre liderado, o tipo de comentário
+   sensível que não deveria sobreviver a um F5. Casa por nome via
+   `chaveFoto`/`impNorm`, igual fotos e risco. */
+let COM_LIDER = {}, COM_LIDER_DIAG = null;
+
+/* pedaço do texto de cada pergunta que basta pra identificar ela, mesmo que
+   a redação mude uma vírgula de um ciclo pro outro */
+const COM_LIDER_PERGUNTAS = [
+  { tipo:'oportunidade', tem:['NAO FOI BEM', 'ENTREGA'] },
+  { tipo:'valores',      tem:['FATOS OU EVIDENCIAS'] }
+];
+function tipoPerguntaComLiderado(pergunta){
+  const n = impNorm(pergunta);
+  const achado = COM_LIDER_PERGUNTAS.find(r => r.tem.every(t => n.indexOf(t) >= 0));
+  return achado ? achado.tipo : null;
 }
 
-$('#impRisco').addEventListener('change', ev => {
+function parseComLiderado(buffer){
+  const wb = XLSX.read(buffer, { type:'array' });
+  /* "Perguntas computáveis", nunca a "não computáveis" (que é só risco) —
+     acha por nome de aba primeiro, cai pra primeira aba com coluna NOME. */
+  const nomeAba = wb.SheetNames.find(n => impNorm(n).indexOf('COMPUTAVEIS') >= 0 && impNorm(n).indexOf('NAO') < 0)
+    || wb.SheetNames[0];
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[nomeAba], { header:1, defval:null });
+  if (!rows.length) throw new Error('A planilha está vazia.');
+
+  let hr = -1;
+  for (let i = 0; i < Math.min(rows.length, 8); i++){
+    const h = (rows[i] || []).map(impNorm);
+    if (h.indexOf('NOME') >= 0 && h.some(c => c.indexOf('RELACIONAMENTO') >= 0)) { hr = i; break; }
+  }
+  if (hr < 0) throw new Error('Não encontrei as colunas NOME / Relacionamento atual na avaliação. ' +
+    'Use o export do formulário do ciclo (aba "Perguntas computáveis").');
+
+  const head = rows[hr].map(impNorm);
+  const iNome = head.indexOf('NOME');
+  const iRel = head.findIndex(h => h.indexOf('RELACIONAMENTO') >= 0);
+  const iPerg = head.findIndex(h => h === 'NOME (PERGUNTA)');
+  const iCom = head.findIndex(h => h === 'COMENTARIO');
+  if (iPerg < 0 || iCom < 0) throw new Error('Não encontrei as colunas "Nome (Pergunta)" / "Comentário".');
+
+  const mapa = {};
+  let linhasLL = 0;
+  for (let i = hr + 1; i < rows.length; i++){
+    const r = rows[i];
+    if (!r || r[iNome] == null) continue;
+    if (impNorm(r[iRel]) !== 'LIDER > LIDERADO') continue;
+    linhasLL++;
+    const tipo = tipoPerguntaComLiderado(r[iPerg]);
+    if (!tipo) continue;
+    const nome = String(r[iNome]).trim();
+    const txt = r[iCom] == null ? '' : String(r[iCom]).trim();
+    if (!nome || !txt || impNorm(txt) === 'N/A') continue;
+    const k = chaveFoto(nome);
+    if (!mapa[k]) mapa[k] = { nome };
+    if (!mapa[k][tipo]) mapa[k][tipo] = txt;   /* primeiro líder que respondeu vence */
+  }
+  return { mapa, linhasLL, linhas: rows.length - hr - 1 };
+}
+
+/* texto final do card: os dois pedaços, cada um com seu rótulo — não é o
+   mesmo formato "Pontos fortes / Pontos de oportunidade" do COMENTARIOS
+   fixo, porque a fonte aqui é outra (prosa do líder, não marcador do
+   assessment) e forçar o mesmo rótulo diria uma origem que não é essa. */
+function textoComLiderado(p){
+  const c = COM_LIDER[chaveFoto(p.nome)];
+  if (!c) return '';
+  const partes = [];
+  if (c.oportunidade) partes.push('Entregas — o que pode melhorar\n' + c.oportunidade);
+  if (c.valores) partes.push('Valores no dia a dia\n' + c.valores);
+  return partes.join('\n\n');
+}
+
+$('#impComents').addEventListener('change', ev => {
   const f = ev.target.files[0];
   if (!f) return;
+  impDiz('lendo ' + f.name + '…');
   const fr = new FileReader();
   fr.onload = () => {
     try {
-      const wb = XLSX.read(fr.result, { type:'array' });
-      /* procura primeiro uma aba "Resumo"; sem ela, a primeira aba com uma
-         coluna NOME serve de tentativa — e falha com uma mensagem clara se
-         não achar "Risco Gestor", em vez de casar coluna errada em silêncio */
-      const achaCabecalho = sheet => {
-        const rs = XLSX.utils.sheet_to_json(sheet, { header:1, defval:null });
-        const hi = rs.findIndex(r => (r || []).some(c => impNorm(c) === 'NOME'));
-        return hi >= 0 ? { rs, hi } : null;
-      };
-      const nomeResumo = wb.SheetNames.find(n => impNorm(n).indexOf('RESUMO') >= 0);
-      let achado = nomeResumo ? achaCabecalho(wb.Sheets[nomeResumo]) : null;
-      if (!achado){
-        for (const n of wb.SheetNames){
-          achado = achaCabecalho(wb.Sheets[n]);
-          if (achado) break;
-        }
-      }
-      if (!achado) throw new Error('Nao encontrei a coluna NOME em nenhuma aba.');
-
-      const rows = achado.rs;
-      const head = rows[achado.hi].map(impNorm);
-      const iNome = head.findIndex(h => h === 'NOME');
-      const iGestor = head.findIndex(h => h.indexOf('RISCO') >= 0 && h.indexOf('GESTOR') >= 0);
-      const iPC = head.findIndex(h => h.indexOf('RISCO') >= 0 && h.indexOf('GESTOR') < 0 &&
-        (h.indexOf('P&C') >= 0 || h.indexOf('P & C') >= 0 || h.indexOf('PC') >= 0));
-      if (iGestor < 0) throw new Error('Nao encontrei a coluna "Risco Gestor". Use a planilha ' +
-        '"Risco de Saida H2 2026", aba "Resumo".');
-
-      const mapa = {}; let lidos = 0;
-      for (let i = achado.hi + 1; i < rows.length; i++){
-        const r = rows[i]; if (!r || r[iNome] == null) continue;
-        const nome = String(r[iNome]).trim(); if (!nome) continue;
-        const gestorTxt = r[iGestor] != null ? String(r[iGestor]).trim() : '';
-        const pcTxt = iPC >= 0 && r[iPC] != null ? String(r[iPC]).trim() : '';
-        const gestor = classificaRisco(gestorTxt);
-        if (!gestor) continue;
-        mapa[chaveFoto(nome)] = { nome, gestor, gestorTxt, pc: classificaRisco(pcTxt), pcTxt };
-        lidos++;
-      }
-      RISCO_IMP = mapa;
-
+      const { mapa, linhasLL, linhas } = parseComLiderado(fr.result);
+      COM_LIDER = mapa;
       const naBase = {};
       P_TODOS.forEach(p => { naBase[chaveFoto(p.nome)] = p.nome; });
-      RISCO_DIAG = {
-        lidos,
-        casou: Object.values(mapa).filter(v => naBase[chaveFoto(v.nome)]).length,
-        sobra: Object.values(mapa).filter(v => !naBase[chaveFoto(v.nome)]).map(v => v.nome).sort()
+      const pessoas = Object.values(mapa);
+      COM_LIDER_DIAG = {
+        linhas, linhasLL,
+        pessoas: pessoas.length,
+        casou: pessoas.filter(c => naBase[chaveFoto(c.nome)]).length,
+        sobra: pessoas.filter(c => !naBase[chaveFoto(c.nome)]).map(c => c.nome).sort()
       };
-      $('#impRiscoRel').hidden = false;
-      if (BOOTED) renderPagina2();
-      impDiz(RISCO_DIAG.casou + ' de ' + lidos + ' lideranças de risco casaram com a base' +
-        (RISCO_DIAG.sobra.length ? ' · ' + RISCO_DIAG.sobra.length + ' sem pessoa na base' : ''), 'ok');
+      $('#impComentsRel').hidden = false;
+      if (BOOTED){ renderPagina2(); renderPagina3(); }
+      impDiz(COM_LIDER_DIAG.casou + ' de ' + pessoas.length + ' pessoas com comentário casaram com a base' +
+        (COM_LIDER_DIAG.sobra.length ? ' · ' + COM_LIDER_DIAG.sobra.length + ' sem pessoa na base' : ''), 'ok');
     } catch(e){
       impDiz(e.message, 'err');
     }
   };
-  fr.onerror = () => impDiz('nao consegui abrir o arquivo', 'err');
+  fr.onerror = () => impDiz('não consegui abrir o arquivo', 'err');
   fr.readAsArrayBuffer(f);
 });
 
-$('#impRiscoRel').addEventListener('click', () => {
-  if (!RISCO_DIAG){ alert('Carregue a planilha de risco de saida primeiro.'); return; }
-  const d = RISCO_DIAG;
-  let t = 'RISCO DE SAIDA POR PLANILHA\n' +
-    'A ponte e o nome, igual as fotos: precisa bater com a coluna NOME da base.\n\n' +
-    'linhas lidas: ' + d.lidos + '\n' +
-    'casaram com a base: ' + d.casou + '\n';
+$('#impComentsRel').addEventListener('click', () => {
+  if (!COM_LIDER_DIAG){ alert('Carregue os comentários primeiro.'); return; }
+  const d = COM_LIDER_DIAG;
+  let t = 'COMENTÁRIOS LÍDER > LIDERADO\n' +
+    'Só entram linhas com Relacionamento = "Líder > Liderado". A ponte é o nome,\n' +
+    'igual fotos e risco de saída.\n\n' +
+    'linhas na planilha: ' + d.linhas + '\n' +
+    'linhas Líder > Liderado: ' + d.linhasLL + '\n' +
+    'pessoas com pelo menos um comentário: ' + d.pessoas + '\n' +
+    'casaram com a base: ' + d.casou + '\n' +
+    '\nEste comentário só aparece no card de quem NÃO está no COMENTARIOS fixo\n' +
+    '(a lista de 61 já embutida no código) — é o fallback, não substitui nada.';
   if (d.sobra.length)
     t += '\nSEM PESSOA NA BASE (' + d.sobra.length + ')\n' + d.sobra.map(n => '  ' + n).join('\n') + '\n';
   alert(t);
 });
-if (RISCO_DIAG) $('#impRiscoRel').hidden = false;
+if (COM_LIDER_DIAG) $('#impComentsRel').hidden = false;
+
+/* ---------- 09 · risco de saída ----------
+   Até 23/09/2026 vinha de uma segunda planilha, carregada à parte e nunca
+   persistida (a base geral vai para o sessionStorage; aquela, por ser dado
+   sensível de sucessão/desligamento, ficava só em memória). Unificado nesta
+   mesma base a pedido do usuário: "a planilha geral já é sigilosa, então não
+   varia tanta diferença". Os dois campos (`riscoGestor`/`riscoPC`) entram
+   pelo `IMP_COLS` normal, como qualquer outro — ver bloco TALENT ali, e
+   `classificaRisco()` logo depois de `conceito()`, no topo do leitor.
+   Histórico completo em [[avd-matriz-risco-saida]]. */
+const RK_ORDEM = ['Alto', 'Médio', 'Baixo'];
+/* definição de cada nível, pro glossário abaixo da matriz (`#rkConceitos`)
+   — texto do próprio usuário, não invenção */
+const RK_DEF = {
+  Alto: 'a pessoa não está motivada, se mostra insatisfeita com a empresa, tem habilidades com grande procura de mercado.',
+  'Médio': 'tem habilidades com grande procura de mercado.',
+  Baixo: 'a pessoa está motivada e se mostra satisfeita com a empresa.'
+};
 
 /* jitter determinístico pelo nome (+ índice, contra nome duplicado): mesma
    pessoa cai sempre no mesmo ponto dentro da própria célula, então o
@@ -4771,22 +4939,16 @@ function rkJit(seed){
 function renderRiscoMatriz(){
   const vazio = $('#rkVazio'), corpo = $('#rkBody');
   if (!vazio || !corpo) return;
-  const pares = P.map((p, idx) => {
-    const rk = RISCO_IMP[chaveFoto(p.nome)];
-    return (rk && p.conc) ? { p, rk, idx } : null;
-  }).filter(Boolean);
+  const pares = P.filter(p => p.riscoGestor && p.conc);
   /* mais largo que `pares`: entra quem tem risco mas ainda não tem conceito
-     final (sem nota do gestor neste ciclo) — a listinha é "todo mundo da
-     planilha de risco", a matriz em cima só desenha quem tem os dois eixos */
-  const todosRk = P.map((p, idx) => {
-    const rk = RISCO_IMP[chaveFoto(p.nome)];
-    return rk ? { p, rk, idx } : null;
-  }).filter(Boolean);
+     final (sem nota do gestor neste ciclo) — a listinha é "todo mundo com
+     risco lido", a matriz em cima só desenha quem tem os dois eixos */
+  const todosRk = P.filter(p => p.riscoGestor);
 
-  if (!Object.keys(RISCO_IMP).length){
+  if (!todosRk.length){
     vazio.hidden = false; corpo.hidden = true;
-    vazio.textContent = 'Carregue a planilha de risco de saída ("Carregar risco de saída", faixa preta) ' +
-      'para ver esta matriz.';
+    vazio.textContent = 'Nenhuma liderança com risco de saída na base: confira as colunas ' +
+      'RISCO GESTOR / RISCO P&C em "Conferir colunas".';
     return;
   }
   vazio.hidden = true; corpo.hidden = false;
@@ -4801,13 +4963,14 @@ function renderRiscoMatriz(){
   for (let i = 1; i < nx; i++) linhas += '<div class="rkgl" style="left:' + (i * xBand) + '%;top:0;width:1px;height:100%"></div>';
   for (let i = 1; i < ny; i++) linhas += '<div class="rkgl" style="top:' + (i * yBand) + '%;left:0;height:1px;width:100%"></div>';
 
-  const pontos = pares.map(({ p, rk, idx }) => {
-    const ic = ORDEM_CONC.indexOf(p.conc), ir = RK_ORDEM.indexOf(rk.gestor);
+  const pontos = pares.map(p => {
+    const ic = ORDEM_CONC.indexOf(p.conc), ir = RK_ORDEM.indexOf(p.riscoGestor);
     if (ic < 0 || ir < 0) return '';
+    const idx = P.indexOf(p);
     const jx = rkJit(p.nome + '#' + idx + '|x'), jy = rkJit(p.nome + '#' + idx + '|y');
     const x = Math.max(2, Math.min(98, xCentro(ic) + jx * xBand * 0.32));
     const y = Math.max(2, Math.min(98, yCentro(ir) + jy * yBand * 0.30));
-    return '<span class="rkpt" data-i="' + P.indexOf(p) + '" style="left:' + x.toFixed(1) + '%;top:' +
+    return '<span class="rkpt" data-i="' + idx + '" style="left:' + x.toFixed(1) + '%;top:' +
       y.toFixed(1) + '%">' + avatar(p, 'rkav') + '</span>';
   }).join('');
 
@@ -4828,31 +4991,35 @@ function renderRiscoMatriz(){
     '<span style="margin-left:auto;color:var(--gray-500);font-weight:500">' +
     'eixo horizontal: conceito final · eixo vertical: risco de saída</span>';
 
+  $('#rkConceitos').innerHTML = '<h5>O que significa cada risco</h5><ul>' +
+    RK_ORDEM.map(r => '<li><b>Risco ' + r + ':</b> ' + esc(RK_DEF[r]) + '</li>').join('') +
+    '</ul>';
+
   /* enquadramento por risco: três quadros (Alto/Médio/Baixo), cada um com quem
      está naquele risco, em ordem alfabética — mais largo que `pares`: entra
      quem ainda não tem conceito final neste ciclo, com "sem conceito" */
   $('#rkTodosSub').textContent = todosRk.length + (todosRk.length === 1 ? ' liderança' : ' lideranças');
   $('#rkTodos').innerHTML = RK_ORDEM.map(r => {
-    const grupo = todosRk.filter(({ rk }) => rk.gestor === r).sort((a, b) => a.p.nome.localeCompare(b.p.nome));
+    const grupo = todosRk.filter(p => p.riscoGestor === r).sort((a, b) => a.nome.localeCompare(b.nome));
     if (!grupo.length) return '';
-    const chips = grupo.map(({ p }) =>
-      '<span class="rk-chip" data-i="' + P.indexOf(p) + '">' + avatar(p, 'rkchipav') +
-      esc(tc(p.nome)) + '</span>').join('');
+    const cards = grupo.map(p =>
+      '<div class="rk-card">' + avatar(p, 'rkcardav') +
+      '<div class="rk-card-info"><div class="rk-card-name">' + esc(tc(p.nome)) + '</div>' +
+      '<div class="rk-card-riscos"><span>Gestor: <b>' + esc(p.riscoGestor) + '</b></span>' +
+      '<span>P&amp;C: <b>' + (p.riscoPC ? esc(p.riscoPC) : '—') + '</b></span></div></div></div>').join('');
     return '<div class="rk-frame ' + RK_CLS[r] + '"><h5>Risco ' + r + ' · ' + grupo.length +
       (grupo.length === 1 ? ' liderança' : ' lideranças') + '</h5>' +
-      '<div class="rk-frame-body">' + chips + '</div></div>';
+      '<div class="rk-cards">' + cards + '</div></div>';
   }).join('');
-  $('#rkTodos').querySelectorAll('[data-i]').forEach(d => {
-    const p = P[+d.dataset.i];
-    if (p) d.addEventListener('mouseenter', ev => mostraTipHtml(ev, dicaRisco(p)));
-    d.addEventListener('mouseleave', escondeTip);
-  });
+  /* Sem hover aqui, de propósito: os cards já mostram gestor e P&C direto no
+     corpo, então o tooltip (que soma só o conceito) era resposta a um hover
+     que o card não precisa dar. O hover interativo fica só na matriz acima
+     (`.rkpt`), que é bolota sem legenda própria. */
 }
 function dicaRisco(p){
-  const rk = RISCO_IMP[chaveFoto(p.nome)];
   const linha = 'Conceito ' + (p.conc || '–') +
-    ' · risco pelo gestor ' + (rk ? rk.gestor : '–') +
-    ' · risco por P&C ' + (rk && rk.pc ? rk.pc : 'sem leitura');
+    ' · risco pelo gestor ' + (p.riscoGestor || '–') +
+    ' · risco por P&C ' + (p.riscoPC || 'sem leitura');
   return '<b>' + esc(tc(p.nome)) + '</b><span class="tl">' + esc(linha) + '</span>';
 }
 
@@ -4860,98 +5027,186 @@ const RK_CLS = { Alto:'r-alto', 'Médio':'r-medio', Baixo:'r-baixo' };
 
 /* ---------- 10 · liderança executiva: diagnóstico para o conselho ----------
    Não depende de `P`/planilha, igual ao ASSESS do painel 08: números fixos.
-   Nome oficial do instrumento é "Assessment de Liderança 2026" — "360" nunca
-   aparece no texto do painel, só nos nomes de arquivo originais (era erro de
-   nomenclatura minha, corrigido a pedido do usuário em 23/09/2026). Fonte:
-   `Analise_360_Heads_2026.docx` (dossiê completo, por head — Comitê
-   Executivo) e sua síntese `analise_conclusiva_360_2026.html`, cruzados com
-   a Pesquisa de Clima 2026, dimensão "Liderança Imediata". Só os padrões
-   comuns a mais de um head entram aqui — o ranking nomeado e o heatmap de
-   competência por head dos documentos originais ficaram de fora, a pedido
-   do usuário: isso é "assessment individual", que já existe de outra forma
-   no painel 08 e no nine-box da página 3. */
-const LID360 = {
-  sub: '8 heads · Comitê Executivo · Assessment de Liderança 2026',
-  fonteLinha: 'Fonte: Assessment de Liderança 2026 (Comitê Executivo) × Pesquisa de Clima 2026, ' +
-    'dimensão Liderança Imediata. Setembro de 2026.',
-  headline: 'Liderança consistente, com 2 padrões estruturais para pauta do comitê, não individuais.',
-  /* comparação pedida pelo usuário: parâmetro passa a ser a liderança
-     GERAL (ASSESS.lid, painel 08, ~40 líderes avaliados pelo time), não só
-     o grupo de heads entre si. `headsComp` são as médias dos heads por
-     competência (mesma ordem de ASSESS.valores), lidas do dossiê de
-     assessment dos heads. O card compara isso com ASSESS.lid[i] e classifica
-     acima/abaixo — cálculo acontece em renderLideranca360(), não aqui, pra
-     não duplicar os números de ASSESS à mão. */
-  headsComp: [4.43, 4.11, 4.39, 4.45, 4.37, 4.61],
-  /* o quali é o que dá o tom: a nota embasa, o comentário aberto explica.
-     Só entra onde há tema documentado nos comentários abertos do dossiê
-     (Analise_360_Heads_2026.docx) — sem inventar leitura para competência
-     sem sinal qualitativo próprio (caso de Inovar para Liderar, cujo +0,02
-     já é quase ruído). Chave é o nome exato de ASSESS.valores. */
-  qualPorCompetencia: {
-    'Melhor e Mais longe com Dados': [
-      'Forte em quase todo o grupo, não é média puxada por poucos.',
-      'Não falta decisão com dados. Falta virar desenvolvimento do time.'
-    ],
-    'Inovar para Liderar': [
-      'Diferença de +0,02 é ruído, não sinal.',
-      'Nenhum tema qualitativo recorrente aqui.'
-    ],
-    'Sede por Resultados': [
-      'Pergunta mais fraca do assessment em 5 dos 8 heads: "ajuda a construir plano de desenvolvimento".',
-      'Competência mais citada como oportunidade individual nos comentários abertos.',
-      'Padrão real. Não é recorte estatístico.'
-    ],
-    'Ser Dono': [
-      'Dois heads, mesma tensão, direções opostas: um evita cobrança e exposição do time.',
-      'O outro fiscaliza sem construir coletivamente.',
-      'O papel esperado da liderança sênior não está claro.'
-    ]
-  },
-  /* "pontuar tudo que temos": lista curta do que entrou na conta, uma
-     linha por fonte — não parágrafo, não caixa, só bullet */
-  fontes: [
-    '<b>Assessment de Liderança 2026, pontuação:</b> notas por competência, autoavaliação e avaliação pelo time.',
-    '<b>Assessment de Liderança 2026, qualitativo:</b> comentários abertos, pontos fortes e de oportunidade.',
-    '<b>Pesquisa de Clima 2026, Liderança Imediata:</b> e-NPS e favorabilidade, usada como confirmação cruzada.',
-    '<b>Avaliação do ciclo (AVD):</b> não entra aqui, é outra população e outra régua, nos painéis 1 a 9 desta aba.'
+   Até 24/09/2026 este painel tinha uma segunda aba, "Heads" (8 do Comitê
+   Executivo, fonte `Analise_360_Heads_2026.docx`) — removida a pedido do
+   usuário ("tire o botão de mudar de heads para lideranças... deixa só
+   liderança"). O código dela (const `LID360`, função `renderLideranca360`,
+   HTML das abas) está guardado em `AVD_Painel10_Heads_backup.md`, na mesma
+   pasta deste relatório, pronto pra religar se precisar voltar.
+
+   Consolidado (24/09/2026): um card por TEMA recorrente, nota (quanti) e
+   quali lado a lado, exatamente como os cards de Heads tinham — pedido explícito:
+   "consolida o quali com o quanti, pra ficar parecido com o de heads".
+
+   Fonte do quali: "COMENTÁRIOS QUALITATIVOS" (coluna C) das 42 abas
+   individuais de `Assessment_Lideranca_2026_ajustado (1).xlsx` — mesma
+   planilha que já alimenta os 38 nomes embutidos em `COMENTARIOS` (página
+   3), só que aqui contado e agregado por tema, não citado pessoa por
+   pessoa (o painel evita ranking nomeado, mesmo critério dos Heads).
+   175 comentários de "pontos fortes" e 192 de "pontos de oportunidade",
+   lidos um a um; cada tema abaixo é uma contagem real de palavra/assunto
+   recorrente nesse texto, cada bullet resume o que aparece de fato nos
+   relatos — nada aqui é extrapolação sem lastro. Números fixos porque a
+   fonte é um documento, não uma planilha carregada em tempo de execução —
+   mesmo critério de `LID360`.
+
+   CRUZAMENTO COM O CICLO AVD (24/09/2026, a pedido do usuário: "você não
+   considerou os comentários da avaliação de desempenho?"). 23 dos 42
+   líderes desta aba TAMBÉM aparecem como avaliados no ciclo AVD regular
+   (`Respostas_Avaliação de Desempenho _ Mar - Ago 2026.xlsx`, relação
+   "Líder > Liderado") — o comentário, aqui, é do CHEFE de cada um desses
+   23, não do time deles: outra direção de olhar, mesma pessoa. Extraídos
+   os 46 comentários (23 de entregas + 23 de justificativa dos 6 valores)
+   e contados os mesmos temas: prioridades aparece em 14 (30%), autonomia
+   em 12 (26%), evolução operacional→estratégica em 9 (20%), delegação em 6
+   (13%), feedback em 6 (13%). Confirma os temas já achados no Assessment
+   por uma fonte totalmente independente (outra pergunta, outro avaliador,
+   outro instrumento) — por isso essas confirmações aparecem como bullet
+   extra nos cards abaixo, não como um card à parte (o achado é o mesmo,
+   citar duas vezes empobreceria a leitura).
+
+   CRUZAMENTO COM O CLIMA 2026 (24/09/2026, a pedido do usuário: "cruza
+   também clima"). Fonte: `Pesquisa_de_Clima_2026 - Planilhão .xlsx`, aba
+   "Liderança1" (`Área de Trabalho\Pesquisa de Clima\Pesquisa de Clima 26\`)
+   — essa aba quebra a dimensão "Liderança Imediata" (8 perguntas) POR
+   LÍDER, não só por área, e casa por nome com as 42 abas do Assessment.
+   38 dos 42 líderes aparecem nessa aba; só 29 têm volume de resposta
+   suficiente pra calcular a dimensão (time pequeno demais preserva
+   anonimato e não computa). Das 8 perguntas de Liderança Imediata, a mais
+   fraca — de longe — é "me apoia no meu PDI, contribuindo para meu
+   desenvolvimento e evolução de carreira": 78,3% de favorabilidade média
+   entre os 29, ante 87-96% nas outras 7. Isso não confirma "gestão de
+   prioridades" (o Clima não pergunta sobre isso) — confirma a MESMA
+   direção dos temas de desenvolvimento/protagonismo do time (delegação,
+   ampliar protagonismo): investimento no crescimento das pessoas é o elo
+   mais fraco, também sob a ótica de quem é liderado, não só nos
+   comentários abertos. Entrou como bullet no card "Ampliar protagonismo
+   do time" — o mais próximo tematicamente, sem forçar equivalência com
+   "gestão de prioridades". */
+const LID_GERAL_QUALI = {
+  totalFortes: 175, totalOport: 192,
+  fortes: [
+    { tema:'Confiança e autonomia dadas ao time', n:28, de:175, bullets:[
+      'Tema isolado mais citado entre os pontos fortes — quase 1 em cada 6 comentários.',
+      'É o motivo mais repetido para o time descrever segurança para decidir sozinho.'
+    ]},
+    { tema:'Comunicação clara', n:20, de:175, bullets:[
+      'Feedback direto e transparência aparecem juntos na maioria desses relatos.'
+    ]},
+    { tema:'Proximidade e acessibilidade', n:18, de:175, bullets:[
+      'Liderança disponível para o time, sem formalidade excessiva no dia a dia.'
+    ]}
+  ],
+  /* ordem manual pedida pelo usuário pro grid fixo 3×2 do painel 10
+     ("Gestão de Prioridade; Ampliar protagonismo; o outro" / "Feedback;
+     Evoluir; o outro") — não é mais por frequência (`n`) decrescente. */
+  oport: [
+    { tema:'Gestão de prioridades', n:49, de:192, bullets:[
+      'De longe o mais citado — 1 em cada 4 comentários de oportunidade.',
+      'Mesmo tema mais fraco identificado nos Heads (Sede por Resultados): padrão real, não recorte de população pequena.',
+      'Confirmado numa fonte independente: também o mais citado nos comentários do ciclo AVD sobre 23 desses líderes (14 de 46, 30%), escritos pelo chefe deles, não pelo time.'
+    ]},
+    { tema:'Ampliar protagonismo do time', n:23, de:192, bullets:[
+      'Pedido recorrente de mais espaço de decisão para o time, não de mais acompanhamento.',
+      'Autonomia do time aparece com o mesmo peso nos comentários do ciclo AVD sobre 23 desses líderes (12 de 46, 26%).',
+      'Na Pesquisa de Clima 2026, a pergunta mais fraca entre 29 desses líderes é sobre apoio ao PDI e ao ' +
+        'desenvolvimento de carreira (78,3% de favorabilidade, a menor das 8 de Liderança Imediata) — mesma ' +
+        'direção: o time pede mais investimento da liderança no crescimento das pessoas.'
+    ]},
+    { tema:'Comunicação, como oportunidade', n:28, de:192, bullets:[
+      'O mesmo traço que aparece como força em 20 relatos aparece como oportunidade em 28 outros.',
+      'Não é uniforme: a experiência de comunicação varia bastante de time para time.'
+    ]},
+    { tema:'Feedback mais estruturado', n:19, de:192, bullets:[
+      'Pedido de rotina de feedback, não só de conversa pontual quando surge um problema.',
+      'Mesmo tema nos comentários do ciclo AVD sobre 23 desses líderes (6 de 46, 13%).'
+    ]},
+    { tema:'Evoluir de atuação operacional para estratégica', n:23, de:192, bullets:[
+      'Mesma tensão vista nos Heads: tempo dividido entre execução direta e direcionamento de médio prazo.',
+      'Também recorrente nos comentários do ciclo AVD sobre 23 desses líderes (9 de 46, 20%).'
+    ]},
+    { tema:'Delegação', n:13, de:192, bullets:[
+      'Menos citado que protagonismo, mas na mesma direção: menos concentração de decisão na liderança.',
+      'Mesmo tema nos comentários do ciclo AVD sobre 23 desses líderes (6 de 46, 13%).'
+    ]}
   ]
 };
-function renderLideranca360(){
-  const L = LID360;
-  $('#lidSub').textContent = L.sub;
-  $('#lidFonteLinha').textContent = L.fonteLinha;
-  $('#lidDiagnostico').textContent = L.headline;
+function renderLiderancaGeral(){
+  const Q = LID_GERAL_QUALI;
 
-  /* heads vs. liderança geral, por competência: só vira card quando a
-     diferença é real (≥ 0,01) — abaixo disso é empate, não sinal */
-  const linhas = L.headsComp.map((v, i) => {
-    const geral = ASSESS.lid[i];
-    return { nome: ASSESS.valores[i], heads: v, geral, diff: v - geral };
-  });
-  const cardHtml = l => {
-    const sev = l.diff > 0 ? 'sev-positivo' : 'sev-alerta';
-    const sinal = l.diff > 0 ? '+' : '−';
-    const qual = L.qualPorCompetencia[l.nome] || [];
-    return '<div class="lid-pcard ' + sev + '"><h6>' + esc(l.nome) + '</h6>' +
+  $('#lidFonteLinha').textContent = 'Fonte: Assessment de Liderança 2026 (42 lideranças) × Avaliação do ciclo (AVD), Líder > Liderado × Pesquisa de Clima 2026, Liderança Imediata. Setembro de 2026.';
+  $('#lidFontes').innerHTML = [
+    '<b>Assessment de Liderança 2026, qualitativo:</b> comentários abertos de pontos fortes e de oportunidade, ' +
+      'contados por tema recorrente nas 42 abas individuais.',
+    '<b>Avaliação do ciclo (AVD), comentários Líder &gt; Liderado:</b> usada como confirmação cruzada — 23 dos 42 líderes ' +
+      'também são avaliados no ciclo AVD regular, pelo próprio chefe (não pelo time); os mesmos temas aparecem nos ' +
+      'comentários de entregas e de valores dessas 23 pessoas.',
+    '<b>Pesquisa de Clima 2026, dimensão Liderança Imediata:</b> usada como confirmação cruzada — 38 dos 42 líderes ' +
+      'aparecem na aba "Liderança1" do planilhão, 29 com volume suficiente para calcular a dimensão; a pergunta com ' +
+      'menor favorabilidade entre elas é sobre apoio ao desenvolvimento de carreira do time.'
+  ].map(f => '<li>' + f + '</li>').join('');
+
+  const cardHtml = (t, sev) => {
+    const pct = Math.round(t.n / t.de * 100);
+    return '<div class="lid-pcard ' + sev + '"><h6>' + esc(t.tema) + '</h6>' +
       '<div class="lid-pcard-cols">' +
         '<div class="lid-pcard-nota">' +
-          '<div class="n"><b>' + nf2(l.heads) + '</b><span>heads</span></div>' +
-          '<div class="n"><b>' + nf2(l.geral) + '</b><span>liderança geral</span></div>' +
-          '<div class="diffn">' + sinal + nf2(Math.abs(l.diff)) + '</div>' +
+          '<div class="n-heads"><b>' + pct + '%</b><span>dos comentários</span></div>' +
+          '<div class="obs">' + t.n + ' de ' + t.de + '</div>' +
         '</div>' +
-        '<ul class="lid-pcard-qual">' + qual.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul>' +
+        '<ul class="lid-pcard-qual">' + t.bullets.map(b => '<li>' + esc(b) + '</li>').join('') + '</ul>' +
       '</div></div>';
   };
-  const fortes = linhas.filter(l => l.diff >= 0.01).sort((a, b) => b.diff - a.diff);
-  const atencao = linhas.filter(l => l.diff <= -0.01).sort((a, b) => a.diff - b.diff);
-  $('#lidPadroes').innerHTML =
-    (fortes.length ? '<div class="lid-grp sev-positivo">Pontos fortes</div>' +
-      '<div class="lid-cardgrid">' + fortes.map(cardHtml).join('') + '</div>' : '') +
-    (atencao.length ? '<div class="lid-grp sev-alerta">Pontos de atenção</div>' +
-      '<div class="lid-cardgrid">' + atencao.map(cardHtml).join('') + '</div>' : '');
-
-  $('#lidFontes').innerHTML = L.fontes.map(f => '<li>' + f + '</li>').join('');
+  /* distribui os temas em N colunas balanceadas por tamanho de texto: o
+     card maior cai na coluna mais "vazia" no momento (todas começam em 0,
+     então os N maiores viram o topo de cada coluna), e os menores vão
+     empilhando embaixo da coluna que ficar mais leve — "tamanho" é a soma
+     do texto dos bullets, proxy simples de quanto o card vai ocupar em
+     altura. N=3, não 2: o pedido foi deixar o card em si mais vertical
+     (mais alto e estreito), não só o conteúdo dele — mais colunas mais
+     finas faz isso sem mudar o `.lid-pcard-cols` (que já está empilhado). */
+  const N_COLUNAS = 3;
+  const distribuiEmColunas = (temas, n) => {
+    const tamanho = t => t.bullets.reduce((s, b) => s + b.length, 0);
+    const ord = temas.slice().sort((a, b) => tamanho(b) - tamanho(a));
+    const cols = Array.from({ length: n }, () => ({ itens: [], alt: 0 }));
+    ord.forEach(t => {
+      const alvo = cols.reduce((m, c, i) => c.alt < cols[m].alt ? i : m, 0);
+      cols[alvo].itens.push(t);
+      cols[alvo].alt += tamanho(t);
+    });
+    return cols.map(c => c.itens);
+  };
+  /* renderiza colunas já prontas (`.lid-cardcol`, empilhamento vertical com
+     gap fixo) — o espaçamento entre cards fica sempre igual, mesmo com
+     alturas diferentes, porque cada card soma direto ao próximo NA MESMA
+     coluna (gap do flex), em vez de depender da altura da linha inteira
+     de um grid (onde o card mais curto de uma linha sobra um vão maior
+     até a próxima linha) */
+  const renderColunas = (cols, sev) =>
+    '<div class="lid-cardgrid">' +
+      cols.map(col => '<div class="lid-cardcol">' + col.map(t => cardHtml(t, sev)).join('') + '</div>').join('') +
+    '</div>';
+  const colunasHtml = (temas, sev) =>
+    renderColunas(distribuiEmColunas(temas, Math.min(N_COLUNAS, temas.length)), sev);
+  /* "Pontos de atenção" pediu ordem manual fixa, não balanceada por
+     tamanho: "Gestão de Prioridade; Ampliar protagonismo; o outro /
+     Feedback; Evoluir; o outro" — 2 linhas de 3 temas cada, lidas da
+     esquerda pra direita. `reshapeColunas` faz esse encaixe: pega a lista
+     na ordem de leitura (linha 1 inteira, depois linha 2) e distribui pro
+     índice `i % nCols`, então a coluna 0 vira [linha1[0], linha2[0]], a
+     coluna 1 vira [linha1[1], linha2[1]], etc. — cada coluna diz respeito
+     à MESMA posição nas duas linhas, preservando a leitura pedida. */
+  const reshapeColunas = (temas, nCols) => {
+    const cols = Array.from({ length: nCols }, () => []);
+    temas.forEach((t, i) => cols[i % nCols].push(t));
+    return cols;
+  };
+  $('#lidPadroesGeral').innerHTML =
+    '<div class="lid-grp sev-positivo">Pontos fortes mais citados</div>' +
+    colunasHtml(Q.fortes, 'sev-positivo') +
+    '<div class="lid-grp sev-alerta">Pontos de atenção mais citados</div>' +
+    renderColunas(reshapeColunas(Q.oport, N_COLUNAS), 'sev-alerta');
 }
 
 /* ---------- boot ---------- */
@@ -4959,9 +5214,7 @@ let ARQ_NOME = '';
 try { ARQ_NOME = sessionStorage.getItem('avd_P_arq') || ''; } catch(e){}
 try {
   const d = JSON.parse(sessionStorage.getItem('avd_diag') || 'null');
-  if (d){ DERIVADOS = d.der; RECUSADOS = d.rec; AMOSTRA_RECUSA = d.am;
-          DIVERGENTES = d.div || 0; AMOSTRA_DIVERG = d.amd || '';
-          CALIBRADOS = d.cal || 0; CONC_COMITE = d.cc || 0; }
+  if (d){ DERIVADOS = d.der; RECUSADOS = d.rec; AMOSTRA_RECUSA = d.am; CALIBRADOS = d.cal || 0; }
 } catch(e){}
 
 /* Sem base, as paginas 2 e 3 sairiam com zero em tudo — e zero num slide de
@@ -5052,14 +5305,7 @@ function pintaRotulo(){
   } else if (semNota){
     impDiz(rot + cal + ' · ' + semNota + ' sem nota final' + foto, 'ok');
   } else {
-    /* Divergencia entre a coluna CONCEITO e o calculo NAO e erro: a coluna
-       CONCEITO da planilha nao entra na conta (nao sabe nada de calibracao),
-       entao a divergencia so avisa que ela diz outro numero — nao troca o que
-       esta na tela, que e sempre a matriz. Fica como nota de rodape, nao em
-       vermelho. O vermelho continua reservado a coluna essencial que faltou,
-       que e o unico caso em que o relatorio sai mentindo.
-       Contagem da planilha inteira, entao so aparece fora do recorte. */
-    impDiz(rot + cal + ((DIVERGENTES && BRAND !== 'giro') ? ' · conceito recalculado em ' + DIVERGENTES : '') + foto, 'ok');
+    impDiz(rot + cal + foto, 'ok');
   }
   $('#stamp').textContent = rot + (nCal ? ' · ' + nCal + ' calibradas' : '');
 }
