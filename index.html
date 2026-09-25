@@ -213,6 +213,23 @@ h1 em{font-style:normal;color:var(--gray-500)}
 .pn{font-size:10px;font-weight:700;color:var(--b-acc);letter-spacing:.8px}
 .pt{font-size:16px;font-weight:700;color:var(--gray-900);letter-spacing:-.2px}
 .ps{font-size:12px;color:var(--gray-500);flex:1;min-width:190px}
+/* Painéis retráteis (25/09/2026, a pedido do usuário): "só com o título
+   aberto e uma setinha para abrir ou não o resultado" — página Resultados
+   inteira e a seção Líderes do Conselho. `.phd` vira o botão de clique
+   (`cursor:pointer`, a seta é um `::after` nele mesmo — some pelo fim do
+   `.phd`, depois de `.ps`, que é quem sobra o espaço da linha), e o CSS
+   esconde TUDO que não é `.phd` dentro do `.panel` quando falta a classe
+   `.is-aberto`. Nenhum wrapper novo em volta do conteúdo: com dezenas de
+   painéis diferentes (KPIs, gráfico, tabela, `<details>`...), embrulhar
+   cada um manualmente era arriscado; a seleção `> :not(.phd)` funciona
+   igual não importa o que exista dentro do painel. Fecha por padrão —
+   `.is-aberto` só entra depois do primeiro clique, não no HTML. */
+.panel.retratil .phd{cursor:pointer;user-select:none}
+.panel.retratil .phd::after{content:'▸';color:var(--gray-400);font-size:12px;
+  font-weight:700;transition:transform .15s;flex:none;margin-left:4px}
+.panel.retratil.is-aberto .phd::after{transform:rotate(90deg)}
+.panel.retratil:not(.is-aberto)>:not(.phd){display:none}
+.panel.retratil:not(.is-aberto) .phd{margin-bottom:0;border-bottom-color:transparent}
 .teach{background:var(--b-acc-soft);border-left:3px solid var(--b-acc);border-radius:8px;padding:11px 13px;
   margin-top:16px;font-size:12.5px;color:var(--gray-700);line-height:1.55}
 .teach b{color:var(--gray-900)}
@@ -414,7 +431,7 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .rky div,.rkx div{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
   color:var(--gray-500);max-width:96px}
 .rkx div{text-align:center}
-.rkplot{grid-area:plot;position:relative;aspect-ratio:16/9;min-height:260px;border-radius:12px;
+.rkplot{grid-area:plot;position:relative;aspect-ratio:16/9;min-height:340px;border-radius:12px;
   overflow:hidden;background:linear-gradient(135deg,var(--nb-for) 0%,var(--nb-ple) 48%,var(--nb-ins) 100%)}
 .rkgl{position:absolute;background:rgba(var(--b-ink-rgb),.14)}
 .rkzone{position:absolute;top:0;right:0;width:50%;height:33.333%;
@@ -424,7 +441,12 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
   background:var(--card-bg);padding:3px 8px;border-radius:20px;white-space:nowrap;text-align:right}
 .rkpt{position:absolute;transform:translate(-50%,-50%);cursor:pointer;transition:transform .12s;z-index:2}
 .rkpt:hover{transform:translate(-50%,-50%) scale(1.4);z-index:9}
-.av.rkav{width:27px;height:27px;font-size:9.5px}
+/* Fotos maiores na matriz de risco (25/09/2026, a pedido do usuário): de
+   27px pra 38px. O posicionamento por célula também mudou, de jitter
+   aleatório pra grade (`arranjaCelula`, no script) — "não deixar um círculo
+   na frente do outro". `.rkplot` subiu a altura mínima junto, senão o
+   avatar maior sobrava por cima do rótulo dos eixos em telas mais estreitas. */
+.av.rkav{width:38px;height:38px;font-size:12.5px}
 /* enquadramento por risco: três blocos empilhados (Alto/Médio/Baixo), cada um
    com quem está naquele risco em cards de 2 por linha — só leitura, sem
    clique. Cada card já mostra o risco pelo gestor e por P&C direto, sem
@@ -489,27 +511,32 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .lid-pcard.sev-positivo{background:var(--nb-for);color:var(--nb-for-ink)}
 .lid-pcard.sev-alerta{background:var(--nb-ins);color:var(--nb-ins-ink)}
 .lid-pcard h6{font-size:12.5px;font-weight:700;line-height:1.3;margin-bottom:9px}
-/* nota em cima, quali embaixo — verticalizado a pedido do usuário ("cards
-   mais verticalizados ao invés de horizontais"). Antes era nota numa coluna
-   estreita fixa ao lado do quali; a vantagem de virar vertical é o quali
-   ganhar a largura inteira do card pra quebrar linha, em vez de espremer
-   nos ~180px que sobravam ao lado da nota — ajuda justamente os bullets
-   mais longos (como o cruzamento com o Clima) a não empurrar o card muito
-   mais alto que os vizinhos. */
-.lid-pcard-cols{display:flex;flex-direction:column;gap:10px}
-/* número em destaque + rótulo na mesma linha da observação (N de M),
-   separados por uma linha embaixo — a observação continua pequena, só que
-   agora ao lado em vez de embaixo, a pedido do usuário, "é legal deixar
-   esse obs pequeninho" */
-.lid-pcard-nota{display:flex;align-items:baseline;gap:10px;padding-bottom:8px;
-  border-bottom:1px solid rgba(0,0,0,.15)}
-.lid-pcard-nota .n-heads{display:flex;align-items:baseline;gap:6px}
+/* Cabeçalho clicável (25/09/2026, a pedido do usuário: "tópicos retráteis").
+   Tema + número ficam sempre visíveis — resumo de relance, mesmo padrão dos
+   `.panel.retratil` do resto do relatório ("só o título aberto"). A seta é
+   um `::after` no cabeçalho, gira 90° com `.is-aberto`; só a lista de
+   tópicos (`.lid-pcard-qual`) some quando fechado. */
+.lid-pcard-hd{cursor:pointer;user-select:none;display:flex;align-items:flex-start;
+  justify-content:space-between;gap:10px;margin-bottom:9px}
+.lid-pcard-hd h6{margin-bottom:0}
+.lid-pcard-hd::after{content:'▸';font-size:11px;font-weight:700;opacity:.65;
+  flex:none;margin-top:2px;transition:transform .15s}
+.lid-pcard.is-aberto .lid-pcard-hd::after{transform:rotate(90deg)}
+.lid-pcard:not(.is-aberto) .lid-pcard-qual{display:none}
+/* número em destaque, CENTRALIZADO (25/09/2026, a pedido do usuário) — antes
+   ficava alinhado à esquerda, com a observação "N de M" empurrada pra
+   direita por `margin-left:auto`. Vira coluna centralizada: número e rótulo
+   centrados, observação centralizada embaixo, os dois lados do card com o
+   mesmo eixo de leitura. */
+.lid-pcard-nota{display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:2px;padding-bottom:8px;margin-bottom:9px;border-bottom:1px solid rgba(0,0,0,.15)}
+.lid-pcard-nota .n-heads{display:flex;align-items:baseline;gap:6px;justify-content:center}
 .lid-pcard-nota .n-heads b{font-size:22px;font-weight:700;line-height:1}
 .lid-pcard-nota .n-heads span{font-size:9.5px;opacity:.75}
-.lid-pcard-nota .obs{font-size:9px;line-height:1.35;opacity:.7;margin-left:auto;text-align:right}
+.lid-pcard-nota .obs{font-size:9px;line-height:1.35;opacity:.7}
 /* quali virou bullet assertivo, não parágrafo — uma frase por linha,
    quadrado pequeno no lugar de hífen (regra de lista do resto do material) */
-.lid-pcard-qual{list-style:none;font-size:12.5px;line-height:1.4;display:grid;gap:7px}
+.lid-pcard-qual{list-style:none;font-size:12.5px;line-height:1.4;display:grid;gap:7px;margin-top:9px}
 .lid-pcard-qual li{position:relative;padding-left:12px}
 .lid-pcard-qual li::before{content:'';position:absolute;left:0;top:5px;width:5px;height:5px;
   border-radius:1px;background:currentColor;opacity:.6}
@@ -893,8 +920,8 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
   <nav>
     <button class="is-on" data-p="p1">O ciclo</button>
     <button data-p="p2">Resultados</button>
-    <button data-p="p3">Área &amp; liderança</button>
-    <button data-p="p4">Conselho</button>
+    <button data-p="p3">Áreas</button>
+    <button data-p="p4">Liderança</button>
   </nav>
   <div class="header-actions">
     <span class="hstamp" id="stamp"></span>
@@ -937,27 +964,29 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
          Só a etapa "now" leva a tarja "estamos aqui".
          A barra de progresso é a largura de .tl-feito: com 5 etapas, ela para
          no centro da etapa atual em (n.º da etapa − 0,5) × 20%.
-         Hoje: etapa 4 de 5 → (4 − 0,5) × 20 = 70 → menos 10 de recuo = 60%.
+         Hoje: etapa 5 de 5 → (5 − 0,5) × 20 = 90 → menos 10 de recuo = 80%.
 
-         Conferir que cada `tli` FECHA antes do próximo abrir. A etapa 4 entrou
-         dentro da 3 numa edição e o efeito não parece erro de HTML: `.tli` é
-         `flex-direction:column`, então a 4 desceu para baixo da 3, o "estamos
-         aqui" desceu mais um degrau, e como sobraram 4 filhos diretos numa
-         grade de 5 colunas o trilho ficou sobrando à direita. -->
+         Conferir que cada `tli` FECHA antes do próximo abrir. Isso já
+         quebrou duas vezes (a etapa 4 dentro da 3, depois a 5 dentro da 4,
+         25/09/2026) e o efeito não parece erro de HTML: `.tli` é
+         `flex-direction:column`, então a etapa de dentro desce para baixo
+         da de fora, o "estamos aqui" desce mais um degrau junto, e como
+         sobra um filho direto a menos numa grade de 5 colunas o trilho
+         fica sobrando de um lado. -->
     <div class="tl" id="tl">
       <div class="tl-trilho"></div>
-      <div class="tl-feito" style="width:60.0%"></div>
+      <div class="tl-feito" style="width:80.0%"></div>
       <div class="tli done"><b>1</b>
         <div class="tln">Autoavaliação</div><div class="tld">10 a 16/08</div></div>
       <div class="tli done"><b>2</b>
         <div class="tln">Avaliação do gestor</div><div class="tld">10 a 21/08</div></div>
       <div class="tli done"><b>3</b>
         <div class="tln">Calibragem</div><div class="tld">24/08 a 09/09</div></div>
-      <div class="tli now"><b>4</b>
-        <div class="tln">Alinhamento Movimentações</div><div class="tld">14 a 25/09</div>
+      <div class="tli done"><b>4</b>
+        <div class="tln">Alinhamento Movimentações</div><div class="tld">14 a 25/09</div></div>
+      <div class="tli now"><b>5</b>
+        <div class="tln">Devolutivas</div><div class="tld">28/09 a 02/10</div>
         <div class="tlnow">estamos aqui</div></div>
-      <div class="tli todo"><b>5</b>
-        <div class="tln">Devolutivas</div><div class="tld">28/09 a 02/10</div></div>
     </div>
   </div>
 
@@ -1164,6 +1193,12 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
    iniciais (15px) que veio antes: 19px com iniciais visíveis. */
 .consdet .av.nbav{width:19px;height:19px;font-size:7px}
 .consdet .dots.fluxo{gap:3px}
+/* Fotos maiores no filtro Key Talents / cargo de liderança (25/09/2026):
+   populações bem menores que "Todos", cabe dar mais destaque ao rosto sem
+   sacrificar a proporção "mais larga que alta" das células. `.foco` é
+   ligada via JS (`renderConselho`) quando `cardsVisiveis` é true. */
+.consdet.foco .av.nbav{width:30px;height:30px;font-size:11px}
+.consdet.foco .dots.fluxo{gap:5px}
 /* "Retangular lateralmente" + "aumenta a margem do box": mais respiro
    dentro da célula, mas sem exagerar — padding grande também empurra a
    altura pra cima, na direção contrária do "achatado". */
@@ -1195,6 +1230,14 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 /* "População" é mais comprido que "Cargo"/"Áreas", que são quem definiu os
    46px fixos de `.frow .fk` — sem isto o rótulo quebra em duas linhas */
 #consFiltros .fk{width:70px}
+/* Cards de Líderes/Key Talents no Conselho (25/09/2026): fotos maiores que
+   as da página 3 — pedido do usuário. São poucas pessoas por vez (só quem
+   está nesses dois filtros), então dá pra dar mais destaque ao rosto sem
+   lotar a tela. `.pch` reserva 34px pra coluna do avatar (30px + 2px de
+   padding do anel `.cav` de cada lado); crescendo o avatar, a coluna cresce
+   junto, senão a foto maior estoura pra cima do nome ao lado. */
+#consCards .av.pcav{width:46px;height:46px;font-size:15px}
+#consCards .pch{grid-template-columns:50px 1fr auto auto}
 @media(max-width:760px){
   .arl{grid-template-columns:1fr 44px;gap:8px}
   .arl-s,.arl-l{display:none}
@@ -1447,13 +1490,17 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
     <h1 id="capaP2">Visão Yandeh<br><em>Geral</em></h1>
   </div>
 
-  <div class="panel">
+  <!-- Painéis 01–08: retráteis (25/09/2026, a pedido do usuário) — abrem só
+       com o título, uma setinha ao lado revela o resultado. A matriz de
+       risco (09) e a liderança executiva (10) saíram desta página no mesmo
+       pedido: moraram para a aba Conselho, ver seção "Líderes" lá. -->
+  <div class="panel retratil">
     <div class="phd"><span class="pn">01</span><span class="pt">Dados gerais</span></div>
     <div class="fatos" id="kpis"></div>
     <div class="cap" id="gapNote"></div>
   </div>
 
-  <div class="panel">
+  <div class="panel retratil">
     <div class="phd"><span class="pn">02</span><span class="pt">Como a régua foi usada</span>
       <span class="ps" id="curvaSub"></span></div>
     <!-- legenda única do painel: os dois gráficos abaixo têm as mesmas séries -->
@@ -1465,7 +1512,7 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
     <div class="read" id="curvaNote"></div>
   </div>
 
-  <div class="panel">
+  <div class="panel retratil">
     <div class="phd"><span class="pn">03</span><span class="pt">Distribuição dos conceitos</span>
       <span class="ps" id="distSub"></span></div>
     <!-- Ênfase invertida em 14/09/2026 a pedido do usuário: o ciclo anterior
@@ -1479,21 +1526,21 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
     <div class="dist2" id="dist2"></div>
   </div>
 
-  <div class="panel">
+  <div class="panel retratil">
     <div class="phd"><span class="pn">04</span><span class="pt">Análise por senioridade X desempenho</span>
       <span class="ps" id="senSub"></span></div>
     <div class="chart" id="chSen"></div>
     <div class="read" id="senNote"></div>
   </div>
 
-  <div class="panel">
+  <div class="panel retratil">
     <div class="phd"><span class="pn">05</span><span class="pt">Evolução de cada Business Unit</span></div>
     <div class="chart" id="chBU"></div>
     <div class="read" id="buNote"></div>
     <div class="cap" id="capBU"></div>
   </div>
 
-  <div class="panel">
+  <div class="panel retratil">
     <div class="phd"><span class="pn">06</span><span class="pt">Evolução de cada valor</span>
       <span class="ps">Nota final: onde cada valor estava e onde está.</span></div>
     <div class="chart" id="chValores"></div>
@@ -1505,104 +1552,15 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
     </details>
   </div>
 
-  <div class="panel">
+  <div class="panel retratil">
     <div class="phd"><span class="pn">07</span><span class="pt">Auto Avaliação X Avaliação Gestor</span></div>
     <div class="gaps" id="gaps"></div>
     <div class="cap" id="gapCap"></div>
   </div>
 
-  <!-- ======================================================================
-       08 · ASSESSMENT DE LIDERANÇA
-       Outro instrumento e outra população: não é o AVD. São os líderes
-       avaliados pelos próprios liderados nos seis valores, e o que entra aqui
-       é só a média de todos — a mandala geral e a tabela valor por valor.
-       Fica no fim de propósito: quem lê de cima para baixo já viu o ciclo
-       inteiro antes de trocar de régua.
-       Removido em 14/09/2026 a pedido do usuário e devolvido no mesmo dia,
-       a pedido do usuário de novo — ver [[avd-painel-assessment-lideranca]].
-       ====================================================================== -->
-  <div class="panel">
-    <div class="phd"><span class="pn">08</span><span class="pt">Assessment de liderança</span>
-      <span class="ps" id="asSub"></span></div>
-    <div class="gpk" id="asLeg"></div>
-    <div class="asgrid">
-      <div class="chart" id="chMandala"></div>
-      <div id="asTab"></div>
-    </div>
-  </div>
-
-  <!-- ======================================================================
-       09 · MATRIZ DE RISCO DE SAÍDA
-       Cruza o conceito final (desempenho, já decidido pela régua oficial) com
-       o risco de saída voluntária que o gestor (e, em segundo plano, P&C)
-       enxerga. Vem da própria planilha base, colunas RISCO GESTOR / RISCO
-       P&C (ver IMP_COLS) — unificado ali em 23/09/2026, junto com as demais
-       colunas de talent. Ver [[avd-matriz-risco-saida]].
-       ====================================================================== -->
-  <div class="panel">
-    <div class="phd"><span class="pn">09</span><span class="pt">Matriz de risco de saída</span>
-      <span class="ps" id="rkSub"></span></div>
-    <div class="cap" id="rkVazio"></div>
-    <div id="rkBody" hidden>
-      <div class="rkwrap">
-        <div class="rky" id="rkY"></div>
-        <div class="rkplot" id="rkPlot"></div>
-        <div class="rkx" id="rkX"></div>
-      </div>
-      <div class="rklg" id="rkLeg"></div>
-      <div class="rk-conceitos" id="rkConceitos"></div>
-      <div class="rk-all-box">
-        <h4>Todas as lideranças · <span id="rkTodosSub"></span></h4>
-        <div class="rk-frames" id="rkTodos"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================================
-       10 · LIDERANÇA EXECUTIVA: DIAGNÓSTICO PARA O CONSELHO
-       Até 24/09/2026 tinha duas abas (Lideranças Gerais / Heads, alternadas
-       por botão). O usuário pediu pra tirar o botão e o "textinho de
-       introdução" (`#lidSub`) e deixar só Lideranças Gerais — a aba Heads
-       (`LID360`, `renderLideranca360`, `#lidTabs`) foi pro arquivo
-       `AVD_Painel10_Heads_backup.md`, na mesma pasta deste relatório, com o
-       passo a passo pra religar se precisar voltar.
-
-       Consolidado (24/09/2026) no mesmo formato de card que os Heads
-       tinham — nota grande + quali ao lado (`.lid-pcard-cols`), agrupado em
-       "Pontos fortes" / "Pontos de atenção" — a pedido do usuário: "consolida
-       o quali com o quanti, pra ficar parecido com o de heads". Cada card é
-       um TEMA recorrente, não uma competência: os 6 valores não fazem
-       sentido aqui porque a fonte do quali (ver abaixo) não abre comentário
-       por valor, só por pessoa. A "nota" de cada card é a fração de
-       comentários que citam aquele tema — o quanti — e o quali é a
-       descrição curta do que esse tema significa na prática, fundamentada
-       em exemplos reais lidos das 42 abas, não invenção solta.
-       Fonte: `Assessment_Lideranca_2026_ajustado (1).xlsx`, bloco
-       "COMENTÁRIOS QUALITATIVOS" das 42 abas individuais (mesma fonte dos
-       38 nomes já embutidos em `COMENTARIOS`, página 3) — 175 comentários
-       de "pontos fortes" e 192 de "pontos de oportunidade", contados por
-       tema recorrente.
-
-       SEM PARÁGRAFO DE DIAGNÓSTICO (removido a pedido do usuário em
-       24/09/2026 — só os cards ficam). Ele cruzava o achado do quali com o
-       gap autoavaliação × liderados de `ASSESS` (painel 08); esse cálculo
-       saiu de `renderLiderancaGeral` junto com o texto, então hoje o painel
-       não lê mais `ASSESS.auto`/`ASSESS.lid` — só `ASSESS.nLideres`
-       aparecia no `#lidSub`, que também já tinha saído antes. Se o
-       parágrafo voltar, o cálculo do gap (comentado no histórico de
-       [[avd-comentarios-lider-liderado]]) pode ser recolocado.
-       ====================================================================== -->
-  <div class="panel">
-    <div class="phd"><span class="pn">10</span><span class="pt">Liderança Yandeh</span></div>
-
-    <div id="lidPadroesGeral"></div>
-
-    <div class="lid-src-wrap">
-      <h5>Fontes consideradas</h5>
-      <ul class="lid-src" id="lidFontes"></ul>
-    </div>
-    <p class="cap" id="lidFonteLinha"></p>
-  </div>
+  <!-- 08 · Assessment de liderança mudou para a aba Liderança em 25/09/2026,
+       a pedido do usuário ("move também o assessment para liderança") — já
+       era só sobre líderes, fazia mais sentido morar lá. Ver [[avd-painel-assessment-lideranca]]. -->
 
 </section>
 
@@ -1611,7 +1569,7 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 
   <div class="cover">
     <div class="eyebrow">Área por área</div>
-    <h1>Cada área,<br><em>cada liderança.</em></h1>
+    <h1>Cada área,<br><em>time por time.</em></h1>
     <p class="lead">Escolha a business unit, depois a área. O 9-box e as pessoas da área
       aparecem logo abaixo, no mesmo lugar.</p>
   </div>
@@ -1649,31 +1607,186 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 
 </section>
 
-<!-- ==================== PÁGINA CONSELHO ====================
-     Adicionada em 25/09/2026, a pedido do usuário: uma visão executiva com
-     um nine-box só (troca de população pelos filtros, não dois lado a
-     lado — decisão tomada via AskUserQuestion), pensada pra caber numa tela
-     sem rolar até o nine-box. Os cards abaixo (só aparecem em Líderes /
-     Key Talents) podem empurrar a página pra baixo normalmente — o "sem
-     rolar" vale pro nine-box e pros filtros, não pra lista de pessoas.
+<!-- ==================== PÁGINA LIDERANÇA ====================
+     Adicionada em 25/09/2026 como aba "Conselho"; renomeada para "Liderança"
+     no mesmo lote de ajustes (25/09/2026, rodada seguinte) — a pedido do
+     usuário, junto com o resto desta reorganização: o nine-box (que era o
+     painel 01) virou o ÚLTIMO painel da página, as análises de população
+     fixa (Coordenador+Gerente+Head) passaram a abrir a página, e o
+     Assessment de liderança (que vivia na página Resultados) mudou pra cá
+     também — já era só sobre líderes, fazia mais sentido morar junto.
+     "Não-líderes" saiu do filtro do nine-box no mesmo pedido ("foco em
+     liderança aqui"). Numa rodada seguinte, ainda no mesmo dia, o usuário
+     também tirou "Todos" ("tira o todos, deixando só Key Talents heads
+     gerentes e coordenadores") e o filtro de Empresa inteiro ("tira
+     girotrade, deixa só yandeh"). Ainda no mesmo dia, dois ajustes vieram
+     em cima disso, os dois corrigindo o mesmo tipo de bug — filtro
+     deixando entrar ou faltar gente que não devia:
+       · "é só para aparecer líderes, acho que o filtro tá errado": a base
+         (`baseEsc`, dentro de `renderConselho`) usava `baseLiderancaDe()`
+         — companhia inteira, não só liderança —, e como "Key Talents" vem
+         ligado por padrão, qualquer analista marcado Key Talent no plano
+         de ação entrava no nine-box mesmo sem ser Coordenador/Gerente/
+         Head. Virou `pessoasLideresResultados()`: agora TODO mundo nesta
+         aba já é liderança antes de qualquer chip, e "Key Talents" filtra
+         Key Talents dentro da liderança, não da companhia toda.
+       · "o recorte tem que incluir o Rodolfo que é do CD": `baseLiderancaDe()`
+         excluía TODO o Girotrade CD (`!ehGiroCD(p)`) — mas o CD tem seu
+         próprio degrau de GERENTE na escada salarial, e quem está nesse
+         cargo lá é liderança tanto quanto na Yandeh S.A. A exclusão por
+         empresa nunca devia ter sido o critério de "quem é liderança"; o
+         critério é sempre o nível. `baseLiderancaDe()` hoje devolve a
+         companhia inteira (Yandeh e Girotrade CD), e quem filtra por
+         liderança é `POP_LIDERES_RESULTADOS`/`CONS.niveis`, não a empresa.
+     O filtro de população do nine-box continua só quatro chips
+     acumuláveis: Key Talents + Coordenador + Gerente + Head, todos
+     ligados por padrão (sem isso o nine-box abriria vazio).
+     Internamente os ids (`CONS`, `consFiltros`, `renderConselho()`, `p4`)
+     continuam com o nome antigo — é só o rótulo visível na aba que mudou,
+     trocar cada identificador interno não trazia benefício nenhum.
 
-     "Líderes" aqui é `SENIOR` (o mesmo recorte "de especialista pra cima"
-     que já define quem tem card na página 3) — não existe uma coluna na
-     base que diga "é gestor de alguém", então reaproveitei o recorte que
-     o resto do relatório já usa pra essa ideia, em vez de inventar um
-     terceiro critério de liderança. "Key Talents" vem da coluna PLANO DE
-     AÇÃO: quem tem "Key Talent" escrito lá (mesma lógica de
-     `planoCls`/PLANO_CORES, ver `renderConselho`).
-     ==================================================================== -->
+     "Cargo de liderança" (acumulável, Coordenador/Gerente/Head — mesmo
+     padrão do filtro de Cargo da página Áreas, `F.niveis`) e "Key Talents"
+     (coluna PLANO DE AÇÃO, `ehKeyTalent`/`planoCls`) — os quatro se somam
+     por OR, não por radio — continuam decidindo quem aparece no nine-box
+     e na lista de cards, agora no fim da página.
+
+     "LÍDERES" (as análises no topo): mesmas da página Resultados, só que
+     computadas sobre a população FIXA Coordenador+Gerente+Head — recorte
+     independente do filtro acumulável do nine-box lá embaixo. Motor de
+     cálculo compartilhado (`renderResultados`, ns/população como
+     parâmetro) — os dois lugares nunca divergem de lógica, só de gente
+     somada. Todos os painéis são retráteis, igual à página Resultados. -->
+
 <section class="page" id="p4">
 
   <div class="cover">
     <div class="eyebrow">Visão executiva</div>
-    <h1>Conselho</h1>
+    <h1>Liderança</h1>
+    <p class="lead" id="lidResSub"></p>
   </div>
 
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">01</span><span class="pt">Dados gerais</span></div>
+    <div class="fatos" id="lid-kpis"></div>
+    <div class="cap" id="lid-gapNote"></div>
+  </div>
+
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">02</span><span class="pt">Como a régua foi usada</span>
+      <span class="ps" id="lid-curvaSub"></span></div>
+    <div class="lg lg-painel" id="lid-lgCurva"></div>
+    <div class="chgrid">
+      <div class="chart" id="lid-chNotaE"></div>
+      <div class="chart" id="lid-chNotaV"></div>
+    </div>
+    <div class="read" id="lid-curvaNote"></div>
+  </div>
+
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">03</span><span class="pt">Distribuição dos conceitos</span>
+      <span class="ps" id="lid-distSub"></span></div>
+    <div class="evo-linha evo-topo">
+      <div class="evo-k">Evolução vs. ciclo anterior<em id="lid-evoSub"></em></div>
+      <div class="evo2" id="lid-evo2"></div>
+    </div>
+    <div class="cap" id="lid-evoNote"></div>
+    <div class="dist2" id="lid-dist2"></div>
+  </div>
+
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">04</span><span class="pt">Análise por senioridade X desempenho</span>
+      <span class="ps" id="lid-senSub"></span></div>
+    <div class="chart" id="lid-chSen"></div>
+    <div class="read" id="lid-senNote"></div>
+  </div>
+
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">05</span><span class="pt">Evolução de cada Business Unit</span></div>
+    <div class="chart" id="lid-chBU"></div>
+    <div class="read" id="lid-buNote"></div>
+    <div class="cap" id="lid-capBU"></div>
+  </div>
+
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">06</span><span class="pt">Evolução de cada valor</span>
+      <span class="ps">Nota final: onde cada valor estava e onde está.</span></div>
+    <div class="chart" id="lid-chValores"></div>
+    <div class="vsobre" id="lid-valSobre"></div>
+    <div class="read" id="lid-valNote"></div>
+    <details class="depara" id="lid-deParaValores">
+      <summary>De-para dos seis valores · Yandeh ↔ Girotrade</summary>
+      <table class="dptab" id="lid-dpTab"></table>
+    </details>
+  </div>
+
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">07</span><span class="pt">Auto Avaliação X Avaliação Gestor</span></div>
+    <div class="gaps" id="lid-gaps"></div>
+    <div class="cap" id="lid-gapCap"></div>
+  </div>
+
+  <!-- 08 · Assessment de liderança — mudou da página Resultados pra cá em
+       25/09/2026, rodada seguinte ("move também o assessment para
+       liderança"). Não depende de população (dado fixo, 42 líderes), então
+       manteve os ids sem prefixo `lid-` — nunca existiu em dois lugares ao
+       mesmo tempo, só mudou de endereço. Ver [[avd-painel-assessment-lideranca]]. -->
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">08</span><span class="pt">Assessment de liderança</span>
+      <span class="ps" id="asSub"></span></div>
+    <div class="gpk" id="asLeg"></div>
+    <div class="cap" id="asEscala"></div>
+    <div class="asgrid">
+      <div class="chart" id="chMandala"></div>
+      <div id="asTab"></div>
+    </div>
+    <div class="bloco" id="asPorBU"></div>
+  </div>
+
+  <!-- 09 · matriz de risco de saída — mudou de página em 25/09/2026 (era o
+       painel 09 de Resultados). Ganhou botões de filtro por cargo
+       (Coordenador/Gerente/Head, acumuláveis) no mesmo pedido, além do
+       recorte fixo Coord+Gerente+Head desta seção — ver
+       [[avd-matriz-risco-saida]]. -->
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">09</span><span class="pt">Matriz de risco de saída</span>
+      <span class="ps" id="lid-rkSub"></span></div>
+    <div class="fbar" id="lid-rkFiltros"></div>
+    <div class="cap" id="lid-rkVazio"></div>
+    <div id="lid-rkBody" hidden>
+      <div class="rkwrap">
+        <div class="rky" id="lid-rkY"></div>
+        <div class="rkplot" id="lid-rkPlot"></div>
+        <div class="rkx" id="lid-rkX"></div>
+      </div>
+      <div class="rklg" id="lid-rkLeg"></div>
+      <div class="rk-conceitos" id="lid-rkConceitos"></div>
+      <div class="rk-all-box">
+        <h4>Todas as lideranças · <span id="lid-rkTodosSub"></span></h4>
+        <div class="rk-frames" id="lid-rkTodos"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 · liderança executiva — mudou de página em 25/09/2026 (era o
+       painel 10 de Resultados). Ver comentário grande junto de
+       `renderLiderancaGeral`, no script. -->
+  <div class="panel retratil">
+    <div class="phd"><span class="pn">10</span><span class="pt">Liderança Yandeh</span></div>
+    <div id="lid-lidPadroesGeral"></div>
+    <div class="lid-src-wrap">
+      <h5>Fontes consideradas</h5>
+      <ul class="lid-src" id="lid-lidFontes"></ul>
+    </div>
+    <p class="cap" id="lid-lidFonteLinha"></p>
+  </div>
+
+  <!-- 11 · nine-box — foi o painel 01 até 25/09/2026; virou o último a
+     pedido do usuário ("deixa o nine box por último"). Continua sendo o
+     recorte ACUMULÁVEL (Todos/Key Talents + Coordenador/Gerente/Head), que
+     não é o mesmo recorte fixo das análises acima. -->
   <div class="panel">
-    <div class="phd"><span class="pn">01</span><span class="pt">Nine-box</span>
+    <div class="phd"><span class="pn">11</span><span class="pt">Nine-box</span>
       <span class="ps" id="consSub"></span></div>
     <div class="fbar" id="consFiltros"></div>
     <div class="consrow">
@@ -1683,7 +1796,7 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
   </div>
 
   <div class="panel" id="consCardsPanel" hidden>
-    <div class="phd"><span class="pn">02</span><span class="pt" id="consCardsT">Pessoas</span>
+    <div class="phd"><span class="pn">12</span><span class="pt" id="consCardsT">Pessoas</span>
       <span class="ps" id="consCardsSub"></span></div>
     <div class="cards" id="consCards"></div>
   </div>
@@ -2220,6 +2333,107 @@ const ASSESS = {
   nPerguntas: 32
 };
 
+/* ============================================================
+   MÉDIA DO ASSESSMENT POR BUSINESS UNIT (25/09/2026, a pedido do usuário:
+   "mostrar como ficou a média geral de notas de cada B.U., ali mesmo onde
+   está o assessment... abrir por diretoria"). Fonte: aba "Resumo Geral" de
+   `Assessment_Lideranca_2026_ajustado (1).xlsx`, colunas Líder / Média Auto
+   / Média Liderados — a mesma planilha de onde saem os números do ASSESS
+   acima, só que aqui por LÍDER, não a média da companhia inteira.
+
+   Exclui a única linha marcada "OUT" na coluna sTATUS daquela aba (Leila
+   Bonfanti) — mesmo critério editorial da própria planilha, não um corte
+   meu. Os nomes aqui são a grafia OFICIAL (como está na planilha BASE do
+   ciclo, não a abreviada que a aba "Resumo Geral" usa em alguns casos —
+   ex.: "Bianca Palacios" na aba virou "Bianca Oliveira Palacios" aqui,
+   "Weslley Figueiredo" virou "Weslley Pereira Figueiredo") — o casamento
+   com a BU é por NOME EXATO (`impNorm`) contra a base carregada, mesmo
+   princípio de "sem aproximação por semelhança" das fotos
+   ([[avd-fotos-das-pessoas]]): errar o nome intacto é pior que não achar.
+   Cinco pessoas da aba (Lucas Sanches, Magno Fernandes, Ricardo Uehara
+   Gonçalves, Rodrigo Filardi Vieira de Souza, Victor Sampaio Tenorio de
+   Mello) não existem na base do ciclo atual — ficam de fora do
+   agrupamento por BU e aparecem à parte, nomeados, em vez de já não
+   fazer diferença nenhuma somidas em silêncio.
+
+   `auto: null` em quem a planilha trouxe "-" na Média Auto (Guilherme
+   Dello Russo, Lucas Sanches) — sem resposta de autoavaliação; a média de
+   auto por BU ignora esses ao calcular, mas eles contam na de liderados. */
+const ASSESS_POR_LIDER = [
+  { nome:'Alexandre Contreras Garcia', auto:4.38, lid:3.74 },
+  { nome:'Andressa Bianca Bento Giopatto', auto:3.59, lid:4.58 },
+  { nome:'Antonio Carlos Guimaraes', auto:4.97, lid:4.55 },
+  { nome:'Aurelien Alexis Jacomy', auto:4.19, lid:4.39 },
+  { nome:'Bianca Oliveira Palacios', auto:4.66, lid:3.91 },
+  { nome:'Bruna Barbosa Rodrigues', auto:4.47, lid:4.06 },
+  { nome:'Bruna Morand Paixao Ferreira', auto:3.75, lid:4.96 },
+  { nome:'Denis Taveira Laurentino de Lima', auto:4.19, lid:4.12 },
+  { nome:'Douglas Alves de Brito Neves', auto:4.09, lid:4.05 },
+  { nome:'Gabriel Liberman Fernandes', auto:4.50, lid:4.56 },
+  { nome:'Gisele Pires Silva Almeida', auto:4.03, lid:4.26 },
+  { nome:'Guilherme Dello Russo', auto:null, lid:4.34 },
+  { nome:'Idineu Spadari Onha', auto:4.25, lid:4.15 },
+  { nome:'Isabella Montanhal de Araujo Pereira', auto:3.72, lid:4.60 },
+  { nome:'Jackson Junior Marques Almeida', auto:3.97, lid:4.58 },
+  { nome:'Jesse Souza Cavalcanti Neto', auto:4.16, lid:4.70 },
+  { nome:'Joseany Zapala', auto:4.84, lid:4.76 },
+  { nome:'Karina Barbosa do Nascimento Yai', auto:4.78, lid:4.55 },
+  { nome:'Leonardo Furlan Fernandes', auto:4.47, lid:3.69 },
+  { nome:'Ligia dos Santos Perguer', auto:4.66, lid:4.71 },
+  { nome:'Luana Lopes da Silva', auto:4.28, lid:4.56 },
+  { nome:'Lucas Sanches', auto:null, lid:4.21 },
+  { nome:'Luciana Leme', auto:3.91, lid:3.97 },
+  { nome:'Luzane Ruscher Souto', auto:3.91, lid:4.89 },
+  { nome:'Magno Fernandes', auto:4.25, lid:4.55 },
+  { nome:'Marcelo Ricardo Bueno de Campos', auto:3.88, lid:3.83 },
+  { nome:'Marcos Garcia da Silva', auto:3.94, lid:4.24 },
+  { nome:'Matheus Lauria Tucci', auto:4.19, lid:4.71 },
+  { nome:'Paulo Henrique Eid da Fonseca', auto:4.56, lid:4.06 },
+  { nome:'Pietro Lamego Querini', auto:4.31, lid:4.81 },
+  { nome:'Priscilla Galhanone Assis Figueiredo Cardoso', auto:4.62, lid:4.72 },
+  { nome:'Rafael Ferreira Inacio', auto:4.56, lid:4.46 },
+  { nome:'Rafaela Lima Prucoli', auto:4.28, lid:4.84 },
+  { nome:'Renata Marconi de Souza', auto:3.97, lid:3.95 },
+  { nome:'Rennan Prado Freitas', auto:4.81, lid:4.62 },
+  { nome:'Ricardo Setton', auto:4.34, lid:3.28 },
+  { nome:'Ricardo Uehara Goncalves', auto:4.06, lid:3.22 },
+  { nome:'Roberto Marinho Mendonca do Nascimento', auto:4.12, lid:4.23 },
+  { nome:'Rodolfo Morais do Rego', auto:4.00, lid:4.38 },
+  { nome:'Rodrigo Filardi Vieira de Souza', auto:4.28, lid:3.73 },
+  { nome:'Rodrigo Madeiro dos Santos', auto:4.31, lid:4.93 },
+  { nome:'Valdo Melo Lima Guerra', auto:5.00, lid:4.55 },
+  { nome:'Victor Sampaio Tenorio de Mello', auto:3.62, lid:3.53 },
+  { nome:'Weslley Pereira Figueiredo', auto:3.84, lid:4.02 }
+];
+
+/* Média por BU: cada líder pesa igual (não pondera por tamanho de time),
+   mesmo critério do resto do relatório (ver comentário do ASSESS acima e
+   de LID_GERAL_QUALI). O casamento líder → BU é feito em tempo de leitura
+   contra a base carregada (`P_TODOS`, nunca `P` — é referência de
+   companhia, independente do recorte Yandeh/Girotrade do topo), então
+   funciona com qualquer base do ciclo, não só a que gerou estes números;
+   quem não casar cai em `semBU`, mostrado à parte. */
+function assessMediaPorBU(){
+  const porBU = {};
+  const semBU = [];
+  ASSESS_POR_LIDER.forEach(r => {
+    const alvo = impNorm(r.nome);
+    const p = P_TODOS.find(x => impNorm(x.nome) === alvo);
+    if (!p){ semBU.push(r.nome); return; }
+    const bu = p.bu || '(sem BU)';
+    const g = porBU[bu] || (porBU[bu] = { bu, n:0, autoSoma:0, autoN:0, lidSoma:0, lidN:0 });
+    g.n++;
+    if (r.auto != null){ g.autoSoma += r.auto; g.autoN++; }
+    if (r.lid  != null){ g.lidSoma  += r.lid;  g.lidN++; }
+  });
+  const linhas = Object.values(porBU).map(g => ({
+    bu: g.bu, n: g.n,
+    auto: g.autoN ? g.autoSoma / g.autoN : null,
+    lid:  g.lidN  ? g.lidSoma  / g.lidN  : null
+  })).sort((a, b) => b.n - a.n || a.bu.localeCompare(b.bu));
+  return { linhas, semBU };
+}
+
 /* A comparação exata que estava aqui (`p.emp === 'GIROTRADE'`) só acertava uma
    das grafias que as planilhas do ciclo usam para a mesma empresa:
      · `GIROTRADE`      — Base_AVD_H2_2026.xlsx
@@ -2736,14 +2950,27 @@ function radarChart(sel, cfg){
 /* ============================================================
    PÁGINA 2
    ============================================================ */
-function renderPagina2(){
-  /* A capa dizia "Visão Yandeh · Geral" fixa no HTML, inclusive com o recorte
-     do CD ativo e 58 pessoas na tela — o título contradizia todo o resto da
-     página. Acompanha o recorte. */
-  const capa = $('#capaP2');
-  if (capa) capa.innerHTML = (BRAND === 'giro' && !RECORTE_VAZIO)
-    ? 'Visão Girotrade<br><em>CD · Operações</em>'
-    : 'Visão Yandeh<br><em>Geral</em>';
+/* ============================================================
+   RESULTADOS — motor genérico, usado duas vezes
+   Painéis 01–07 (KPIs, curva de notas, distribuição+evolução, senioridade,
+   BU, valores, gap auto×gestor) não são exclusivos da página Resultados: a
+   aba Conselho pediu (25/09/2026) "uma igual, porém para líderes" — as
+   MESMAS análises, só que computadas sobre coordenadores/gerentes/heads em
+   vez da companhia inteira. Em vez de duplicar ~500 linhas de cálculo e
+   correr o risco das duas cópias divergirem a cada ajuste futuro, o corpo
+   virou uma função com dois parâmetros: `ns` (prefixo dos ids do HTML —
+   '' para a página Resultados, 'lid-' para a aba Líderes) e `P` (a
+   população a somar — sombreia de propósito o `P` global do recorte de
+   marca, então todo `P.filter(...)` aqui dentro já promove sozinho a
+   população certa, sem precisar reescrever cada linha).
+   `renderPagina2()` chama isto com ns='' e o `P` global (recorte Yandeh/
+   Girotrade do topo); `renderLideresResultados()` chama com ns='lid-' e a
+   população fixa de líderes (`pessoasLideresResultados()`).
+   ============================================================ */
+function renderResultados(ns, P){
+  const $n = id => $('#' + ns + id);
+  const $$n = sel => $$('#' + ns + sel);
+  const nsSel = suf => '#' + ns + suf;
 
   const com   = P.filter(p => p.conc);
   const hist  = P.filter(p => p.pE != null && p.pV != null);
@@ -2768,7 +2995,7 @@ function renderPagina2(){
   const cincoCinco = P.filter(p => p.gE === 5 && p.gV === 5);
   const exc = P.filter(p => p.conc === 'Excepcional').length;
 
-  $('#kpis').innerHTML =
+  $n('kpis').innerHTML =
     fato('Pessoas avaliadas', com.length + '<small> / ' + P.length + '</small>',
          'com nota final nos dois eixos') +
     fato('Com histórico', histC.length + '<small> / ' + P.length + '</small>',
@@ -2780,11 +3007,12 @@ function renderPagina2(){
          false, cincoCinco.length ? 'cinco' : '');
 
   /* os cartões nascem do innerHTML, então o listener é ligado aqui — o
-     `$$('[data-nb]')` do fim do arquivo já rodou, sobre o HTML original */
-  $$('#kpis [data-nb]').forEach(b =>
-    b.addEventListener('click', () => abreNineBox(b.dataset.nb)));
+     `$$('[data-nb]')` do fim do arquivo já rodou, sobre o HTML original.
+     `P` como 2º argumento: mesmo motivo do `dist2 [data-conc]` logo abaixo. */
+  $$n('kpis [data-nb]').forEach(b =>
+    b.addEventListener('click', () => abreNineBox(b.dataset.nb, P)));
 
-  ocultaLeitura('#gapNote');
+  ocultaLeitura(nsSel('gapNote'));
 
   /* ---------- 02 · curva das notas, coorte pareada ---------- */
   const NOTAS = [1, 2, 3, 4, 5];
@@ -2801,17 +3029,17 @@ function renderPagina2(){
   /* uma escala só para os dois painéis: lado a lado com eixos diferentes,
      a forma da curva mente sobre a comparação */
   const escNotas = escalaPct(curvaE.now.concat(curvaE.ant, curvaV.now, curvaV.ant));
-  $('#curvaSub').textContent = 'Grupo comparável: ' + histC.length + ' pessoas com nota nos dois ciclos.';
+  $n('curvaSub').textContent = 'Grupo comparável: ' + histC.length + ' pessoas com nota nos dois ciclos.';
 
   const pctFmt = v => Math.round(v) + '%';
-  legendaPainel('#lgCurva', [{ n:'Anterior', cls:'s-ant' }, { n:'Ciclo', cls:'s-now' }]);
+  legendaPainel(nsSel('lgCurva'), [{ n:'Anterior', cls:'s-ant' }, { n:'Ciclo', cls:'s-now' }]);
   /* Estes dois seguem sendo linha com ponto, de propósito. A limpeza de linhas
      do relatório valeu para os painéis que misturavam barra E linha, em que a
      linha repetia em desenho o que a tag de variação já dizia em número. Aqui
      não há barra: a linha é o gráfico, e é o formato que deixa a curva de
      distribuição ser lida como forma — para onde a massa andou entre os dois
      ciclos — que é a pergunta deste painel. */
-  [['#chNotaE', 'Entregas', curvaE], ['#chNotaV', 'Valores', curvaV]].forEach(function(cfg){
+  [[nsSel('chNotaE'), 'Entregas', curvaE], [nsSel('chNotaV'), 'Valores', curvaV]].forEach(function(cfg){
     const sel = cfg[0], nome = cfg[1], c = cfg[2];
     lineChart(sel, {
       titulo: 'Curva de notas · ' + nome,
@@ -2829,7 +3057,7 @@ function renderPagina2(){
         '<i class="t-ant"></i>Anterior: <b>' + pc(c.qa[i], histC.length) + '%</b> <em>(' + c.qa[i] + ' pessoas)</em>'
     });
   });
-  ocultaLeitura('#curvaNote');
+  ocultaLeitura(nsSel('curvaNote'));
 
   /* --- 03 · distribuição: uma faixa fina e os números grandes embaixo ---
      Antes o mesmo número aparecia três vezes no painel: escrito dentro da barra
@@ -2837,7 +3065,7 @@ function renderPagina2(){
      dentro do cartão (essa com outra escala, normalizada pelo maior conceito e
      não pelo total, o que fazia duas grandezas diferentes parecerem a mesma).
      Ficou uma leitura só: a faixa mostra a proporção, o número mostra o número. */
-  $('#distSub').textContent = com.length + ' com conceito · ' + (P.length - com.length) + ' sem nota final';
+  $n('distSub').textContent = com.length + ' com conceito · ' + (P.length - com.length) + ' sem nota final';
   const distRows = ORDEM_CONC.map(k => ({ k, n: P.filter(p => p.conc === k).length, bg: CONC[k].bg, ink: CONC[k].ink }));
   const semC = P.length - com.length;
 
@@ -2868,8 +3096,8 @@ function renderPagina2(){
   const totAnt = distPar.reduce((s, r) => s + r.nAnt, 0);
   /* dist-sec: desde 14/09/2026 esta é a leitura secundária do painel — a
      evolução vs. ciclo anterior (#evo2, acima) é que abre em tamanho cheio. */
-  $('#dist2').classList.add('dist-sec');
-  $('#dist2').innerHTML =
+  $n('dist2').classList.add('dist-sec');
+  $n('dist2').innerHTML =
     '<div class="finastk">' + distRows.filter(r => r.n).map(r =>
       '<span style="width:' + (r.n * 100 / com.length) + '%;background:' + r.bg + '"' +
       ' title="' + esc(r.k) + ': ' + r.n + '"></span>').join('') + '</div>' +
@@ -2932,14 +3160,19 @@ function renderPagina2(){
        que os quatro cartões já diziam em número. */
     '';
   /* os cartões nascem do innerHTML, então o listener é ligado aqui: o
-     `$$('[data-nb]')` do fim do arquivo roda uma vez, sobre o HTML original */
-  $$('#dist2 [data-conc]').forEach(b =>
-    b.addEventListener('click', () => abreNineBox('conc:' + b.dataset.conc)));
+     `$$('[data-nb]')` do fim do arquivo roda uma vez, sobre o HTML original.
+     `abreNineBox(..., P)` passa a população LOCAL desta chamada (na aba
+     Liderança, a fixa Coordenador+Gerente+Head) — sem o 2º argumento,
+     `abreNineBox` cairia no `P` GLOBAL da empresa (bug corrigido em
+     25/09/2026: "em distribuição de conceitos, quando eu clico, ainda
+     aparecem pessoas que não são líderes"). */
+  $$n('dist2 [data-conc]').forEach(b =>
+    b.addEventListener('click', () => abreNineBox('conc:' + b.dataset.conc, P)));
 
   /* --- evolução --- */
   let mel = 0, est = 0, reg = 0;
   histC.forEach(p => { const d = (p.gE - p.pE) + (p.gV - p.pV); if (d > 0) mel++; else if (d < 0) reg++; else est++; });
-  $('#evoSub').textContent = 'Somente as ' + histC.length + ' pessoas com nota válida nos dois ciclos.';
+  $n('evoSub').textContent = 'Somente as ' + histC.length + ' pessoas com nota válida nos dois ciclos.';
   /* enxuto: uma barra de 100% dividida em três, dentro do mesmo painel da
      distribuição, em vez de três blocos grandes num painel só para isso */
   /* Cores sólidas e vibrantes (--evo-*), dedicadas a este gráfico — pedido do
@@ -2959,7 +3192,7 @@ function renderPagina2(){
      barra) não cabe rótulo por extenso: aí mostra só a seta e o número, e o
      nome completo continua no title (tooltip) e na linha .evleg abaixo, que
      fica como o lugar do percentual. */
-  $('#evo2').innerHTML =
+  $n('evo2').innerHTML =
     '<div class="evbar">' + evoDefs.filter(d => d.n).map(d => {
       const w = d.n * 100 / histC.length;
       const rotulo = w >= 9 ? (d.g + ' ' + d.k + ' ' + d.n) : (d.g + ' ' + d.n);
@@ -2969,7 +3202,7 @@ function renderPagina2(){
     '<div class="evleg">' + evoDefs.map(d =>
       '<span><i style="background:' + d.bg + '"></i>' + d.k + ' <b>' + d.n + '</b>' +
       '<em>' + pc(d.n, histC.length) + '%</em></span>').join('') + '</div>';
-  ocultaLeitura('#evoNote');
+  ocultaLeitura(nsSel('evoNote'));
 
   /* --- por agrupamento e por BU --- */
   /* a escada oficial, e nada escrito à mão aqui: era esta lista paralela que
@@ -3029,15 +3262,15 @@ function renderPagina2(){
   });
   if (!gNp.length){
     const temNivel = comNota.some(p => p.nivel);
-    vazioPainel('#chSen', temNivel
+    vazioPainel(nsSel('chSen'), temNivel
       ? 'Nenhum nível com nota do gestor.'
       : 'Sem nível de senioridade na base: confira a coluna NÍVEL em "Conferir colunas".');
-    $('#senSub').textContent = temNivel ? 'sem nota do gestor' : 'coluna NÍVEL ausente';
+    $n('senSub').textContent = temNivel ? 'sem nota do gestor' : 'coluna NÍVEL ausente';
   } else {
   /* O subtitulo explicava o metodo (quantos grupos, corte de 5 pessoas). Saiu:
      em comite o slide carrega o numero, a regra e falada. Fica so o aviso de
      dado impróprio, que e informacao, nao explicacao. */
-  $('#senSub').textContent = nivelForaDaLista
+  $n('senSub').textContent = nivelForaDaLista
     ? 'a coluna NÍVEL parece trazer o cargo' : '';
   /* Mesmo desenho do painel de business unit: um gráfico só, com os dois eixos
      dentro dele. Coluna é a média de hoje, o traço por cima é onde o nível
@@ -3049,7 +3282,7 @@ function renderPagina2(){
      exato. Duas codificações para o mesmo fato só disputam a atenção — e a
      linha ainda tinha o defeito de ligar categorias que não têm continuidade
      entre si (uma BU não "vira" a próxima). Fica coluna e delta. */
-  columnChart('#chSen', {
+  columnChart(nsSel('chSen'), {
     titulo: 'Nota final média, por senioridade',
     sub: 'Coluna: média deste ciclo, com o tamanho do grupo no rótulo. Tag: quanto andou desde o ciclo passado.',
     /* o tamanho do grupo vai no eixo: com o corte removido, há níveis de uma
@@ -3065,7 +3298,7 @@ function renderPagina2(){
     ]
   });
   }
-  ocultaLeitura('#senNote');
+  ocultaLeitura(nsSel('senNote'));
 
   /* ---------- 06 · colunas por business unit ----------
      Um gráfico só, com os dois eixos dentro dele: entregas e valores viram
@@ -3079,9 +3312,9 @@ function renderPagina2(){
   gB.sort((a, b) => b.n - a.n);
   const parBU = grupos('bu', null, histC).filter(g => g.k);
   if (!gB.length){
-    vazioPainel('#chBU', 'Sem business unit na base: confira a coluna BUSINESS UNIT em "Conferir colunas".');
-    $('#buNote').innerHTML = '';
-    $('#capBU').textContent = '';
+    vazioPainel(nsSel('chBU'), 'Sem business unit na base: confira a coluna BUSINESS UNIT em "Conferir colunas".');
+    $n('buNote').innerHTML = '';
+    $n('capBU').textContent = '';
   } else {
   /* ordenado pelo movimento em entregas: num gráfico de variação a ordem é
      o que deixa a leitura acontecer da esquerda para a direita */
@@ -3096,7 +3329,7 @@ function renderPagina2(){
      o quanto andou. O ponto da linha guarda a nota oficial do ciclo passado,
      que aparece ao passar o mouse em vez de virar mais um número na tela. */
   const dl = (c, p) => (c == null || p == null) ? null : c - p;
-  columnChart('#chBU', {
+  columnChart(nsSel('chBU'), {
     titulo: 'Nota final média, por business unit',
     sub: 'Coluna: média deste ciclo. Tag em cima: quanto a BU andou desde o ciclo passado.',
     xs: linhasBU.map(r => r.n),
@@ -3135,9 +3368,9 @@ function renderPagina2(){
   const partes = [];
   if (tE) partes.push(destaque('Maior avanço em entregas', tE));
   if (tV) partes.push(destaque(partes.length ? 'em valores' : 'Maior avanço em valores', tV));
-  $('#buNote').innerHTML = partes.length ? partes.join('. ') + '.' : '';
+  $n('buNote').innerHTML = partes.length ? partes.join('. ') + '.' : '';
   const foraBU = linhasBU.filter(r => r.pE == null || r.cE == null).map(r => r.n);
-  $('#capBU').innerHTML = foraBU.length
+  $n('capBU').innerHTML = foraBU.length
     ? 'Sem coluna por não ter os dois ciclos: <b>' + foraBU.join(', ') + '</b>.'
     : '';
   }
@@ -3173,7 +3406,7 @@ function renderPagina2(){
 
   /* 07 · de-para por valor, só nota do gestor. A autoavaliação saiu daqui:
      ela vive num painel só dela, logo abaixo. */
-  columnChart('#chValores', {
+  columnChart(nsSel('chValores'), {
     titulo: 'Nota final por valor · de-para',
     sub: naoComparaveis.length
       ? 'Coluna é este ciclo. A tag em cima é a variação sobre Set/25 a Fev/26 — ' +
@@ -3193,7 +3426,7 @@ function renderPagina2(){
   /* O que cada valor quer dizer, na ordem das colunas do gráfico acima. Sem
      isto o eixo mostra seis nomes e o leitor completa cada um com a própria
      ideia do que seja "Ser Dono". */
-  $('#valSobre').innerHTML = gapRows.map((r, i) => {
+  $n('valSobre').innerHTML = gapRows.map((r, i) => {
     const s = sobreDe(i);
     /* o " · " entre os dois comportamentos vira marca da cor do acento: separa
        melhor que um ponto solto no meio de duas frases curtas */
@@ -3210,8 +3443,8 @@ function renderPagina2(){
   /* A faixa de leitura tem fundo e barra lateral próprios, então quando o texto
      é vazio ela fica na tela como um retângulo sem conteúdo — foi o que apareceu
      no recorte do CD, que não tem ciclo anterior por valor para comparar. */
-  $('#valNote').hidden = !movV.length;
-  $('#valNote').innerHTML = movV.length
+  $n('valNote').hidden = !movV.length;
+  $n('valNote').innerHTML = movV.length
     ? 'A nota final subiu em <b>' + subiuV + ' dos ' + movV.length + ' valores</b>. Maior avanço em <b>' +
       esc(movV[0].nome) + '</b> (' + (movV[0].d >= 0 ? '+' : '') + nf2(movV[0].d) + '), menor em <b>' +
       esc(movV[movV.length - 1].nome) + '</b> (' + (movV[movV.length - 1].d >= 0 ? '+' : '') +
@@ -3221,7 +3454,7 @@ function renderPagina2(){
   /* tabela do <details> acima. Renderiza sempre — o <details> some sozinho
      fora do recorte Girotrade via CSS (:root[data-brand="giro"]), então não
      precisa de JS pra decidir se aparece, só pra preencher a linha. */
-  $('#dpTab').innerHTML =
+  $n('dpTab').innerHTML =
     '<tr><th>Valor Yandeh</th><th>Valor Girotrade</th><th>Comparável</th><th>Por quê</th></tr>' +
     DE_PARA_VALORES.map(d => '<tr class="' + (d.comparavel ? 'ok' : 'no') + '">' +
       '<td>' + esc(d.yan) + '</td><td>' + esc(d.giro) + '</td>' +
@@ -3242,10 +3475,10 @@ function renderPagina2(){
      com gestor: sem uma das pontas, não há o que mostrar, mas há o que dizer. */
   if (!linhasGap.some(r => r.a != null)){
     const temAuto = P.some(p => p.aE != null || p.aV != null || (p.avals || []).some(x => x != null));
-    vazioPainel('#gaps', temAuto
+    vazioPainel(nsSel('gaps'), temAuto
       ? 'A base tem autoavaliação, mas não nos seis valores: confira as colunas VALOR n AUTO.'
       : 'Sem autoavaliação na base: confira as colunas AUTO em "Conferir colunas".');
-    $('#gapCap').textContent = '';
+    $n('gapCap').textContent = '';
   } else {
   /* TABELA, e não gráfico. Aqui a pergunta é "quanto", e número lido em coluna
      responde isso melhor que altura de barra — foi o formato que passou por
@@ -3278,7 +3511,7 @@ function renderPagina2(){
      que repetem a mesma leitura da linha "Valores · média dos seis" logo
      acima, e o painel existe para responder uma pergunta de duas linhas. */
   const eixos = linhasGap.filter(r => r.eixo);
-  $('#gaps').innerHTML =
+  $n('gaps').innerHTML =
     '<div class="gpk"><span><i class="sw gest"></i>Gestor <em>referência</em></span>' +
       '<span><i class="sw auto"></i>Autoavaliação</span>' +
       '<span class="gpk-esc">régua de 1 a 5</span></div>' +
@@ -3293,15 +3526,27 @@ function renderPagina2(){
      isso que ele significa. */
   const comGap = eixos.filter(r => r.d != null);
   const maiorG = comGap.slice().sort((x, y) => x.d - y.d)[0];
-  $('#gapCap').innerHTML = !maiorG ? '' :
+  $n('gapCap').innerHTML = !maiorG ? '' :
     'Referência é a nota do gestor. Δ negativo quer dizer que o gestor avaliou <b>abaixo</b> ' +
     'da autoavaliação. A maior distância está em <b>' + esc(maiorG.k.split(' · ')[0]) +
     '</b> (' + nf2(maiorG.d) + ').';
   }
+}
 
-  renderAssessment();
-  renderRiscoMatriz();
-  renderLiderancaGeral();
+/* página Resultados (recorte de marca do topo, Yandeh/Girotrade) — painéis
+   01-07. Assessment, risco e liderança executiva NÃO passam por
+   `renderResultados`: os três mudaram para a aba Liderança em 25/09/2026
+   (ver `renderLideresResultados`) — o assessment nunca dependeu de `P`
+   (dado fixo), e os outros dois já eram só sobre líderes. */
+function renderPagina2(){
+  /* A capa dizia "Visão Yandeh · Geral" fixa no HTML, inclusive com o recorte
+     do CD ativo e 58 pessoas na tela — o título contradizia todo o resto da
+     página. Acompanha o recorte. */
+  const capa = $('#capaP2');
+  if (capa) capa.innerHTML = (BRAND === 'giro' && !RECORTE_VAZIO)
+    ? 'Visão Girotrade<br><em>CD · Operações</em>'
+    : 'Visão Yandeh<br><em>Geral</em>';
+  renderResultados('', P);
 }
 
 /* ---------- 08 · assessment de liderança ----------
@@ -3316,14 +3561,16 @@ function renderPagina2(){
 
    Devolvido em 14/09/2026: tinha saído mais cedo no mesmo dia, a pedido do
    usuário; voltou, a pedido do usuário de novo. Código idêntico ao que saiu. */
-function renderAssessment(){
+function renderAssessment(ns){
+  ns = ns || '';
+  const $n = id => $('#' + ns + id);
   const A = ASSESS;
   /* "avaliações", e não "pessoas": quem responde sobre mais de um líder conta
      duas vezes nessa soma, e no assessment isso acontece. */
-  $('#asSub').textContent = A.nLideres + ' líderes · ' + A.nAvaliacoes +
+  $n('asSub').textContent = A.nLideres + ' líderes · ' + A.nAvaliacoes +
     ' avaliações de liderados · ' + A.nPerguntas + ' perguntas nos seis valores';
 
-  $('#asLeg').innerHTML =
+  $n('asLeg').innerHTML =
     /* Sem a etiqueta "referência" aqui. Ela veio copiada do painel 07, onde faz
        sentido porque a nota do gestor é a que vale. No assessment ninguém é
        referência: são duas leituras do mesmo líder, a do time e a dele. O sinal
@@ -3332,7 +3579,19 @@ function renderAssessment(){
     '<span><i class="sw auto"></i>Autoavaliação do líder</span>' +
     '<span class="gpk-esc">régua de 1 a 5</span>';
 
-  radarChart('#chMandala', {
+  /* A régua deste instrumento NÃO é a régua de avaliação do AVD (Insatisfatório
+     ... Excepcional, painel 01/03 da página 1) — é de frequência, pergunta a
+     pergunta ("com que frequência esta pessoa..."). Pedido do usuário
+     (25/09/2026): mostrar a régua explicitamente, porque "1 a 5" sozinho não
+     diz o que cada nota quer dizer aqui. Texto conferido contra a aba
+     "Legenda" de `Assessment_Lideranca_2026_ajustado (1).xlsx` (que também
+     junta nota a frequência, só que em faixas: "Sempre" ≥ 4,5 etc. — aqui
+     é o degrau a degrau que o usuário pediu, não a faixa). */
+  const el = $n('asEscala');
+  if (el) el.innerHTML = '<b>Régua do instrumento:</b> 1 Nunca · 2 Raramente · ' +
+    '3 Às vezes · 4 Frequentemente · 5 Sempre';
+
+  radarChart('#' + ns + 'chMandala', {
     titulo: 'Mandala geral',
     sub: 'Média dos ' + A.nLideres + ' líderes em cada valor. O anel de fora é 5.',
     eixos: A.valores,
@@ -3362,7 +3621,7 @@ function renderAssessment(){
       '<td class="ga-n">' + num(a, 'auto') + '</td>' +
       cellD(l - a) + '</tr>';
 
-  $('#asTab').innerHTML =
+  $n('asTab').innerHTML =
     '<table class="gatab">' +
       '<thead><tr><th class="ga-k">Valor</th><th class="ga-t"></th>' +
         '<th>Liderados</th><th>Auto</th><th>Δ</th></tr></thead>' +
@@ -3377,6 +3636,41 @@ function renderAssessment(){
   /* #asNote (leitura em texto) e #asCap (legenda do instrumento) saíram do
      painel em 14/09/2026 a pedido do usuário: só mandala e tabela ficam,
      sem comentário nenhum por cima do número. */
+
+  /* Média geral por Business Unit (25/09/2026, a pedido do usuário: "mostrar
+     como ficou a média geral de notas de cada B.U., ali mesmo onde está o
+     assessment... abrir por diretoria"). Mesma tabela/visual da abertura por
+     valor logo acima (reaproveita `trilha`/`num`/`cellD`/`linha`), só que a
+     ABERTURA é por BU em vez de valor — os dois convivem no painel, o
+     usuário não pediu para tirar a de valores. */
+  const asBUEl = $n('asPorBU');
+  if (asBUEl){
+    const { linhas: buLinhas, semBU } = assessMediaPorBU();
+    if (!buLinhas.length){
+      asBUEl.innerHTML = '<div class="empty">Nenhum líder do assessment casou com a base carregada.</div>';
+    } else {
+      asBUEl.innerHTML =
+        '<div class="bloco-k">Média geral por Business Unit</div>' +
+        '<table class="gatab">' +
+          '<thead><tr><th class="ga-k">Business Unit</th><th class="ga-t"></th>' +
+            '<th>Liderados</th><th>Auto</th><th>Δ</th></tr></thead>' +
+          '<tbody>' +
+            buLinhas.map(r => {
+              const rot = tc(r.bu) + ' · ' + r.n + (r.n === 1 ? ' líder' : ' líderes');
+              const d = (r.lid != null && r.auto != null) ? r.lid - r.auto : null;
+              return '<tr class="ga-val"><td class="ga-k">' + esc(rot) + '</td>' +
+                '<td class="ga-t">' + trilha(r.lid ?? 1, 'gest') + trilha(r.auto ?? 1, 'auto') + '</td>' +
+                '<td class="ga-n">' + (r.lid  != null ? num(r.lid, 'gest')  : '<span class="gn gest">–</span>') + '</td>' +
+                '<td class="ga-n">' + (r.auto != null ? num(r.auto, 'auto') : '<span class="gn auto">–</span>') + '</td>' +
+                (d != null ? cellD(d) : '<td class="ga-d">–</td>') + '</tr>';
+            }).join('') +
+          '</tbody>' +
+        '</table>' +
+        (semBU.length
+          ? '<div class="cap">Sem correspondência na base carregada: <b>' + esc(semBU.join(', ')) + '</b>.</div>'
+          : '');
+    }
+  }
 }
 
 /* ============================================================
@@ -3818,10 +4112,16 @@ const escala = (cls, lbl, v) =>
 function card(p, idx){
   const c = p.conc ? CONC[p.conc] : null;
   const nomes = valoresDe(p);
-  const d = (p.pE != null && p.pV != null && p.gE != null && p.gV != null) ? (p.gE - p.pE) + (p.gV - p.pV) : null;
-  const mov = d == null ? '<span class="dt nil">—</span>'
-            : d > 0 ? '<span class="dt pos">▲ ' + d + '</span>'
-            : d < 0 ? '<span class="dt neg">▼ ' + (-d) + '</span>' : '<span class="dt eqz">=</span>';
+  /* Entregas e valores em duas etiquetas separadas, não somadas: somar os
+     dois eixos (ex.: entregas -1, valores +1) dava "=" e escondia que os dois
+     se moveram, só que em direções opostas — o usuário pediu o delta de cada
+     eixo, não a soma. */
+  const movEixo = (rot, antes, agora) => {
+    const dd = (antes != null && agora != null) ? agora - antes : null;
+    return '<span class="dt' + (dd == null ? ' nil' : dd > 0 ? ' pos' : dd < 0 ? ' neg' : ' eqz') + '">' +
+      rot + ' ' + (dd == null ? '—' : dd > 0 ? '▲' + dd : dd < 0 ? '▼' + (-dd) : '=') + '</span>';
+  };
+  const mov = movEixo('E', p.pE, p.gE) + movEixo('V', p.pV, p.gV);
 
   const vrows = nomes.map((v, i) => {
     const a = p.avals ? p.avals[i] : null, g = p.gvals ? p.gvals[i] : null;
@@ -3993,8 +4293,21 @@ function renderModal(){
 
 /* tipo: 'senior' para os 61, 'area:<AREA>' para uma área inteira,
    'conc:<CONCEITO>' para quem está num conceito, ou 'cinco' para o 5 × 5.
-   Nos dois últimos sai só a lista: todo mundo cai na mesma célula da matriz. */
-function abreNineBox(tipo){
+   Nos dois últimos sai só a lista: todo mundo cai na mesma célula da matriz.
+
+   `basePop` (2º argumento, opcional): a população de onde o clique partiu.
+   Sem ele, cai no `P` GLOBAL (recorte de marca do topo) — que é o certo para
+   quem clica na página Resultados, mas era ERRADO para quem clica na aba
+   Liderança: até 25/09/2026 os cartões "Nota máxima 5 × 5" e os pills de
+   "Distribuição dos conceitos" de dentro de `renderResultados(ns, P)`
+   chamavam `abreNineBox` sem passar a população local, então SEMPRE liam o
+   `P` global da empresa inteira — bug reportado pelo usuário: "em
+   distribuição de conceitos, quando eu clico, ainda aparecem pessoas que
+   não são líderes". Os dois pontos de disparo dentro de `renderResultados`
+   agora passam `P` (o parâmetro da própria função, que na aba Liderança é
+   `pessoasLideresResultados()`). */
+function abreNineBox(tipo, basePop){
+  basePop = basePop || P;
   MODAL.conc = '';
   if (tipo === 'cinco'){
     /* O cartão "Nota máxima 5 × 5" mostrava só a contagem. São poucas pessoas e
@@ -4002,13 +4315,13 @@ function abreNineBox(tipo){
        porta. `conc` recebe o rótulo porque é o que liga o modo "só lista": a
        matriz não tem o que mostrar quando os dois eixos são 5. */
     MODAL.conc = 'Nota máxima 5 × 5';
-    MODAL.base = P.filter(p => p.gE === 5 && p.gV === 5);
+    MODAL.base = basePop.filter(p => p.gE === 5 && p.gV === 5);
     MODAL.titulo = 'Nota máxima 5 × 5';
     MODAL.sub = 'Entregas 5 e valores 5 na nota do gestor';
   } else if (tipo.indexOf('conc:') === 0){
     const k = tipo.slice(5);
     MODAL.conc = k;
-    MODAL.base = P.filter(p => p.conc === k);
+    MODAL.base = basePop.filter(p => p.conc === k);
     MODAL.titulo = k;
     MODAL.sub = 'Quem está neste conceito';
   } else if (tipo.indexOf('area:') === 0){
@@ -4156,6 +4469,12 @@ $('#toggleAll').addEventListener('click', () => {
   $$('#cards .pc').forEach(c => c.classList.toggle('open', abrir));
   $('#toggleAll').textContent = abrir ? 'Fechar todos' : 'Abrir todos';
 });
+
+/* Painéis retráteis: wiring uma vez só, igual ao nav/brand-switch — os
+   `.phd` são HTML estático, nunca recriados por innerHTML (só o conteúdo
+   DEPOIS deles muda), então o clique liga aqui e vale para sempre. */
+$$('.panel.retratil .phd').forEach(h =>
+  h.addEventListener('click', () => h.closest('.panel').classList.toggle('is-aberto')));
 
 /* ---------- boot ---------- */
 let BOOTED = false;
@@ -4891,38 +5210,136 @@ const RK_DEF = {
   Baixo: 'a pessoa está motivada e se mostra satisfeita com a empresa.'
 };
 
-/* jitter determinístico pelo nome (+ índice, contra nome duplicado): mesma
-   pessoa cai sempre no mesmo ponto dentro da própria célula, então o
-   relatório não "treme" a cada re-render */
-function rkJit(seed){
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
-  return ((h >>> 0) % 2000) / 1000 - 1; /* -1..1 */
-}
-
 /* eixo X contínuo = conceito final (ORDEM_CONC, pior→melhor), eixo Y = risco
    de saída (RK_ORDEM, alto→baixo, alto em cima). Só entra quem tem os dois:
    risco (planilha de liderança) e conceito final (base principal) — mesma
    régua da distribuição dos conceitos, sem recalcular nada. É matriz de
    materialidade, não nine-box: cada liderança espalha dentro da própria
-   célula em vez de empilhar numa grade. */
-function renderRiscoMatriz(){
-  const vazio = $('#rkVazio'), corpo = $('#rkBody');
+   célula em vez de empilhar numa grade.
+
+   EIXO Y VEM DO RISCO POR PESSOAS & CULTURA (`riscoPC`), NÃO DO GESTOR
+   (25/09/2026, a pedido do usuário: "matriz de risco precisa refletir o
+   que foi colocado por pessoas e cultura"). Até então era o contrário —
+   `riscoGestor` decidia a posição e P&C só aparecia no hover/cards. Quem
+   não tem leitura de P&C não entra na matriz (mesmo critério de sempre:
+   "todo mundo com risco lido", só que agora o risco que conta é o outro).
+   O risco do gestor virou a leitura secundária: aparece no hover
+   (`dicaRisco`) e nos cards do enquadramento abaixo, mas não decide onde
+   ninguém cai.
+
+   Até 25/09/2026 quem espalhava era um jitter pseudo-aleatório determinístico
+   (`rkJit`, removida): cada pessoa caía num deslocamento fixo dentro da
+   célula, sem saber quem mais estava lá. Com fotos maiores (38px, pedido do
+   usuário) e mais de duas ou três pessoas na mesma célula, o jitter não
+   garantia espaço nenhum — duas bolotas podiam cair quase no mesmo ponto e
+   uma tampava a outra por cima. Trocado por grade: `arranjaCelula` conhece
+   TODO MUNDO que caiu naquela célula antes de posicionar qualquer um, e
+   distribui em linhas/colunas dentro dela (mesmo princípio do nine-box
+   pequeno da página 1 — `cols = ceil(sqrt(n))`), então ninguém nasce em
+   cima de ninguém, não importa quantos dividam a célula. */
+function arranjaCelula(lista, cx0, cy0, spanX, spanY){
+  const n = lista.length;
+  const cols = Math.max(1, Math.ceil(Math.sqrt(n)));
+  const rows = Math.max(1, Math.ceil(n / cols));
+  return lista.map((p, i) => {
+    const col = i % cols, row = Math.floor(i / cols);
+    const x = cols > 1 ? cx0 - spanX / 2 + spanX * col / (cols - 1) : cx0;
+    const y = rows > 1 ? cy0 - spanY / 2 + spanY * row / (rows - 1) : cy0;
+    return { p, x, y };
+  });
+}
+/* Filtro de cargo da matriz de risco (Coordenador/Gerente/Head, acumulável)
+   — pedido do usuário, 25/09/2026, no mesmo lote que moveu este painel para
+   a aba Conselho: estreitar dentro do recorte fixo (Coord+Gerente+Head da
+   seção) para só um ou dois desses cargos, sem sair da matriz. Mesmo padrão
+   do filtro de Cargo da página 3 (`F.niveis`): Set vazio = "todos". */
+const RK_NIVEIS = new Set();
+/* Key Talents entrou como filtro do mapa de risco em 25/09/2026, a pedido
+   do usuário: "os keys talents são para aparecer em mapa de risco e no
+   nine box, como filtros, mas não nas análises de nota". Mesmo padrão de
+   acúmulo por OR do nine-box (`CONS.keyTalents`/`CONS.niveis`): liga junto
+   com Cargo, nunca junto com "Todos" — "Todos" reseta os dois. As
+   análises de nota (KPIs, curva, distribuição, senioridade, BU, valores,
+   gap — `renderResultados` via `renderLideresResultados`) continuam sobre
+   `pessoasLideresResultados()` sem passar por nenhum destes dois filtros:
+   nunca leram `RK_NIVEIS`/`RK_KEY_TALENTS` nem `CONS`, então já ficavam de
+   fora antes desta mudança — não precisou de ajuste ali.
+
+   RODADA SEGUINTE, mesmo dia: "precisa adicionar também os key talents que
+   não são liderança... só na matriz de nine box e de risco de saída". Até
+   aqui o chip Key Talents só buscava DENTRO de `POP` (a população fixa
+   Coordenador+Gerente+Head) — então um Key Talent sem cargo de liderança
+   nunca aparecia aqui, mesmo com o chip ligado. "Todos" (nenhum chip
+   ativo) continua mostrando só `POP` (a liderança, comportamento intacto);
+   o chip Key Talents agora busca em `baseLiderancaDe()` — a companhia
+   inteira — para trazer Key Talents de qualquer nível, unidos (sem
+   duplicar quem for as duas coisas) ao que o filtro de Cargo já mostra. */
+function uniaoPessoas(...arrs){
+  const vistos = new Set(); const out = [];
+  arrs.forEach(arr => arr.forEach(p => { if (!vistos.has(p)){ vistos.add(p); out.push(p); } }));
+  return out;
+}
+let RK_KEY_TALENTS = false;
+function renderRiscoMatriz(ns, POP){
+  ns = ns || '';
+  POP = POP || P;
+  const $n = id => $('#' + ns + id);
+  const filtros = $n('rkFiltros');
+  if (filtros){
+    /* Diretor entrou junto com `POP_LIDERES_RESULTADOS` (25/09/2026, "eu
+       quero que inclua diretor") — mesma lista, mesmo motivo. */
+    const NIVEIS_RK = ['COORDENADOR', 'GERENTE', 'HEAD', 'DIRETOR'];
+    const chip = (on, attr, rot) =>
+      '<button type="button" class="fchip' + (on ? ' is-on' : '') + '" ' + attr + '>' + rot + '</button>';
+    filtros.innerHTML = '<div class="frow"><span class="fk">Cargo</span>' +
+      chip(!RK_NIVEIS.size && !RK_KEY_TALENTS, 'data-rkniv=""', 'Todos') +
+      chip(RK_KEY_TALENTS, 'data-rkkey=""',
+        'Key Talents <em>' + baseLiderancaDe().filter(ehKeyTalent).length + '</em>') +
+      NIVEIS_RK.map(k => chip(RK_NIVEIS.has(k), 'data-rkniv="' + k + '"',
+        nomeNivel(k) + ' <em>' + POP.filter(p => p.nivel === k).length + '</em>')).join('') +
+      '</div>';
+    filtros.querySelectorAll('[data-rkniv]').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.rkniv;
+      if (!k){ RK_NIVEIS.clear(); RK_KEY_TALENTS = false; }
+      else if (RK_NIVEIS.has(k)) RK_NIVEIS.delete(k);
+      else RK_NIVEIS.add(k);
+      renderRiscoMatriz(ns, POP);
+    }));
+    filtros.querySelectorAll('[data-rkkey]').forEach(b => b.addEventListener('click', () => {
+      RK_KEY_TALENTS = !RK_KEY_TALENTS;
+      renderRiscoMatriz(ns, POP);
+    }));
+  }
+  const popF = (RK_NIVEIS.size || RK_KEY_TALENTS)
+    ? uniaoPessoas(
+        RK_NIVEIS.size ? POP.filter(p => RK_NIVEIS.has(p.nivel)) : [],
+        RK_KEY_TALENTS ? baseLiderancaDe().filter(ehKeyTalent) : []
+      )
+    : POP;
+  const vazio = $n('rkVazio'), corpo = $n('rkBody');
   if (!vazio || !corpo) return;
-  const pares = P.filter(p => p.riscoGestor && p.conc);
+  /* EIXO VERTICAL É O RISCO POR PESSOAS & CULTURA, NÃO PELO GESTOR
+     (25/09/2026, a pedido do usuário: "matriz de risco precisa refletir o
+     que foi colocado por pessoas e cultura"). Até aqui a matriz montava a
+     posição pelo `riscoGestor` e o P&C só aparecia no hover/cards — virou
+     o contrário: P&C decide onde a bolota cai, o gestor é quem passou a
+     ser só leitura secundária (hover e cards, mais abaixo). Quem não tem
+     leitura de P&C simplesmente não entra na matriz nem no enquadramento
+     por risco — mesmo critério de antes, só que pelo campo que manda agora. */
+  const pares = popF.filter(p => p.riscoPC && p.conc);
   /* mais largo que `pares`: entra quem tem risco mas ainda não tem conceito
      final (sem nota do gestor neste ciclo) — a listinha é "todo mundo com
      risco lido", a matriz em cima só desenha quem tem os dois eixos */
-  const todosRk = P.filter(p => p.riscoGestor);
+  const todosRk = popF.filter(p => p.riscoPC);
 
   if (!todosRk.length){
     vazio.hidden = false; corpo.hidden = true;
-    vazio.textContent = 'Nenhuma liderança com risco de saída na base: confira as colunas ' +
-      'RISCO GESTOR / RISCO P&C em "Conferir colunas".';
+    vazio.textContent = 'Nenhuma liderança com risco de saída (Pessoas & Cultura) na base: ' +
+      'confira a coluna RISCO P&C em "Conferir colunas".';
     return;
   }
   vazio.hidden = true; corpo.hidden = false;
-  $('#rkSub').textContent = pares.length + ' lideranças com risco de saída e conceito final, neste recorte.';
+  $n('rkSub').textContent = pares.length + ' lideranças com risco de saída (Pessoas & Cultura) e conceito final, neste recorte.';
 
   const nx = ORDEM_CONC.length, ny = RK_ORDEM.length;
   const xBand = 100 / nx, yBand = 100 / ny;
@@ -4933,50 +5350,62 @@ function renderRiscoMatriz(){
   for (let i = 1; i < nx; i++) linhas += '<div class="rkgl" style="left:' + (i * xBand) + '%;top:0;width:1px;height:100%"></div>';
   for (let i = 1; i < ny; i++) linhas += '<div class="rkgl" style="top:' + (i * yBand) + '%;left:0;height:1px;width:100%"></div>';
 
-  const pontos = pares.map(p => {
-    const ic = ORDEM_CONC.indexOf(p.conc), ir = RK_ORDEM.indexOf(p.riscoGestor);
-    if (ic < 0 || ir < 0) return '';
-    const idx = P.indexOf(p);
-    const jx = rkJit(p.nome + '#' + idx + '|x'), jy = rkJit(p.nome + '#' + idx + '|y');
-    const x = Math.max(2, Math.min(98, xCentro(ic) + jx * xBand * 0.32));
-    const y = Math.max(2, Math.min(98, yCentro(ir) + jy * yBand * 0.30));
-    return '<span class="rkpt" data-i="' + idx + '" style="left:' + x.toFixed(1) + '%;top:' +
-      y.toFixed(1) + '%">' + avatar(p, 'rkav') + '</span>';
-  }).join('');
+  /* agrupa por célula (conceito × risco) antes de posicionar — `arranjaCelula`
+     precisa saber quantas pessoas dividem a célula pra montar a grade certa */
+  const porCelula = {};
+  pares.forEach(p => {
+    const ic = ORDEM_CONC.indexOf(p.conc), ir = RK_ORDEM.indexOf(p.riscoPC);
+    if (ic < 0 || ir < 0) return;
+    const k = ic + '_' + ir;
+    (porCelula[k] = porCelula[k] || []).push(p);
+  });
+  let pontos = '';
+  Object.keys(porCelula).forEach(k => {
+    const [icS, irS] = k.split('_');
+    const ic = +icS, ir = +irS;
+    const lista = porCelula[k].slice().sort((a, b) => a.nome.localeCompare(b.nome));
+    const arranjo = arranjaCelula(lista, xCentro(ic), yCentro(ir), xBand * 0.7, yBand * 0.7);
+    arranjo.forEach(({ p, x, y }) => {
+      const idx = P.indexOf(p);
+      const xx = Math.max(2, Math.min(98, x)), yy = Math.max(2, Math.min(98, y));
+      pontos += '<span class="rkpt" data-i="' + idx + '" style="left:' + xx.toFixed(1) + '%;top:' +
+        yy.toFixed(1) + '%">' + avatar(p, 'rkav') + '</span>';
+    });
+  });
 
-  $('#rkPlot').innerHTML = linhas +
+  $n('rkPlot').innerHTML = linhas +
     '<div class="rkzone"><span>Prioridade de retenção</span></div>' + pontos;
-  $('#rkPlot').querySelectorAll('[data-i]').forEach(d => {
+  $n('rkPlot').querySelectorAll('[data-i]').forEach(d => {
     const p = P[+d.dataset.i];
     d.addEventListener('click', () => abreCard(+d.dataset.i));
     if (p) d.addEventListener('mouseenter', ev => mostraTipHtml(ev, dicaRisco(p)));
     d.addEventListener('mouseleave', escondeTip);
   });
 
-  $('#rkY').innerHTML = RK_ORDEM.map(r => '<div>Risco ' + r + '</div>').join('');
-  $('#rkX').innerHTML = ORDEM_CONC.map(c => '<div>' + esc(c) + '</div>').join('');
-  $('#rkLeg').innerHTML = '<span><i style="background:var(--nb-for)"></i>Seguro</span>' +
+  $n('rkY').innerHTML = RK_ORDEM.map(r => '<div>Risco ' + r + '</div>').join('');
+  $n('rkX').innerHTML = ORDEM_CONC.map(c => '<div>' + esc(c) + '</div>').join('');
+  $n('rkLeg').innerHTML = '<span><i style="background:var(--nb-for)"></i>Seguro</span>' +
     '<span><i style="background:var(--nb-ple)"></i>Observar</span>' +
     '<span><i style="background:var(--nb-ins)"></i>Crítico</span>' +
     '<span style="margin-left:auto;color:var(--gray-500);font-weight:500">' +
-    'eixo horizontal: conceito final · eixo vertical: risco de saída</span>';
+    'eixo horizontal: conceito final · eixo vertical: risco de saída (Pessoas &amp; Cultura)</span>';
 
-  $('#rkConceitos').innerHTML = '<h5>O que significa cada risco</h5><ul>' +
+  $n('rkConceitos').innerHTML = '<h5>O que significa cada risco</h5><ul>' +
     RK_ORDEM.map(r => '<li><b>Risco ' + r + ':</b> ' + esc(RK_DEF[r]) + '</li>').join('') +
     '</ul>';
 
   /* enquadramento por risco: três quadros (Alto/Médio/Baixo), cada um com quem
      está naquele risco, em ordem alfabética — mais largo que `pares`: entra
      quem ainda não tem conceito final neste ciclo, com "sem conceito" */
-  $('#rkTodosSub').textContent = todosRk.length + (todosRk.length === 1 ? ' liderança' : ' lideranças');
-  $('#rkTodos').innerHTML = RK_ORDEM.map(r => {
-    const grupo = todosRk.filter(p => p.riscoGestor === r).sort((a, b) => a.nome.localeCompare(b.nome));
+  $n('rkTodosSub').textContent = todosRk.length + (todosRk.length === 1 ? ' liderança' : ' lideranças');
+  $n('rkTodos').innerHTML = RK_ORDEM.map(r => {
+    const grupo = todosRk.filter(p => p.riscoPC === r).sort((a, b) => a.nome.localeCompare(b.nome));
     if (!grupo.length) return '';
     const cards = grupo.map(p =>
       '<div class="rk-card">' + avatar(p, 'rkcardav') +
       '<div class="rk-card-info"><div class="rk-card-name">' + esc(tc(p.nome)) + '</div>' +
-      '<div class="rk-card-riscos"><span>Gestor: <b>' + esc(p.riscoGestor) + '</b></span>' +
-      '<span>P&amp;C: <b>' + (p.riscoPC ? esc(p.riscoPC) : '—') + '</b></span></div></div></div>').join('');
+      '<div class="rk-card-riscos"><span>P&amp;C: <b>' + esc(p.riscoPC) + '</b></span>' +
+      '<span>Gestor: <b>' + (p.riscoGestor ? esc(p.riscoGestor) : '—') + '</b></span></div></div></div>').join('');
     return '<div class="rk-frame ' + RK_CLS[r] + '"><h5>Risco ' + r + ' · ' + grupo.length +
       (grupo.length === 1 ? ' liderança' : ' lideranças') + '</h5>' +
       '<div class="rk-cards">' + cards + '</div></div>';
@@ -4988,8 +5417,8 @@ function renderRiscoMatriz(){
 }
 function dicaRisco(p){
   const linha = 'Conceito ' + (p.conc || '–') +
-    ' · risco pelo gestor ' + (p.riscoGestor || '–') +
-    ' · risco por P&C ' + (p.riscoPC || 'sem leitura');
+    ' · risco por P&C ' + (p.riscoPC || '–') +
+    ' · risco pelo gestor ' + (p.riscoGestor || 'sem leitura');
   return '<b>' + esc(tc(p.nome)) + '</b><span class="tl">' + esc(linha) + '</span>';
 }
 
@@ -5068,10 +5497,11 @@ const LID_GERAL_QUALI = {
       'Time decide sem necessidade de validação prévia da liderança.'
     ]},
     { tema:'Comunicação clara', n:20, de:175, bullets:[
-      'Feedback direto e transparência marcam a relação entre liderança e time.'
+      'Feedbacks claros e transparência nas demandas.'
     ]},
     { tema:'Proximidade e acessibilidade', n:18, de:175, bullets:[
-      'Liderança acessível no dia a dia, sem barreiras hierárquicas para o time.'
+      'Liderança acessível e próxima do time.',
+      'Resposta positiva apenas para alguns times.'
     ]}
   ],
   /* ordem manual pedida pelo usuário pro grid fixo 3×2 do painel 10
@@ -5094,12 +5524,11 @@ const LID_GERAL_QUALI = {
      não evidência nova. */
   oport: [
     { tema:'Gestão de prioridades', n:49, de:192, bullets:[
-      'Time relata dificuldade da liderança em priorizar demandas no dia a dia.',
-      'Avaliação do gestor imediato no ciclo AVD aponta o mesmo padrão nesses líderes.'
+      'Demandas mal priorizadas e voláteis.',
+      'Resultados da AVD reforçam que existe um problema de priorização na liderança.'
     ]},
     { tema:'Comunicação, como oportunidade', n:28, de:192, bullets:[
-      'Mesmo traço citado como força também aparece como oportunidade, a depender do time.',
-      'Indica variação relevante na experiência de comunicação conforme a liderança direta.'
+      'Ainda que comunicação seja um ponto positivo, alguns times trazem esse ponto como negativo.'
     ]},
     /* "Ampliar protagonismo do time" (23/192) e "Delegação" (13/192) fundidos
        em 24/09/2026 a pedido do usuário ("não dá pra juntar delegação junto
@@ -5113,44 +5542,60 @@ const LID_GERAL_QUALI = {
        era aproximada desde a origem (tema recorrente por leitura, não por
        marcação exata no texto-fonte). */
     { tema:'Delegar mais decisões ao time', n:36, de:192, bullets:[
-      'Time pede mais espaço de decisão, não mais controle da liderança.',
-      'Avaliação do gestor no ciclo AVD reforça a mesma leitura de autonomia limitada.',
-      'Pesquisa de Clima 2026 aponta menor favorabilidade em apoio ao desenvolvimento de carreira do time.'
+      'Liderados pedem por mais espaço para ter autonomia e tomar decisões no dia a dia.',
+      'Resultados da AVD reforçam que existe um problema de autonomia.',
+      'Pesquisa de Clima 2026 indica que a hierarquização de decisões atrapalha o desenvolvimento e entrega dos liderados.'
     ]},
     { tema:'Feedback mais estruturado', n:19, de:192, bullets:[
-      'Time pede rotina de feedback, não apenas conversas pontuais diante de problemas.',
-      'Avaliação do gestor no ciclo AVD reforça a mesma leitura.'
+      'Feedbacks precisam entrar como rotina, feitos da forma correta.',
+      'Atualmente são feitos de forma desestruturada, se aproximando mais de cobranças do que pontos de melhoria.',
+      'Resultados da AVD reforçam que existe um problema de feedback na liderança.'
     ]},
     { tema:'Evoluir de atuação operacional para estratégica', n:23, de:192, bullets:[
-      'Liderança ainda concentra tempo em execução direta, não em direcionamento de médio prazo.',
-      'Mesma tensão observada nos Heads e na avaliação do gestor no ciclo AVD.'
+      'Insatisfação com a falta de progressão de desafios e da carreira.',
+      'Desejo de sair do operacional, em direção às decisões ou inputs na estratégia.',
+      'Ciclo AVD aponta que o problema se repete em diferentes níveis da empresa (heads e gestores).'
     ]}
   ]
 };
+/* Movida da página Resultados para a aba Conselho em 25/09/2026, a pedido do
+   usuário: "o geral de liderança também, que é a sessão 10" — junto do mapa
+   de risco, ambos são análise de liderança, e a aba Conselho é onde o
+   usuário agora concentra os painéis sobre líderes. Não depende de `P`
+   (dado fixo, ver comentário grande acima), então não precisou virar
+   parametrizável como `renderResultados`/`renderRiscoMatriz` — só os ids
+   do HTML que trocaram, direto, para o prefixo `lid-`. */
 function renderLiderancaGeral(){
   const Q = LID_GERAL_QUALI;
 
-  $('#lidFonteLinha').textContent = 'Fonte: Assessment de Liderança 2026 (42 lideranças) × Avaliação do ciclo (AVD), Líder > Liderado × Pesquisa de Clima 2026, Liderança Imediata. Setembro de 2026.';
+  $('#lid-lidFonteLinha').textContent = 'Fonte: Assessment de Liderança 2026 (42 lideranças) × Avaliação do ciclo (AVD), Líder > Liderado × Pesquisa de Clima 2026, Liderança Imediata. Setembro de 2026.';
   /* Lista de fontes enxuta a pedido do usuário ("deixa só tipo Assessment de
      Liderança / Avaliação do Ciclo / Pesquisa de Clima") — a descrição de
      cada uma (o quê, quantas pessoas casaram, como foi cruzado) já está no
      comentário do bloco `LID_GERAL_QUALI`, não precisa repetir na tela. */
-  $('#lidFontes').innerHTML = [
+  $('#lid-lidFontes').innerHTML = [
     'Assessment de Liderança',
     'Avaliação do Ciclo',
     'Pesquisa de Clima'
   ].map(f => '<li><b>' + f + '</b></li>').join('');
 
+  /* Números centralizados + tópicos retráteis (25/09/2026, a pedido do
+     usuário). O cabeçalho do card (`.lid-pcard-hd`: tema + número) fica
+     sempre visível — é o resumo de relance, mesmo padrão dos painéis
+     `.retratil` do resto do relatório ("só o título aberto"). Só a lista
+     de tópicos (`.lid-pcard-qual`, os bullets) recolhe: clique no
+     cabeçalho alterna `.is-aberto` no card. O wiring do clique fica logo
+     depois do innerHTML, porque os cards nascem aqui, dinamicamente. */
   const cardHtml = (t, sev) => {
     const pct = Math.round(t.n / t.de * 100);
-    return '<div class="lid-pcard ' + sev + '"><h6>' + esc(t.tema) + '</h6>' +
-      '<div class="lid-pcard-cols">' +
-        '<div class="lid-pcard-nota">' +
-          '<div class="n-heads"><b>' + pct + '%</b><span>dos comentários</span></div>' +
-          '<div class="obs">' + t.n + ' de ' + t.de + '</div>' +
-        '</div>' +
-        '<ul class="lid-pcard-qual">' + t.bullets.map(b => '<li>' + esc(b) + '</li>').join('') + '</ul>' +
-      '</div></div>';
+    return '<div class="lid-pcard retratil ' + sev + '">' +
+      '<div class="lid-pcard-hd"><h6>' + esc(t.tema) + '</h6></div>' +
+      '<div class="lid-pcard-nota">' +
+        '<div class="n-heads"><b>' + pct + '%</b><span>dos comentários</span></div>' +
+        '<div class="obs">' + t.n + ' de ' + t.de + '</div>' +
+      '</div>' +
+      '<ul class="lid-pcard-qual">' + t.bullets.map(b => '<li>' + esc(b) + '</li>').join('') + '</ul>' +
+    '</div>';
   };
   /* distribui os temas em N colunas balanceadas por tamanho de texto: o
      card maior cai na coluna mais "vazia" no momento (todas começam em 0,
@@ -5197,49 +5642,87 @@ function renderLiderancaGeral(){
     temas.forEach((t, i) => cols[i % nCols].push(t));
     return cols;
   };
-  $('#lidPadroesGeral').innerHTML =
+  $('#lid-lidPadroesGeral').innerHTML =
     '<div class="lid-grp sev-positivo">Pontos fortes mais citados</div>' +
     colunasHtml(Q.fortes, 'sev-positivo') +
     '<div class="lid-grp sev-alerta">Pontos de atenção mais citados</div>' +
     renderColunas(reshapeColunas(Q.oport, N_COLUNAS), 'sev-alerta');
+  /* wiring do clique dos cards retráteis: nascem de innerHTML a cada
+     render, então liga aqui, não no boot (diferente dos `.panel.retratil`
+     estáticos). Fecha por padrão — `.is-aberto` só entra depois do clique. */
+  $$('#lid-lidPadroesGeral .lid-pcard-hd').forEach(h =>
+    h.addEventListener('click', () => h.closest('.lid-pcard').classList.toggle('is-aberto')));
 }
 
-/* ---------- painel Conselho ----------
+/* ---------- painel Conselho / aba Liderança ----------
    Adicionado em 25/09/2026, a pedido do usuário. Não depende do recorte
-   global `P` (o botão Yandeh/Girotrade do topo) — lê direto de `P_TODOS` e
-   filtra por dois eixos próprios, porque o pedido foi ter "Girotrade CD" e
-   "Yandeh Geral" como botões AQUI, ao lado de uma visão da empresa inteira,
-   não amarrados à marca ativa do resto do relatório.
+   global `P` (o botão Yandeh/Girotrade do topo) — lê direto de `P_TODOS`.
 
-   Dois filtros, sempre um nine-box só (decisão tomada via AskUserQuestion:
-   "um nine-box só, que troca de população" — não dois lado a lado):
-     · Empresa:    geral (todo mundo) · yandeh (exceto Girotrade CD) · giro (só Girotrade CD)
-     · População:  todos · líderes (`LIDERANCA_CONSELHO`) · não-líderes ·
-                   Key Talents (`ehKeyTalent`, coluna PLANO DE AÇÃO)
-   Cards completos (mesmo componente `card()` de outras páginas) só aparecem
-   pra Líderes e Key Talents, a pedido do usuário — pra Todos/Não-líderes,
-   só o nine-box. Ids dos cards levam o prefixo "cons" (`card-consN`) pra
-   nunca colidir com os `card-N` da página 3, que indexam por `P`, não por
-   `P_TODOS` nem pelo array filtrado local.
+   SÓ YANDEH (25/09/2026, rodada seguinte): até aqui a aba tinha um filtro
+   de Empresa próprio (Geral/Yandeh/Girotrade CD, `CONS.escopo`), pensado
+   pra não ficar amarrado à marca ativa do resto do relatório. Pedido
+   explícito do usuário: "tira girotrade, deixa só yandeh". Com só uma
+   opção sobrando, o filtro inteiro (chip row "Empresa") saiu — a aba é
+   sempre sobre a Yandeh, sem escolha. `baseLiderancaDe()` faz esse recorte
+   fixo, direto de `P_TODOS`.
 
-   "LÍDERES" AQUI NÃO É `SENIOR`. A primeira versão reaproveitou `SENIOR`
-   (especialista pra cima, o recorte que já dá card na página 3) e o usuário
-   corrigiu: "não especialistas, só coordenadores pra cima". `SENIOR` continua
-   intocado (é usado pela página 3 pra decidir quem tem card, que é outra
-   pergunta) — este painel tem seu próprio recorte, `LIDERANCA_CONSELHO`. */
-let CONS = { escopo:'geral', pop:'todos' };
-const LIDERANCA_CONSELHO = new Set(['COORDENADOR', 'GERENTE', 'HEAD', 'DIRETOR', 'CEO']);
+   "TODOS" TAMBÉM SAIU (mesma rodada) — pedido explícito: "tira o todos,
+   deixando só Key Talents heads gerentes e coordenadores". As quatro
+   opções que sobraram (Key Talents + os três cargos) viraram TODAS
+   acumuláveis entre si — não tem mais radio nenhum. `CONS.niveis` (Set,
+   Coordenador/Gerente/Head, mesmo padrão do filtro de Cargo da página
+   Áreas) e `CONS.keyTalents` (booleano) se combinam por OR: a população do
+   nine-box é quem bate com QUALQUER cargo marcado OU é Key Talent, marcado
+   ou não. Como não sobrou opção nenhuma que mostre "todo mundo", o padrão
+   inicial vem com as quatro ligadas — sem isso a página abriria com o
+   nine-box vazio, o que pareceria defeito, não filtro.
 
-function baseConselhoDe(escopo){
-  if (escopo === 'yandeh') return P_TODOS.filter(p => !ehGiroCD(p));
-  if (escopo === 'giro') return P_TODOS.filter(ehGiroCD);
-  return P_TODOS.slice();
-}
-function populacaoConselhoDe(base, pop){
-  if (pop === 'lideres') return base.filter(p => LIDERANCA_CONSELHO.has(p.nivel));
-  if (pop === 'naoLideres') return base.filter(p => !LIDERANCA_CONSELHO.has(p.nivel));
-  if (pop === 'keyTalents') return base.filter(ehKeyTalent);
-  return base;
+   Cards completos (mesmo componente `card()` de outras páginas) aparecem
+   sempre que a população não estiver vazia — as quatro opções que sobraram
+   são todas "gente que vale a pena olhar", não existe mais uma opção
+   "genérica" tipo "Todos"/"Não-líderes" que devesse ficar só no nine-box.
+   Ids dos cards levam o prefixo "cons" (`card-consN`) pra nunca colidir
+   com os `card-N` da página Áreas, que indexam por `P`, não por `P_TODOS`
+   nem pelo array filtrado local.
+
+   Histórico: "Líderes" era um chip único (`SENIOR`, depois
+   `LIDERANCA_CONSELHO`) até virar os três cargos acumuláveis de hoje;
+   "Não-líderes" e a opção "Todos" (radio) já tinham saído antes desta
+   rodada — ver [[avd-painel-conselho]] pro relato completo. `SENIOR`
+   (página Áreas) permanece intocado, responde outra pergunta. */
+let CONS = { niveis:new Set(['COORDENADOR', 'GERENTE', 'HEAD', 'DIRETOR']), keyTalents:true };
+/* Recorte fixo da seção "Líderes" (KPIs, curva, distribuição, senioridade,
+   BU, valores, gap, assessment, risco, geral de liderança): Coordenador +
+   Gerente + Head + Diretor — "vai só computar: Coords, gerentes e heads",
+   pedido explícito do usuário (25/09/2026), mais tarde ampliado com
+   "eu quero que inclua diretor" (mesmo dia, rodada seguinte, depois de
+   descobrir que Aurelien Alexis Jacomy — cargo DIRETOR — não aparecia em
+   lugar nenhum da aba). CEO NÃO entrou: não foi pedido, e a companhia só
+   tem 1 CEO — incluir mudaria a leitura de "liderança" pra "liderança +
+   uma pessoa isolada", sem o mesmo agrupamento que os outros níveis têm.
+   Independente do filtro acumulável do nine-box (`CONS.niveis`/
+   `CONS.keyTalents`), que só escolhe quem aparece na matriz e nos cards do
+   painel 11/12, no fim da página. */
+const POP_LIDERES_RESULTADOS = new Set(['COORDENADOR', 'GERENTE', 'HEAD', 'DIRETOR']);
+/* NÃO EXCLUI MAIS GIROTRADE CD (25/09/2026, correção de bug apontada pelo
+   usuário: "o recorte tem que incluir o Rodolfo que é do CD"). Até aqui
+   filtrava `!ehGiroCD(p)`, deixando de fora QUALQUER liderança do CD — mas
+   o CD tem seu próprio degrau de GERENTE na escada salarial (ver
+   NIVEIS_OFICIAIS), e quem está nesse cargo lá é liderança tanto quanto um
+   gerente da Yandeh S.A. A companhia (Yandeh × Girotrade CD) nunca devia
+   ter sido o critério de quem é "liderança" — o critério é sempre o nível
+   (`POP_LIDERES_RESULTADOS`/`CONS.niveis`), que já filtra por cargo logo
+   abaixo e em `pessoasLideresResultados()`. */
+function baseLiderancaDe(){ return P_TODOS.slice(); }
+const pessoasLideresResultados = () =>
+  baseLiderancaDe().filter(p => POP_LIDERES_RESULTADOS.has(p.nivel));
+
+/* União, não interseção: Coordenador+Gerente marcados mostra quem é
+   Coordenador OU Gerente; com Key Talents também ligado, soma-se quem for
+   Key Talent independente do cargo. Todos os quatro desligados devolve
+   vazio de propósito — não existe mais fallback "todo mundo". */
+function populacaoConselhoDe(base, niveis, keyTalentsOn){
+  return base.filter(p => (niveis && niveis.has(p.nivel)) || (keyTalentsOn && ehKeyTalent(p)));
 }
 /* Evolução por quadrante vs. ciclo anterior, no mesmo formato que
    `renderNineBox` já sabe consumir (`opc.antes`/`opc.agora`/`opc.deltas`,
@@ -5264,28 +5747,49 @@ function calcDeltaQuadrantes(pessoas){
      ("Insuf.", "Forte") pra caber em nine-box pequeno, aqui é o oposto. */
   return { antes, agora, deltas, curto:false };
 }
+/* Cargos que a seção "Líderes" acumula no filtro do nine-box (não é o mesmo
+   recorte fixo de `POP_LIDERES_RESULTADOS` — esse aqui é o que o usuário
+   escolhe clicando, o outro é fixo para as análises da seção). Ganhou
+   Diretor no mesmo pedido que incluiu o cargo em `POP_LIDERES_RESULTADOS`
+   (25/09/2026, "eu quero que inclua diretor"). */
+const NIVEIS_CONS_CHIP = ['COORDENADOR', 'GERENTE', 'HEAD', 'DIRETOR'];
 function renderConselho(){
   if (!$('#nbConselho')) return;
-  const ESCOPOS = [{ k:'geral', l:'Geral' }, { k:'yandeh', l:'Yandeh' }, { k:'giro', l:'Girotrade CD' }];
-  const POPS = [{ k:'todos', l:'Todos' }, { k:'lideres', l:'Líderes' },
-                { k:'naoLideres', l:'Não-líderes' }, { k:'keyTalents', l:'Key Talents' }];
   const chip = (on, attr, rot) =>
     '<button type="button" class="fchip' + (on ? ' is-on' : '') + '" ' + attr + '>' + rot + '</button>';
+  /* BASE = COMPANHIA INTEIRA, DE PROPÓSITO (25/09/2026, rodada seguinte:
+     "precisa adicionar também os key talents que não são liderança... só
+     na matriz de nine box e de risco de saída"). Uma correção anterior no
+     mesmo dia tinha restringido isto a `pessoasLideresResultados()` (só
+     Coordenador/Gerente/Head) para resolver um bug relatado como "é só
+     para aparecer líderes" — mas o usuário confirmou depois que quer Key
+     Talent SEM cargo de liderança aparecendo aqui (e no mapa de risco,
+     painel 09), só não nas análises "Líderes" fixas (KPIs, curva,
+     distribuição etc., que continuam em `pessoasLideresResultados()`, sem
+     ler nada deste filtro). `baseLiderancaDe()` volta a ser a companhia
+     inteira; quem restringe a Coordenador/Gerente/Head são os TRÊS chips de
+     cargo abaixo — "Key Talents" soma por cima (OR) gente de QUALQUER
+     nível, não só liderança. */
+  const baseEsc = baseLiderancaDe();
+  /* Um filtro só, "Cargo/marcação" — quatro chips acumuláveis, sem radio
+     nenhum (nem "Todos", nem "Empresa": os dois saíram nesta rodada). */
   $('#consFiltros').innerHTML =
-    '<div class="frow"><span class="fk">Empresa</span>' +
-      ESCOPOS.map(o => chip(CONS.escopo === o.k, 'data-esc="' + o.k + '"',
-        o.l + ' <em>' + baseConselhoDe(o.k).length + '</em>')).join('') + '</div>' +
-    '<div class="frow"><span class="fk">População</span>' +
-      POPS.map(o => chip(CONS.pop === o.k, 'data-pop="' + o.k + '"',
-        o.l + ' <em>' + populacaoConselhoDe(baseConselhoDe(CONS.escopo), o.k).length + '</em>')).join('') + '</div>';
-  $$('#consFiltros [data-esc]').forEach(b => b.addEventListener('click', () => {
-    CONS.escopo = b.dataset.esc; renderConselho();
-  }));
+    '<div class="frow"><span class="fk">Cargo</span>' +
+      chip(CONS.keyTalents, 'data-pop="keyTalents"',
+        'Key Talents <em>' + baseEsc.filter(ehKeyTalent).length + '</em>') +
+      NIVEIS_CONS_CHIP.map(k => chip(CONS.niveis.has(k), 'data-cargo="' + k + '"',
+        nomeNivel(k) + ' <em>' + baseEsc.filter(p => p.nivel === k).length + '</em>')).join('') +
+    '</div>';
   $$('#consFiltros [data-pop]').forEach(b => b.addEventListener('click', () => {
-    CONS.pop = b.dataset.pop; renderConselho();
+    CONS.keyTalents = !CONS.keyTalents; renderConselho();
+  }));
+  $$('#consFiltros [data-cargo]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.cargo;
+    if (CONS.niveis.has(k)) CONS.niveis.delete(k); else CONS.niveis.add(k);
+    renderConselho();
   }));
 
-  const pessoas = populacaoConselhoDe(baseConselhoDe(CONS.escopo), CONS.pop);
+  const pessoas = populacaoConselhoDe(baseEsc, CONS.niveis, CONS.keyTalents);
   const comNota = pessoas.filter(p => p.gE != null && p.gV != null);
   $('#consSub').textContent = pessoas.length + (pessoas.length === 1 ? ' pessoa' : ' pessoas') +
     ' · ' + comNota.length + ' no nine-box';
@@ -5309,7 +5813,20 @@ function renderConselho(){
     (semNota ? '<div class="consdist-row"><i style="background:var(--gray-300)"></i><b>Sem nota</b>' +
       '<span>' + semNota + '</span></div>' : '');
 
-  const cardsVisiveis = CONS.pop === 'lideres' || CONS.pop === 'keyTalents';
+  /* Sem "Todos"/"Não-líderes" pra sobrar, toda opção que resta é gente que
+     vale olhar de perto — os cards aparecem sempre que a população não
+     estiver vazia (as quatro opções desligadas ao mesmo tempo é o único
+     jeito de zerar). */
+  const cardsVisiveis = pessoas.length > 0;
+  /* Fotos maiores no nine-box (25/09/2026, a pedido do usuário) — sem
+     "Todos" como opção, a população aqui é sempre pequena o bastante pra
+     dar mais destaque ao rosto. `.consdet.foco` (ver CSS) escala só o
+     avatar (`.av.nbav`), sem mexer no piso da célula — mesma lição de
+     [[avd-painel-conselho]]: quem achata ou alarga a célula é o tamanho do
+     avatar, não o `min-height` do grid. Fica ligada sempre agora (não só
+     quando `cardsVisiveis`), já que não existe mais uma opção "todo mundo"
+     que pudesse lotar a matriz. */
+  $('#nbConselho').closest('.consdet').classList.add('foco');
   renderNineBox('#nbConselho', pessoas, true, calcDeltaQuadrantes(pessoas), {
     baseArr: pessoas,
     onClick: cardsVisiveis ? (p => {
@@ -5322,11 +5839,31 @@ function renderConselho(){
 
   $('#consCardsPanel').hidden = !cardsVisiveis;
   if (cardsVisiveis){
-    $('#consCardsT').textContent = CONS.pop === 'lideres' ? 'Líderes' : 'Key Talents';
+    const rotulos = [...CONS.niveis].map(nomeNivel);
+    if (CONS.keyTalents) rotulos.push('Key Talents');
+    $('#consCardsT').textContent = rotulos.join(' + ') || 'Pessoas';
     $('#consCardsSub').textContent = pessoas.length + (pessoas.length === 1 ? ' pessoa' : ' pessoas');
     $('#consCards').innerHTML = pessoas.map((p, i) => card(p, 'cons' + i)).join('');
     $$('#consCards .pch').forEach(h => h.addEventListener('click', () => h.parentElement.classList.toggle('open')));
   }
+
+  renderLideresResultados();
+}
+
+/* Seção "Líderes" da aba Liderança — mesmas análises da página Resultados
+   (01-08), a matriz de risco (09→10 nesta aba) e o geral de liderança
+   (10→11), todas sobre o recorte fixo `pessoasLideresResultados()`
+   (Coordenador+Gerente+Head, companhia inteira — Yandeh e Girotrade CD,
+   ver `baseLiderancaDe`). Chamada de dentro de `renderConselho()`. */
+function renderLideresResultados(){
+  if (!$('#lid-kpis')) return;
+  const pessoas = pessoasLideresResultados();
+  $('#lidResSub').textContent = pessoas.length + (pessoas.length === 1 ? ' pessoa' : ' pessoas') +
+    ' · coordenadores, gerentes, heads e diretores';
+  renderResultados('lid-', pessoas);
+  renderAssessment();
+  renderRiscoMatriz('lid-', pessoas);
+  renderLiderancaGeral();
 }
 
 /* ---------- boot ---------- */
