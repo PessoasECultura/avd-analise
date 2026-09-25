@@ -85,6 +85,9 @@
   /* conceitos — pastéis do card, iguais nas duas marcas */
   --nb-ins:#fde8e8;--nb-ple:#dbeafe;--nb-for:#d1fae5;--nb-exc:#ede9fe;
   --nb-ins-ink:#9b2c2c;--nb-ple-ink:#1e4b7a;--nb-for-ink:#1d5c43;--nb-exc-ink:#5b2c86;
+  /* Key Talent (painel Conselho, 25/09/2026) — âmbar, cor própria pra não
+     colidir com o roxo de Excepcional */
+  --nb-key:#fef3c7;--nb-key-ink:#92610a;
   /* marca fixa do Girotrade — só para o selo de empresa, nunca para tema */
   --giro-mark:#0F9B3A;
   --navy:var(--b-ink);--teal:var(--b-acc);--teal-light:var(--b-acc-soft);
@@ -130,6 +133,7 @@
   --gray-50:#1d222b;--gray-100:#2a313c;--gray-300:#3b4453;
   --gray-500:#9aa4b3;--gray-700:#c2cad6;--gray-900:#e8ebf0;
   --pos:#5fd98a;--neg:#ff8a7a;
+  --nb-key:#3a2a05;--nb-key-ink:#f0c469;
 }
 :root[data-theme="dark"][data-brand="giro"],
 :root[data-theme="dark"] [data-brand="giro"]{
@@ -680,6 +684,9 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 .pa-rec{background:#fdf0d5;color:#8a5a00}
 .pa-suc{background:var(--nb-exc);color:var(--nb-exc-ink)}
 .pa-pro{background:var(--nb-for);color:var(--nb-for-ink)}
+/* Key Talent (painel Conselho, 25/09/2026) — classifica quem tem essa marca
+   na coluna PLANO DE AÇÃO, a pedido do usuário */
+.pa-key{background:var(--nb-key);color:var(--nb-key-ink)}
 .pa-out{background:var(--gray-100);color:var(--gray-700)}
 .pa-vazio{background:none;color:var(--gray-300);font-weight:600;padding-left:0}
 :root[data-theme="dark"] .pa-rec{background:#3a2a05;color:#f0c469}
@@ -892,6 +899,7 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
     <button class="is-on" data-p="p1">O ciclo</button>
     <button data-p="p2">Resultados</button>
     <button data-p="p3">Área &amp; liderança</button>
+    <button data-p="p4">Conselho</button>
   </nav>
   <div class="header-actions">
     <span class="hstamp" id="stamp"></span>
@@ -1131,6 +1139,46 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
 /* o 9-box do painel de detalhe: sem moldura de gaveta, ele é o painel */
 .nbdet{margin:4px 0 12px}
 .nbdet .nb{grid-template-rows:repeat(3,minmax(104px,1fr)) 14px}
+/* painel Conselho (25/09/2026): mais enxuto que o de área — a pedido do
+   usuário, "o ideal é que caiba tudo em uma tela sem scrollar", então as
+   células do nine-box encolhem um pouco mais que as da página 3.
+   Depois (mesmo dia), o usuário pediu o oposto pro TEXTO de dentro: nome do
+   quadrante maior e por extenso (não abreviado) e percentual maior — e as
+   células "um pouco menos quadradas, mais larguinas". Célula mais baixa
+   (`minmax`) + coluna cheia do painel já deixa cada uma bem mais larga que
+   alta; só precisava crescer o texto, que estava pequeno demais pro espaço
+   que já tinha. */
+.consdet .nb{grid-template-rows:repeat(3,minmax(76px,1fr)) 14px}
+.consdet .nbt{font-size:15px}
+.consdet .nbp{font-size:16px;font-weight:700;opacity:.75}
+/* Sem teto de altura com scroll (o usuário rejeitou essa versão: "sem
+   scrolling nos boxes, eles mais retangulares mesmo"). A solução é o
+   avatar ficar bem menor só neste painel: célula larga (~370px) cabe muitas
+   bolinhas por linha, então mesmo o quadrante mais cheio (tipicamente
+   "Não-líderes", população bem maior) empilha poucas linhas — a célula
+   cresce pouco em altura e continua parecendo um retângulo largo, não um
+   quadrado, sem precisar esconder ninguém atrás de scroll. */
+.consdet .av.nbav{width:15px;height:15px;font-size:0}
+.consdet .dots.fluxo{gap:2px}
+/* distribuição de conceitos ao lado do nine-box, a pedido do usuário
+   ("igual está a distribuição de conceitos... deixando um geral de acordo
+   com os filtros feitos"). Ao lado, não embaixo — some da vertical do
+   painel, então o "sem scroll" continua valendo com a adição. Percentual
+   é sobre quem TEM conceito na população filtrada (mesma convenção do
+   painel 03 da página 2); "Sem nota" aparece à parte, sem percentual. */
+.consrow{display:grid;grid-template-columns:1fr 200px;gap:16px;align-items:start}
+.consdist{display:flex;flex-direction:column;gap:9px;padding-top:2px}
+.consdist-tit{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--gray-500);margin-bottom:2px}
+.consdist-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray-700)}
+.consdist-row i{width:11px;height:11px;border-radius:3px;flex:none}
+.consdist-row b{color:var(--gray-900);flex:1;font-weight:600;min-width:0}
+.consdist-row span{font-weight:700;color:var(--gray-900);white-space:nowrap}
+.consdist-row em{font-style:normal;color:var(--gray-500);font-weight:500;margin-left:4px}
+@media(max-width:820px){ .consrow{grid-template-columns:1fr} }
+/* "População" é mais comprido que "Cargo"/"Áreas", que são quem definiu os
+   46px fixos de `.frow .fk` — sem isto o rótulo quebra em duas linhas */
+#consFiltros .fk{width:70px}
 @media(max-width:760px){
   .arl{grid-template-columns:1fr 44px;gap:8px}
   .arl-s,.arl-l{display:none}
@@ -1581,6 +1629,47 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
       <span><i style="background:var(--gray-300)"></i>Sem nota</span>
     </div>
     <div class="cards" id="cards"></div>
+  </div>
+
+</section>
+
+<!-- ==================== PÁGINA CONSELHO ====================
+     Adicionada em 25/09/2026, a pedido do usuário: uma visão executiva com
+     um nine-box só (troca de população pelos filtros, não dois lado a
+     lado — decisão tomada via AskUserQuestion), pensada pra caber numa tela
+     sem rolar até o nine-box. Os cards abaixo (só aparecem em Líderes /
+     Key Talents) podem empurrar a página pra baixo normalmente — o "sem
+     rolar" vale pro nine-box e pros filtros, não pra lista de pessoas.
+
+     "Líderes" aqui é `SENIOR` (o mesmo recorte "de especialista pra cima"
+     que já define quem tem card na página 3) — não existe uma coluna na
+     base que diga "é gestor de alguém", então reaproveitei o recorte que
+     o resto do relatório já usa pra essa ideia, em vez de inventar um
+     terceiro critério de liderança. "Key Talents" vem da coluna PLANO DE
+     AÇÃO: quem tem "Key Talent" escrito lá (mesma lógica de
+     `planoCls`/PLANO_CORES, ver `renderConselho`).
+     ==================================================================== -->
+<section class="page" id="p4">
+
+  <div class="cover">
+    <div class="eyebrow">Visão executiva</div>
+    <h1>Conselho</h1>
+  </div>
+
+  <div class="panel">
+    <div class="phd"><span class="pn">01</span><span class="pt">Nine-box</span>
+      <span class="ps" id="consSub"></span></div>
+    <div class="fbar" id="consFiltros"></div>
+    <div class="consrow">
+      <div class="nbdet consdet"><div class="nb" id="nbConselho"></div></div>
+      <div class="consdist" id="consDist"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="consCardsPanel" hidden>
+    <div class="phd"><span class="pn">02</span><span class="pt" id="consCardsT">Pessoas</span>
+      <span class="ps" id="consCardsSub"></span></div>
+    <div class="cards" id="consCards"></div>
   </div>
 
 </section>
@@ -3333,8 +3422,20 @@ function celulaDe(p){
    pelo nine-box da companhia. Aquele painel saiu do relatorio; os 9-box que
    restam (por area e o de especialistas e liderancas) chamam esta funcao sem
    ele, entao o bloco de comparacao abaixo fica inerte — mantido porque e o
-   que permite religar o painel sem reescrever nada. */
-function renderNineBox(sel, pessoas, grande, opc){
+   que permite religar o painel sem reescrever nada. Voltou a ser usado no
+   painel Conselho (25/09/2026), via `calcDeltaQuadrantes`.
+
+   `cfg` (opcional, 5º parâmetro) existe só pro painel Conselho: lá a
+   população vem de `P_TODOS` filtrada por escopo/população LOCAIS da aba,
+   não do recorte global `P` do botão Yandeh/Girotrade do topo — então
+   `P.indexOf(p)` erraria o índice (ou daria -1) pra gente fora do recorte
+   ativo. `cfg.baseArr` troca `P` pelo array que foi de fato passado como
+   `pessoas`, e `cfg.onClick(p)` troca o `abreCard` padrão (que também
+   pressupõe `P`) por um comportamento próprio. Sem `cfg`, tudo se comporta
+   exatamente como antes — nenhuma chamada existente precisa mudar. */
+function renderNineBox(sel, pessoas, grande, opc, cfg){
+  const baseArr = (cfg && cfg.baseArr) || P;
+  const onClick = (cfg && cfg.onClick) || (p => abreCard(baseArr.indexOf(p)));
   /* aceita seletor ou o próprio elemento: as gavetas da página 3 são criadas
      na hora e não têm id para procurar */
   const el = typeof sel === 'string' ? $(sel) : sel;
@@ -3358,7 +3459,7 @@ function renderNineBox(sel, pessoas, grande, opc){
            não se reconhece, e reconhecer é a razão de ter foto aqui */
         dots = lista.slice()
           .sort((a, b) => a.nome.localeCompare(b.nome))
-          .map(p => avatar(p, 'nbav') .replace('class="av', 'data-i="' + P.indexOf(p) + '" class="av')).join('');
+          .map(p => avatar(p, 'nbav') .replace('class="av', 'data-i="' + baseArr.indexOf(p) + '" class="av')).join('');
       } else {
         const cols = Math.max(1, Math.ceil(Math.sqrt(Math.max(lista.length, 1)) * 1.7));
         const rows = Math.max(1, Math.ceil(lista.length / cols));
@@ -3367,7 +3468,7 @@ function renderNineBox(sel, pessoas, grande, opc){
           const x = 3 + (i % cols) * passoX + ((i * 7) % 4);
           const y = rows > 1 ? Math.floor(i / cols) * passoY : 38;
           return '<i class="dot' + (ehGiro(p) ? ' giro' : '') + '" style="left:' + Math.min(x, 94) +
-                 '%;top:' + Math.min(y, 90) + '%" data-i="' + P.indexOf(p) + '"></i>';
+                 '%;top:' + Math.min(y, 90) + '%" data-i="' + baseArr.indexOf(p) + '"></i>';
         }).join('');
       }
       /* mudança consolidada do quadrante: quantos estão aqui agora contra
@@ -3400,8 +3501,8 @@ function renderNineBox(sel, pessoas, grande, opc){
      justamente os quadrantes vizinhos que se estava comparando. O clique
      continua abrindo a pessoa. */
   el.querySelectorAll('[data-i]').forEach(d => {
-    const p = P[+d.dataset.i];
-    d.addEventListener('click', () => abreCard(+d.dataset.i));
+    const p = baseArr[+d.dataset.i];
+    d.addEventListener('click', () => { if (p) onClick(p); });
     if (p) d.addEventListener('mouseenter', ev => mostraTipHtml(ev, dicaPessoa(p)));
     d.addEventListener('mouseleave', escondeTip);
   });
@@ -3975,6 +4076,7 @@ function aplicaMarca(m, salvar){
     pintaRotulo();
     renderPagina2();
     renderPagina3();
+    renderConselho();
   }
 }
 /* As duas faixas do topo são `position:fixed`, então não empurram o conteúdo:
@@ -4183,20 +4285,27 @@ const IMP_COLS = [
   ['riscoPC',    [{tem:['RISCO'], nao:['GESTOR'], um:['P&C', 'P & C', 'PC', 'PESSOAS E CULTURA']}]]
 ];
 
-/* Plano de ação: texto livre, mas quatro palavras conhecidas ganham cor, para
+/* Plano de ação: texto livre, mas palavras conhecidas ganham cor, para
    leitura de relance em comitê. O resto aparece em cinza, sem ser recusado —
-   quem conduz o ciclo escreve o que precisar. */
+   quem conduz o ciclo escreve o que precisar.
+   "KEY TALENT" entrou em 25/09/2026 — é a mesma coluna que o painel
+   Conselho usa pra separar quem é Key Talent (`ehKeyTalent`, logo abaixo). */
 const PLANO_CORES = [
-  { chave:'DESLIG',    cls:'pa-des' },
-  { chave:'RECUPER',   cls:'pa-rec' },
-  { chave:'SUCESS',    cls:'pa-suc' },
-  { chave:'PROMO',     cls:'pa-pro' }
+  { chave:'DESLIG',     cls:'pa-des' },
+  { chave:'RECUPER',    cls:'pa-rec' },
+  { chave:'SUCESS',     cls:'pa-suc' },
+  { chave:'PROMO',      cls:'pa-pro' },
+  { chave:'KEY TALENT', cls:'pa-key' }
 ];
 function planoCls(txt){
   const n = impNorm(txt);
   const achado = PLANO_CORES.find(c => n.indexOf(c.chave) >= 0);
   return achado ? achado.cls : 'pa-out';
 }
+/* Painel Conselho: quem tem "Key Talent" marcado no plano de ação — a
+   pedido do usuário, "na coluna PLANO DE AÇÃO eu coloquei alguns como Key
+   talents, preciso que voce os classifique a partir disso". */
+const ehKeyTalent = p => impNorm(p.plano).indexOf('KEY TALENT') >= 0;
 function chipPlano(txt){
   if (!txt) return '';
   return '<span class="pa ' + planoCls(txt) + '">' + esc(txt) + '</span>';
@@ -4720,6 +4829,7 @@ $('#impFotos').addEventListener('change', async ev => {
   if (BOOTED){
     renderPagina2();
     renderPagina3();
+    renderConselho();
     const md = $('#modal');
     if (md && !md.hidden && MODAL.base.length) renderModal();
   }
@@ -4873,7 +4983,7 @@ $('#impComents').addEventListener('change', ev => {
         sobra: pessoas.filter(c => !naBase[chaveFoto(c.nome)]).map(c => c.nome).sort()
       };
       $('#impComentsRel').hidden = false;
-      if (BOOTED){ renderPagina2(); renderPagina3(); }
+      if (BOOTED){ renderPagina2(); renderPagina3(); renderConselho(); }
       impDiz(COM_LIDER_DIAG.casou + ' de ' + pessoas.length + ' pessoas com comentário casaram com a base' +
         (COM_LIDER_DIAG.sobra.length ? ' · ' + COM_LIDER_DIAG.sobra.length + ' sem pessoa na base' : ''), 'ok');
     } catch(e){
@@ -5233,6 +5343,131 @@ function renderLiderancaGeral(){
     renderColunas(reshapeColunas(Q.oport, N_COLUNAS), 'sev-alerta');
 }
 
+/* ---------- painel Conselho ----------
+   Adicionado em 25/09/2026, a pedido do usuário. Não depende do recorte
+   global `P` (o botão Yandeh/Girotrade do topo) — lê direto de `P_TODOS` e
+   filtra por dois eixos próprios, porque o pedido foi ter "Girotrade CD" e
+   "Yandeh Geral" como botões AQUI, ao lado de uma visão da empresa inteira,
+   não amarrados à marca ativa do resto do relatório.
+
+   Dois filtros, sempre um nine-box só (decisão tomada via AskUserQuestion:
+   "um nine-box só, que troca de população" — não dois lado a lado):
+     · Empresa:    geral (todo mundo) · yandeh (exceto Girotrade CD) · giro (só Girotrade CD)
+     · População:  todos · líderes (`LIDERANCA_CONSELHO`) · não-líderes ·
+                   Key Talents (`ehKeyTalent`, coluna PLANO DE AÇÃO)
+   Cards completos (mesmo componente `card()` de outras páginas) só aparecem
+   pra Líderes e Key Talents, a pedido do usuário — pra Todos/Não-líderes,
+   só o nine-box. Ids dos cards levam o prefixo "cons" (`card-consN`) pra
+   nunca colidir com os `card-N` da página 3, que indexam por `P`, não por
+   `P_TODOS` nem pelo array filtrado local.
+
+   "LÍDERES" AQUI NÃO É `SENIOR`. A primeira versão reaproveitou `SENIOR`
+   (especialista pra cima, o recorte que já dá card na página 3) e o usuário
+   corrigiu: "não especialistas, só coordenadores pra cima". `SENIOR` continua
+   intocado (é usado pela página 3 pra decidir quem tem card, que é outra
+   pergunta) — este painel tem seu próprio recorte, `LIDERANCA_CONSELHO`. */
+let CONS = { escopo:'geral', pop:'todos' };
+const LIDERANCA_CONSELHO = new Set(['COORDENADOR', 'GERENTE', 'HEAD', 'DIRETOR', 'CEO']);
+
+function baseConselhoDe(escopo){
+  if (escopo === 'yandeh') return P_TODOS.filter(p => !ehGiroCD(p));
+  if (escopo === 'giro') return P_TODOS.filter(ehGiroCD);
+  return P_TODOS.slice();
+}
+function populacaoConselhoDe(base, pop){
+  if (pop === 'lideres') return base.filter(p => LIDERANCA_CONSELHO.has(p.nivel));
+  if (pop === 'naoLideres') return base.filter(p => !LIDERANCA_CONSELHO.has(p.nivel));
+  if (pop === 'keyTalents') return base.filter(ehKeyTalent);
+  return base;
+}
+/* Evolução por quadrante vs. ciclo anterior, no mesmo formato que
+   `renderNineBox` já sabe consumir (`opc.antes`/`opc.agora`/`opc.deltas`,
+   3×3, alto→baixo em valores e baixo→alto em entregas — mesma leitura da
+   MATRIZ). Só entra quem tem as duas notas nos dois ciclos, mesma regra de
+   `histC` usada no resto do relatório: comparar populações diferentes não
+   é comparar evolução. O "antes" usa a régua de hoje sobre pE/pV (não a
+   coluna da planilha) — mede desempenho, não texto congelado do ciclo
+   passado; ver `conceitoAnteriorDe` para o mesmo raciocínio. */
+function calcDeltaQuadrantes(pessoas){
+  const par = pessoas.filter(p => p.pE != null && p.pV != null && p.gE != null && p.gV != null);
+  const zero3 = () => [[0,0,0],[0,0,0],[0,0,0]];
+  const antes = zero3(), agora = zero3();
+  par.forEach(p => {
+    antes[2 - bucket(p.pV)][bucket(p.pE)]++;
+    const [r, c] = celulaDe(p);
+    agora[r][c]++;
+  });
+  const deltas = antes.map((row, r) => row.map((v, c) => agora[r][c] - v));
+  /* `curto` fica false de propósito: o usuário pediu "nome do quadrante
+     maior e sem ser resumido" — o resto do relatório usa `CONC_CURTO`
+     ("Insuf.", "Forte") pra caber em nine-box pequeno, aqui é o oposto. */
+  return { antes, agora, deltas, curto:false };
+}
+function renderConselho(){
+  if (!$('#nbConselho')) return;
+  const ESCOPOS = [{ k:'geral', l:'Geral' }, { k:'yandeh', l:'Yandeh' }, { k:'giro', l:'Girotrade CD' }];
+  const POPS = [{ k:'todos', l:'Todos' }, { k:'lideres', l:'Líderes' },
+                { k:'naoLideres', l:'Não-líderes' }, { k:'keyTalents', l:'Key Talents' }];
+  const chip = (on, attr, rot) =>
+    '<button type="button" class="fchip' + (on ? ' is-on' : '') + '" ' + attr + '>' + rot + '</button>';
+  $('#consFiltros').innerHTML =
+    '<div class="frow"><span class="fk">Empresa</span>' +
+      ESCOPOS.map(o => chip(CONS.escopo === o.k, 'data-esc="' + o.k + '"',
+        o.l + ' <em>' + baseConselhoDe(o.k).length + '</em>')).join('') + '</div>' +
+    '<div class="frow"><span class="fk">População</span>' +
+      POPS.map(o => chip(CONS.pop === o.k, 'data-pop="' + o.k + '"',
+        o.l + ' <em>' + populacaoConselhoDe(baseConselhoDe(CONS.escopo), o.k).length + '</em>')).join('') + '</div>';
+  $$('#consFiltros [data-esc]').forEach(b => b.addEventListener('click', () => {
+    CONS.escopo = b.dataset.esc; renderConselho();
+  }));
+  $$('#consFiltros [data-pop]').forEach(b => b.addEventListener('click', () => {
+    CONS.pop = b.dataset.pop; renderConselho();
+  }));
+
+  const pessoas = populacaoConselhoDe(baseConselhoDe(CONS.escopo), CONS.pop);
+  const comNota = pessoas.filter(p => p.gE != null && p.gV != null);
+  $('#consSub').textContent = pessoas.length + (pessoas.length === 1 ? ' pessoa' : ' pessoas') +
+    ' · ' + comNota.length + ' no nine-box';
+
+  /* distribuição de conceitos da população filtrada — pedido do usuário,
+     "igual está a distribuição de conceitos... deixando um geral de acordo
+     com os filtros feitos". Passa pelo MESMO `celulaDe` que o nine-box usa
+     pra desenhar as bolotas (não por `p.conc` cru): garante que a soma
+     desta lista bate com a contagem de cada quadrante, mesmo se `p.conc`
+     vier vazio numa base com só as notas preenchidas. Percentual é sobre
+     quem TEM as duas notas (`comNota`); "Sem nota" entra à parte, sem
+     percentual, porque não faz parte do total que os outros dividem. */
+  const distBaldes = {}; ORDEM_CONC.forEach(k => { distBaldes[k] = 0; });
+  comNota.forEach(p => { const [r, c] = celulaDe(p); distBaldes[MATRIZ[r][c]]++; });
+  const distRows = ORDEM_CONC.map(k => ({ k, n: distBaldes[k], bg: CONC[k].bg }));
+  const semNota = pessoas.length - comNota.length;
+  $('#consDist').innerHTML =
+    '<div class="consdist-tit">Distribuição</div>' +
+    distRows.map(r => '<div class="consdist-row"><i style="background:' + r.bg + '"></i><b>' + r.k +
+      '</b><span>' + r.n + '<em>' + pc(r.n, comNota.length) + '%</em></span></div>').join('') +
+    (semNota ? '<div class="consdist-row"><i style="background:var(--gray-300)"></i><b>Sem nota</b>' +
+      '<span>' + semNota + '</span></div>' : '');
+
+  const cardsVisiveis = CONS.pop === 'lideres' || CONS.pop === 'keyTalents';
+  renderNineBox('#nbConselho', pessoas, true, calcDeltaQuadrantes(pessoas), {
+    baseArr: pessoas,
+    onClick: cardsVisiveis ? (p => {
+      const el = document.getElementById('card-cons' + pessoas.indexOf(p));
+      if (!el) return;
+      el.classList.add('open');
+      el.scrollIntoView({ behavior:'smooth', block:'center' });
+    }) : (() => {})
+  });
+
+  $('#consCardsPanel').hidden = !cardsVisiveis;
+  if (cardsVisiveis){
+    $('#consCardsT').textContent = CONS.pop === 'lideres' ? 'Líderes' : 'Key Talents';
+    $('#consCardsSub').textContent = pessoas.length + (pessoas.length === 1 ? ' pessoa' : ' pessoas');
+    $('#consCards').innerHTML = pessoas.map((p, i) => card(p, 'cons' + i)).join('');
+    $$('#consCards .pch').forEach(h => h.addEventListener('click', () => h.parentElement.classList.toggle('open')));
+  }
+}
+
 /* ---------- boot ---------- */
 let ARQ_NOME = '';
 try { ARQ_NOME = sessionStorage.getItem('avd_P_arq') || ''; } catch(e){}
@@ -5349,8 +5584,9 @@ function pintaRelatorio(){
   /* a pagina 1 nao entra aqui: e HTML fixo, ja esta na tela antes de existir base */
   renderPagina2();
   renderPagina3();
+  renderConselho();
   BOOTED = true;
-  if (/^#p[123]$/.test(location.hash)) irPara(location.hash.slice(1), true);
+  if (/^#p[1234]$/.test(location.hash)) irPara(location.hash.slice(1), true);
 }
 
 /* P_TODOS, nao P: o teste e "existe planilha carregada?", e nao "o recorte
