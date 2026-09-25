@@ -877,14 +877,9 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
       <input type="file" id="impFotos" accept="image/*" webkitdirectory directory multiple hidden>
       Carregar fotos
     </label>
-    <label>
-      <input type="file" id="impComents" accept=".xlsx,.xls" hidden>
-      Carregar comentários
-    </label>
     <button class="imp-lim" type="button" id="impTemplate">Baixar modelo</button>
     <button class="imp-lim" type="button" id="impCols" hidden>Conferir colunas</button>
     <button class="imp-lim" type="button" id="impFotosRel" hidden>Conferir fotos</button>
-    <button class="imp-lim" type="button" id="impComentsRel" hidden>Conferir comentários</button>
     <button class="imp-lim" type="button" id="impLimpar" hidden>Limpar</button>
   </div>
   <span class="imp-s" id="impStatus">nenhuma planilha carregada</span>
@@ -1148,25 +1143,46 @@ button.fato.liga:focus-visible{outline:2px solid var(--b-acc);outline-offset:2px
    (`minmax`) + coluna cheia do painel já deixa cada uma bem mais larga que
    alta; só precisava crescer o texto, que estava pequeno demais pro espaço
    que já tinha. */
-.consdet .nb{grid-template-rows:repeat(3,minmax(76px,1fr)) 14px}
+/* Célula bem maior (25/09/2026, rodada seguinte): o usuário disse que os
+   boxes ficaram "mini" e que "tem muita coisa em branco" — o pedido de
+   "retangular" nunca foi pra encolher a célula, era pra ela não ficar
+   quadrada; sobrando espaço em branco no painel, a célula tem que crescer
+   pra ocupar, não ficar minúscula. */
 .consdet .nbt{font-size:15px}
 .consdet .nbp{font-size:16px;font-weight:700;opacity:.75}
-/* Sem teto de altura com scroll (o usuário rejeitou essa versão: "sem
-   scrolling nos boxes, eles mais retangulares mesmo"). A solução é o
-   avatar ficar bem menor só neste painel: célula larga (~370px) cabe muitas
-   bolinhas por linha, então mesmo o quadrante mais cheio (tipicamente
-   "Não-líderes", população bem maior) empilha poucas linhas — a célula
-   cresce pouco em altura e continua parecendo um retângulo largo, não um
-   quadrado, sem precisar esconder ninguém atrás de scroll. */
-.consdet .av.nbav{width:15px;height:15px;font-size:0}
-.consdet .dots.fluxo{gap:2px}
+/* Avatar (25/09/2026): tamanho é uma troca direta com "achatado". Maior
+   deixa a foto mais legível, mas cada linha de bolotas fica mais alta E
+   cabe menos gente por linha — um quadrante cheio (12+ pessoas) quebra em
+   mais linhas e a célula cresce em altura de qualquer jeito, MESMO com o
+   piso da célula baixo (ver `.consdet .nb` abaixo). Quando o usuário disse
+   "horizontal e não vertical, pelo amor" o problema real era esse: reduzir
+   só o piso da célula (`min-height`) não achata quem já está cheio de
+   gente, porque a altura de uma célula povoada vem do conteúdo, não do
+   piso. A correção que resolve os dois casos (vazio E cheio) é o avatar
+   MENOR — linhas mais baixas E mais gente por linha, os dois jeitos de
+   uma célula ficar mais larga que alta. Ainda maior que a versão sem
+   iniciais (15px) que veio antes: 19px com iniciais visíveis. */
+.consdet .av.nbav{width:19px;height:19px;font-size:7px}
+.consdet .dots.fluxo{gap:3px}
+/* "Retangular lateralmente" + "aumenta a margem do box": mais respiro
+   dentro da célula, mas sem exagerar — padding grande também empurra a
+   altura pra cima, na direção contrária do "achatado". */
+.consdet .nbc{padding:12px 18px}
+/* "HORIZONTAL E NÃO VERTICAL": min-height baixo garante que uma célula
+   VAZIA ou com pouca gente fique achatada (uma faixa, não quadrado) — o
+   piso sozinho não resolve célula cheia (ver comentário do avatar acima,
+   que é quem resolve isso). */
+.consdet .nb{grid-template-rows:repeat(3,minmax(56px,1fr)) 14px}
 /* distribuição de conceitos ao lado do nine-box, a pedido do usuário
    ("igual está a distribuição de conceitos... deixando um geral de acordo
    com os filtros feitos"). Ao lado, não embaixo — some da vertical do
    painel, então o "sem scroll" continua valendo com a adição. Percentual
    é sobre quem TEM conceito na população filtrada (mesma convenção do
-   painel 03 da página 2); "Sem nota" aparece à parte, sem percentual. */
-.consrow{display:grid;grid-template-columns:1fr 200px;gap:16px;align-items:start}
+   painel 03 da página 2); "Sem nota" aparece à parte, sem percentual.
+   Coluna de distribuição encolheu de 200px pra 170px na mesma rodada da
+   margem/foto maiores: sobra mais largura pro nine-box, reforçando a
+   proporção "mais larga que alta" ("retangular lateralmente"). */
+.consrow{display:grid;grid-template-columns:1fr 170px;gap:16px;align-items:start}
 .consdist{display:flex;flex-direction:column;gap:9px;padding-top:2px}
 .consdist-tit{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
   color:var(--gray-500);margin-bottom:2px}
@@ -3863,14 +3879,10 @@ function card(p, idx){
     '</div></div>';
 }
 
-/* O comentário vem de COMENTARIOS (editado à mão, lá em cima) primeiro. Se a
-   pessoa não estiver lá, cai no que foi importado de "Carregar comentários"
-   (`COM_LIDER`, ver bloco COMENTÁRIOS LÍDER > LIDERADO perto do fim) — a
-   avaliação do líder sobre esse liderado, direto da planilha do ciclo. O
-   bloco aparece mesmo vazio: o espaço reservado é o pedido. */
+/* O comentário vem de COMENTARIOS, editado à mão lá em cima. O bloco aparece
+   mesmo vazio: o espaço reservado é o pedido. */
 function blocoComentario(p){
-  const hard = (COMENTARIOS[chaveNome(p.nome)] || '').trim();
-  const txt = hard || textoComLiderado(p);
+  const txt = (COMENTARIOS[chaveNome(p.nome)] || '').trim();
   return '<div class="coment"><div class="coment-k">Comentário qualitativo</div>' +
     (txt ? '<div class="coment-t">' + esc(txt) + '</div>'
          : '<div class="coment-t vazio">ainda não registrado</div>') + '</div>';
@@ -4860,157 +4872,6 @@ $('#impFotosRel').addEventListener('click', () => {
   alert(t);
 });
 if (FOTOS_DIAG) $('#impFotosRel').hidden = false;
-
-/* ============================================================
-   COMENTÁRIOS LÍDER > LIDERADO (planilha à parte)
-   Fonte: export bruto do formulário do ciclo, "Respostas_Avaliação de
-   Desempenho _ Mar - Ago 2026.xlsx", aba "Perguntas computáveis" (apesar do
-   nome, essa aba também carrega as perguntas de texto livre — a aba
-   "Perguntas não computáveis" é inteira sobre risco de saída, não tem nada
-   de comentário qualitativo). Cada linha é UMA resposta a UMA pergunta por
-   UM avaliador; a mesma pessoa aparece em dezenas de linhas.
-
-   SÓ ENTRA "Líder > Liderado" (coluna "Relacionamento atual na avaliação"),
-   pedido explícito do usuário — a planilha também traz "Autoavaliação", que
-   fica de fora: aqui o que interessa é o que o GESTOR escreveu sobre o
-   liderado, não o que a pessoa escreveu sobre si mesma.
-
-   Dessa fonte, duas perguntas têm texto livre de verdade (as outras são só
-   nota numérica, 1 a 5, que já está na base principal):
-     · "O que não foi bem... em relação às entregas do seu liderado?"
-       → guardado em `oportunidade`.
-     · "Quais fatos ou evidências do dia a dia sustentam a avaliação
-       atribuída aos valores da Yandeh?" → guardado em `valores` (uma linha
-       só por pessoa, cobrindo os seis valores juntos — a planilha não abre
-       comentário por valor individual).
-
-   Vira o FALLBACK do bloco "Comentário qualitativo" do card: só aparece
-   para quem NÃO está no `COMENTARIOS` fixo (topo do arquivo) — ver
-   `blocoComentario`/`textoComLiderado`. É basicamente o que os 23 nomes sem
-   aba de assessment já usavam, colado à mão no código; agora é sistemático
-   e cobre qualquer um que o líder tenha comentado nesse ciclo, não só esses 23.
-
-   MESMO CUIDADO DAS FOTOS: fica só em memória (`COM_LIDER`), nunca no
-   sessionStorage — é texto de gestor sobre liderado, o tipo de comentário
-   sensível que não deveria sobreviver a um F5. Casa por nome via
-   `chaveFoto`/`impNorm`, igual fotos e risco. */
-let COM_LIDER = {}, COM_LIDER_DIAG = null;
-
-/* pedaço do texto de cada pergunta que basta pra identificar ela, mesmo que
-   a redação mude uma vírgula de um ciclo pro outro */
-const COM_LIDER_PERGUNTAS = [
-  { tipo:'oportunidade', tem:['NAO FOI BEM', 'ENTREGA'] },
-  { tipo:'valores',      tem:['FATOS OU EVIDENCIAS'] }
-];
-function tipoPerguntaComLiderado(pergunta){
-  const n = impNorm(pergunta);
-  const achado = COM_LIDER_PERGUNTAS.find(r => r.tem.every(t => n.indexOf(t) >= 0));
-  return achado ? achado.tipo : null;
-}
-
-function parseComLiderado(buffer){
-  const wb = XLSX.read(buffer, { type:'array' });
-  /* "Perguntas computáveis", nunca a "não computáveis" (que é só risco) —
-     acha por nome de aba primeiro, cai pra primeira aba com coluna NOME. */
-  const nomeAba = wb.SheetNames.find(n => impNorm(n).indexOf('COMPUTAVEIS') >= 0 && impNorm(n).indexOf('NAO') < 0)
-    || wb.SheetNames[0];
-  const rows = XLSX.utils.sheet_to_json(wb.Sheets[nomeAba], { header:1, defval:null });
-  if (!rows.length) throw new Error('A planilha está vazia.');
-
-  let hr = -1;
-  for (let i = 0; i < Math.min(rows.length, 8); i++){
-    const h = (rows[i] || []).map(impNorm);
-    if (h.indexOf('NOME') >= 0 && h.some(c => c.indexOf('RELACIONAMENTO') >= 0)) { hr = i; break; }
-  }
-  if (hr < 0) throw new Error('Não encontrei as colunas NOME / Relacionamento atual na avaliação. ' +
-    'Use o export do formulário do ciclo (aba "Perguntas computáveis").');
-
-  const head = rows[hr].map(impNorm);
-  const iNome = head.indexOf('NOME');
-  const iRel = head.findIndex(h => h.indexOf('RELACIONAMENTO') >= 0);
-  const iPerg = head.findIndex(h => h === 'NOME (PERGUNTA)');
-  const iCom = head.findIndex(h => h === 'COMENTARIO');
-  if (iPerg < 0 || iCom < 0) throw new Error('Não encontrei as colunas "Nome (Pergunta)" / "Comentário".');
-
-  const mapa = {};
-  let linhasLL = 0;
-  for (let i = hr + 1; i < rows.length; i++){
-    const r = rows[i];
-    if (!r || r[iNome] == null) continue;
-    if (impNorm(r[iRel]) !== 'LIDER > LIDERADO') continue;
-    linhasLL++;
-    const tipo = tipoPerguntaComLiderado(r[iPerg]);
-    if (!tipo) continue;
-    const nome = String(r[iNome]).trim();
-    const txt = r[iCom] == null ? '' : String(r[iCom]).trim();
-    if (!nome || !txt || impNorm(txt) === 'N/A') continue;
-    const k = chaveFoto(nome);
-    if (!mapa[k]) mapa[k] = { nome };
-    if (!mapa[k][tipo]) mapa[k][tipo] = txt;   /* primeiro líder que respondeu vence */
-  }
-  return { mapa, linhasLL, linhas: rows.length - hr - 1 };
-}
-
-/* texto final do card: os dois pedaços, cada um com seu rótulo — não é o
-   mesmo formato "Pontos fortes / Pontos de oportunidade" do COMENTARIOS
-   fixo, porque a fonte aqui é outra (prosa do líder, não marcador do
-   assessment) e forçar o mesmo rótulo diria uma origem que não é essa. */
-function textoComLiderado(p){
-  const c = COM_LIDER[chaveFoto(p.nome)];
-  if (!c) return '';
-  const partes = [];
-  if (c.oportunidade) partes.push('Entregas — o que pode melhorar\n' + c.oportunidade);
-  if (c.valores) partes.push('Valores no dia a dia\n' + c.valores);
-  return partes.join('\n\n');
-}
-
-$('#impComents').addEventListener('change', ev => {
-  const f = ev.target.files[0];
-  if (!f) return;
-  impDiz('lendo ' + f.name + '…');
-  const fr = new FileReader();
-  fr.onload = () => {
-    try {
-      const { mapa, linhasLL, linhas } = parseComLiderado(fr.result);
-      COM_LIDER = mapa;
-      const naBase = {};
-      P_TODOS.forEach(p => { naBase[chaveFoto(p.nome)] = p.nome; });
-      const pessoas = Object.values(mapa);
-      COM_LIDER_DIAG = {
-        linhas, linhasLL,
-        pessoas: pessoas.length,
-        casou: pessoas.filter(c => naBase[chaveFoto(c.nome)]).length,
-        sobra: pessoas.filter(c => !naBase[chaveFoto(c.nome)]).map(c => c.nome).sort()
-      };
-      $('#impComentsRel').hidden = false;
-      if (BOOTED){ renderPagina2(); renderPagina3(); renderConselho(); }
-      impDiz(COM_LIDER_DIAG.casou + ' de ' + pessoas.length + ' pessoas com comentário casaram com a base' +
-        (COM_LIDER_DIAG.sobra.length ? ' · ' + COM_LIDER_DIAG.sobra.length + ' sem pessoa na base' : ''), 'ok');
-    } catch(e){
-      impDiz(e.message, 'err');
-    }
-  };
-  fr.onerror = () => impDiz('não consegui abrir o arquivo', 'err');
-  fr.readAsArrayBuffer(f);
-});
-
-$('#impComentsRel').addEventListener('click', () => {
-  if (!COM_LIDER_DIAG){ alert('Carregue os comentários primeiro.'); return; }
-  const d = COM_LIDER_DIAG;
-  let t = 'COMENTÁRIOS LÍDER > LIDERADO\n' +
-    'Só entram linhas com Relacionamento = "Líder > Liderado". A ponte é o nome,\n' +
-    'igual fotos e risco de saída.\n\n' +
-    'linhas na planilha: ' + d.linhas + '\n' +
-    'linhas Líder > Liderado: ' + d.linhasLL + '\n' +
-    'pessoas com pelo menos um comentário: ' + d.pessoas + '\n' +
-    'casaram com a base: ' + d.casou + '\n' +
-    '\nEste comentário só aparece no card de quem NÃO está no COMENTARIOS fixo\n' +
-    '(a lista de 61 já embutida no código) — é o fallback, não substitui nada.';
-  if (d.sobra.length)
-    t += '\nSEM PESSOA NA BASE (' + d.sobra.length + ')\n' + d.sobra.map(n => '  ' + n).join('\n') + '\n';
-  alert(t);
-});
-if (COM_LIDER_DIAG) $('#impComentsRel').hidden = false;
 
 /* ---------- 09 · risco de saída ----------
    Até 23/09/2026 vinha de uma segunda planilha, carregada à parte e nunca
