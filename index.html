@@ -2430,7 +2430,11 @@ function assessMediaPorBU(){
     bu: g.bu, n: g.n,
     auto: g.autoN ? g.autoSoma / g.autoN : null,
     lid:  g.lidN  ? g.lidSoma  / g.lidN  : null
-  })).sort((a, b) => b.n - a.n || a.bu.localeCompare(b.bu));
+  })).sort((a, b) => {
+    const lidA = a.lid != null ? a.lid : -Infinity;
+    const lidB = b.lid != null ? b.lid : -Infinity;
+    return lidB - lidA || a.bu.localeCompare(b.bu);
+  });
   return { linhas, semBU };
 }
 
